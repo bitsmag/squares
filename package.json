@@ -1,0 +1,23 @@
+{
+  "name": "helloNode",
+  "version": "0.0.0",
+  "description": "helloNode description",
+  "main": "helloNode.js",
+  "dependencies": {
+    "express": "~4.12.2",
+    "swig": "^1.4.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "no"
+  },
+  "keywords": [
+    "none"
+  ],
+  "author": "sven",
+  "license": "BSD-2-Clause"
+}

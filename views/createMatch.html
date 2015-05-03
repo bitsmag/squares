@@ -1,0 +1,33 @@
+<html>
+  <head>
+    <title>{{ title }}</title>
+  </head>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
+  <body>
+    <h1>SQUARES</h1>
+    Your match is ready. Invite three friends to play with you by telling them your match id.
+    <h2>{{ matchID }}</h2>
+    The start button will be activated after 4 players has joined your match.
+    <button id="startMatchBtn">Start Match</button>
+    <script>
+
+    var createMatchSockets = io.connect('http://localhost:3000/createMatchSockets');
+
+
+    createMatchSockets.on('connect', function () {
+      createMatchSockets.emit('connectionInfo', {{matchID}});
+
+      createMatchSockets.on('match ready', function(){
+        alert("matchready");
+        $('#startMatchBtn').click(function(){
+          window.location.replace('http://localhost:3000/match/' + {{matchID}} + '/{{playerName}}');
+        })
+
+      });
+    });
+
+    </script>
+  </body>
+</html>

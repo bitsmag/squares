@@ -1,0 +1,44 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Squares</title>
+  </head>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+  <body>
+    <h1>SQUARES</h1>
+    <form id="createMatchForm" action="">
+      <input id="cPlayerName" autocomplete="off" value="Your Name">
+      <input type="submit" value="CreateMatch Match">
+    </form>
+    <form id="joinMatchForm" action="">
+      <input id="jPlayerName" autocomplete="off" value="Your Name">
+      <input id="matchID" autocomplete="off" value="Match ID">
+      <input type="submit" value="Join Match">
+    </form>
+    <a href="">Join random Match<a/>
+  </body>
+  <script>
+  $('#createMatchForm').submit(function(){
+        window.location.replace('http://localhost:3000/createMatch/' + $('#cPlayerName').val());
+        return false;
+  });
+
+  $('#joinMatchForm').submit(function(){
+    var url = 'http://localhost:3000/joinMatch/' + $('#matchID').val() + '/' + $('#jPlayerName').val();
+    $.ajax({
+      type: "GET",
+      url: url,
+      context: this,
+      success: function(data){
+        if(data){
+          window.location.replace('http://localhost:3000/match/' + data.matchID + '/' + data.playerName);
+        }
+        else{
+          alert('Could not find a match with the given ID');
+        }
+      }
+    })
+    return false;
+  });
+  </script>
+</html>
