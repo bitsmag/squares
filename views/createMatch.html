@@ -13,7 +13,7 @@
     <button id="startMatchBtn">Start Match</button>
     <script>
 
-    var createMatchSockets = io.connect('http://localhost:3000/createMatchSockets');
+    var createMatchSockets = io.connect('/createMatchSockets');
 
 
     createMatchSockets.on('connect', function () {
@@ -22,7 +22,7 @@
       createMatchSockets.on('match ready', function(){
         alert("matchready");
         $('#startMatchBtn').click(function(){
-          window.location.replace('http://localhost:3000/match/' + {{matchID}} + '/{{playerName}}');
+          window.location.replace('/match/' + {{matchID}} + '/{{playerName}}');
         })
 
       });

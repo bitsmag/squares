@@ -86,7 +86,7 @@ var direction;
 // TODO: GLOBAL VAR DIRECTION !!!
 
 var socket = io();
-var matchSockets = io.connect('http://localhost:3000/matchSockets');
+var matchSockets = io.connect('/matchSockets');
 
 matchSockets.on('connect', function () {
   // Send the playerInfo as soon as

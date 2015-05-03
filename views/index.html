@@ -19,19 +19,19 @@
   </body>
   <script>
   $('#createMatchForm').submit(function(){
-        window.location.replace('http://localhost:3000/createMatch/' + $('#cPlayerName').val());
+        window.location.replace('/createMatch/' + $('#cPlayerName').val());
         return false;
   });
 
   $('#joinMatchForm').submit(function(){
-    var url = 'http://localhost:3000/joinMatch/' + $('#matchID').val() + '/' + $('#jPlayerName').val();
+    var url = '/joinMatch/' + $('#matchID').val() + '/' + $('#jPlayerName').val();
     $.ajax({
       type: "GET",
       url: url,
       context: this,
       success: function(data){
         if(data){
-          window.location.replace('http://localhost:3000/match/' + data.matchID + '/' + data.playerName);
+          window.location.replace('/match/' + data.matchID + '/' + data.playerName);
         }
         else{
           alert('Could not find a match with the given ID');
