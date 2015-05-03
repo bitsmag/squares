@@ -50,28 +50,28 @@ MatchController.prototype.timer = function(duration){
 
 MatchController.prototype.matchTicker = function(){
   function tick(){
-    setTimeout(function(){
-      if(that.match.running){
-        that.calculateBoard();
-        matchSockets.sendUpdateBoardEvent(that.match.id);
-        tick();
-      }
-    }, 500);
+    if(!that.match.running){
+      clearInterval(tickerInterval);
+    }
+    else{
+      that.calculateBoard();
+      matchSockets.sendUpdateBoardEvent(that.match.id);
+    }
   }
   var that = this;
-  tick();
+  var tickerInterval = setInterval(tick, 500);
 }
 
 MatchController.prototype.calculateBoard = function(){
   // Current Positions
-  var blueCurrent = this.match.getPlayerByColor('blue').position;
   var orangeCurrent = this.match.getPlayerByColor('orange').position;
+  var blueCurrent = this.match.getPlayerByColor('blue').position;
   var greenCurrent = this.match.getPlayerByColor('green').position;
   var redCurrent = this.match.getPlayerByColor('red').position;
 
   // Positions players want to move to
-  var blueFuture = this.calculateStep(blueCurrent, this.match.getPlayerByColor('blue').activeDirection);
   var orangeFuture = this.calculateStep(orangeCurrent, this.match.getPlayerByColor('orange').activeDirection);
+  var blueFuture = this.calculateStep(blueCurrent, this.match.getPlayerByColor('blue').activeDirection);
   var greenFuture = this.calculateStep(greenCurrent, this.match.getPlayerByColor('green').activeDirection);
   var redFuture = this.calculateStep(redCurrent, this.match.getPlayerByColor('red').activeDirection);
 
@@ -100,7 +100,15 @@ MatchController.prototype.calculateBoard = function(){
       greenFuture = greenCurrent;
     }
   }
-  if(redFuture === redFuture){
+  if(redFuture === greenFuture){
+    if(Math.floor(Math.random()*2)===0){
+      redFuture = redCurrent;
+    }
+    else{
+      greenFuture = greenCurrent;
+    }
+  }
+  if(redFuture === orangeFuture){
     if(Math.floor(Math.random()*2)===0){
       redFuture = redCurrent;
     }
@@ -108,32 +116,25 @@ MatchController.prototype.calculateBoard = function(){
       orangeFuture = orangeCurrent;
     }
   }
-  if(greenFuture === greenFuture){
+  if(greenFuture === orangeFuture){
     if(Math.floor(Math.random()*2)===0){
       greenFuture = greenCurrent;
     }
     else{
       orangeFuture = orangeCurrent;
-    }
-  }
-  if(greenFuture === greenFuture){
-    if(Math.floor(Math.random()*2)===0){
-      greenFuture = greenCurrent;
-    }
-    else{
-      redFuture = redCurrent;
     }
   }
 
   // Set new positions on players
-  this.match.getPlayerByColor('blue').position = blueFuture;
   this.match.getPlayerByColor('orange').position = orangeFuture;
+  this.match.getPlayerByColor('blue').position = blueFuture;
   this.match.getPlayerByColor('green').position = greenFuture;
   this.match.getPlayerByColor('red').position = redFuture;
 
   // Set color on board
-  this.match.board.getSquare(blueFuture).color = 'blue';
+  // TODO: Don't apply color if player is not moving
   this.match.board.getSquare(orangeFuture).color = 'orange';
+  this.match.board.getSquare(blueFuture).color = 'blue';
   this.match.board.getSquare(greenFuture).color = 'green';
   this.match.board.getSquare(redFuture).color = 'red';
 }
