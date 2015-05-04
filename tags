@@ -1,0 +1,58 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+Board	board.js	/^  this.board.push(square0, square1, square2, square3, square4, square5, square6, square7, square8);$/;"	c
+Board.getSquare	board.js	/^  Board.prototype.getSquare = function(id) {$/;"	m
+Match	match.js	/^function Match(){$/;"	c
+Match.getMatchCreator	match.js	/^Match.prototype.getMatchCreator = function() {$/;"	m
+Match.getPlayer	match.js	/^Match.prototype.getPlayer = function(playerName) {$/;"	m
+Match.getPlayerByColor	match.js	/^Match.prototype.getPlayerByColor = function(playerColor) {$/;"	m
+MatchController	matchController.js	/^function MatchController(match){$/;"	c
+MatchController.calculateStep	matchController.js	/^MatchController.prototype.calculateStep = function(currentPosition, activeDirection){$/;"	m
+MatchController.countdown	matchController.js	/^MatchController.prototype.countdown = function(x){$/;"	m
+MatchController.function.durationDecrement	matchController.js	/^  function durationDecrement(){$/;"	f
+MatchController.function.tick	matchController.js	/^  function tick(){$/;"	f
+MatchController.function.ticker	matchController.js	/^  function ticker(i){$/;"	f
+MatchController.getNewPlayerPositions	matchController.js	/^MatchController.prototype.getNewPlayerPositions = function(){ \/\/ TODO: Make this function a little bit nicer...$/;"	m
+MatchController.matchTicker	matchController.js	/^MatchController.prototype.matchTicker = function(){$/;"	m
+MatchController.runMatch	matchController.js	/^MatchController.prototype.runMatch = function(){$/;"	m
+MatchController.timer	matchController.js	/^MatchController.prototype.timer = function(duration){$/;"	m
+MatchController.updateBoard	matchController.js	/^MatchController.prototype.updateBoard = function(){$/;"	m
+MatchesManager	matchesManager.js	/^function MatchesManager(){$/;"	c
+MatchesManager.addMatch	matchesManager.js	/^MatchesManager.prototype.addMatch = function(match) {$/;"	m
+MatchesManager.getMatch	matchesManager.js	/^MatchesManager.prototype.getMatch = function(matchID) {$/;"	m
+Player	player.js	/^function Player(name, matchID, matchCreator){$/;"	c
+Square	square.js	/^function Square(squareID, edgesTo, position, startPoints){$/;"	c
+author	package.json	/^  "author": "sven",$/;"	f
+countdown	views/assets/js/match.js	/^function countdown(secondsLeft){$/;"	f
+dependencies	package.json	/^  "dependencies": {$/;"	f
+description	package.json	/^  "description": "helloNode description",$/;"	f
+devDependencies	package.json	/^  "devDependencies": {},$/;"	f
+express	package.json	/^    "express": "~4.12.2",$/;"	f
+keywords	package.json	/^  "keywords": [$/;"	f
+license	package.json	/^  "license": "BSD-2-Clause"$/;"	f
+main	package.json	/^  "main": "helloNode.js",$/;"	f
+matchesManager.Match	match.js	/^}$/;"	c
+matchesManager.matchesManager.Match.addPlayer	match.js	/^Match.prototype.addPlayer = function(player) {$/;"	m
+name	package.json	/^  "name": "helloNode",$/;"	f
+prepareMatch	views/assets/js/match.js	/^function prepareMatch(board, thisColor){$/;"	f
+repository	package.json	/^  "repository": {$/;"	f
+respond	createMatchSockets.js	/^function respond(socket){$/;"	f
+respond	matchSockets.js	/^function respond(socket, io){$/;"	f
+scripts	package.json	/^  "scripts": {$/;"	f
+sendCountdownEvent	matchSockets.js	/^function sendCountdownEvent(matchID, secondsLeft){$/;"	f
+sendMatchReadyEvent	createMatchSockets.js	/^function sendMatchReadyEvent(matchID){$/;"	f
+sendPlayerConnectedEvent	matchSockets.js	/^function sendPlayerConnectedEvent(enquiringPlayer){$/;"	f
+sendPrepareGameEvent	matchSockets.js	/^function sendPrepareGameEvent(matchID){$/;"	f
+sendUpdateBoardEvent	matchSockets.js	/^function sendUpdateBoardEvent(matchID){$/;"	f
+setKeyListener	views/assets/js/match.js	/^function setKeyListener(){$/;"	f
+startDirectionEmits	views/assets/js/match.js	/^function startDirectionEmits(){$/;"	f
+swig	package.json	/^    "swig": "^1.4.2"$/;"	f
+test	package.json	/^    "test": "test"$/;"	f
+type	package.json	/^    "type": "git",$/;"	f
+updateBoard	views/assets/js/match.js	/^function updateBoard(board){$/;"	f
+url	package.json	/^    "url": "no"$/;"	f
+version	package.json	/^  "version": "0.0.0",$/;"	f
