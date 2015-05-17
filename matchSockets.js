@@ -70,12 +70,14 @@ function sendPrepareGameEvent(matchID){
   }
 }
 
-// Sends update board event
-function sendUpdateBoardEvent(matchID){
-  var board = matchesManager.manager.getMatch(matchID).board;
+// Sends tickUpdate event - new Board state, match duration, player score ...
+function sendTickUpdateEvent(matchID){
+  var match = matchesManager.manager.getMatch(matchID);
+  var data = {board: match.board.board,
+      duration: match.duration};
   for(var i = 0; i < matchesManager.manager.getMatch(matchID).players.length; i++){
     var thisColor = matchesManager.manager.getMatch(matchID).players[i].color;
-    matchesManager.manager.getMatch(matchID).players[i].socket.emit('update board', board);
+    matchesManager.manager.getMatch(matchID).players[i].socket.emit('tickUpdate', data);
   }
 }
 
@@ -89,5 +91,5 @@ function sendCountdownEvent(matchID, secondsLeft){
 exports.respond = respond;
 exports.sendPlayerConnectedEvent = sendPlayerConnectedEvent;
 exports.sendPrepareGameEvent = sendPrepareGameEvent;
-exports.sendUpdateBoardEvent = sendUpdateBoardEvent;
+exports.sendTickUpdateEvent = sendTickUpdateEvent;
 exports.sendCountdownEvent = sendCountdownEvent;
