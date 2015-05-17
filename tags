@@ -12,6 +12,7 @@ Match.getPlayer	match.js	/^Match.prototype.getPlayer = function(playerName) {$/;
 Match.getPlayerByColor	match.js	/^Match.prototype.getPlayerByColor = function(playerColor) {$/;"	m
 MatchController	matchController.js	/^function MatchController(match){$/;"	c
 MatchController.calculateStep	matchController.js	/^MatchController.prototype.calculateStep = function(currentPosition, activeDirection){$/;"	m
+MatchController.checkForCircuits	matchController.js	/^MatchController.prototype.checkForCircuits = function(){$/;"	m
 MatchController.countdown	matchController.js	/^MatchController.prototype.countdown = function(x){$/;"	m
 MatchController.function.durationDecrement	matchController.js	/^  function durationDecrement(){$/;"	f
 MatchController.function.tick	matchController.js	/^  function tick(){$/;"	f
@@ -19,6 +20,7 @@ MatchController.function.ticker	matchController.js	/^  function ticker(i){$/;"	f
 MatchController.getNewPlayerPositions	matchController.js	/^MatchController.prototype.getNewPlayerPositions = function(){ \/\/ TODO: Make this function a little bit nicer...$/;"	m
 MatchController.matchTicker	matchController.js	/^MatchController.prototype.matchTicker = function(){$/;"	m
 MatchController.runMatch	matchController.js	/^MatchController.prototype.runMatch = function(){$/;"	m
+MatchController.searchForCircuit	matchController.js	/^MatchController.prototype.searchForCircuit = function(theSquare, theColor){$/;"	m
 MatchController.timer	matchController.js	/^MatchController.prototype.timer = function(duration){$/;"	m
 MatchController.updateBoard	matchController.js	/^MatchController.prototype.updateBoard = function(){$/;"	m
 MatchesManager	matchesManager.js	/^function MatchesManager(){$/;"	c
@@ -32,6 +34,9 @@ dependencies	package.json	/^  "dependencies": {$/;"	f
 description	package.json	/^  "description": "helloNode description",$/;"	f
 devDependencies	package.json	/^  "devDependencies": {},$/;"	f
 express	package.json	/^    "express": "~4.12.2",$/;"	f
+function.dfs	matchController.js	/^  function dfs(theSquare, theColor){$/;"	f
+function.getVertices	matchController.js	/^  function getVertices(s, c){ \/\/ Returns all squares in the same color reachable from the current square$/;"	f
+function.setAllSquaresUnvisited	matchController.js	/^  function setAllSquaresUnvisited(){$/;"	f
 keywords	package.json	/^  "keywords": [$/;"	f
 license	package.json	/^  "license": "BSD-2-Clause"$/;"	f
 main	package.json	/^  "main": "helloNode.js",$/;"	f

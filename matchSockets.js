@@ -74,7 +74,11 @@ function sendPrepareGameEvent(matchID){
 function sendTickUpdateEvent(matchID){
   var match = matchesManager.manager.getMatch(matchID);
   var data = {board: match.board.board,
-      duration: match.duration};
+      duration: match.duration,
+      scores: {blue: match.getPlayerByColor('blue').score,
+        orange: match.getPlayerByColor('orange').score,
+        green: match.getPlayerByColor('green').score,
+        red: match.getPlayerByColor('red').score}};
   for(var i = 0; i < matchesManager.manager.getMatch(matchID).players.length; i++){
     var thisColor = matchesManager.manager.getMatch(matchID).players[i].color;
     matchesManager.manager.getMatch(matchID).players[i].socket.emit('tickUpdate', data);

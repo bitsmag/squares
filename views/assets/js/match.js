@@ -26,7 +26,11 @@ function tickUpdate(data){
     elementSelector = '#square' + i;
     $(elementSelector).html(data.board[i].color)
   }
-  $('#countdown').html(tickUpdate.duration);
+  $('#countdown').html(data.duration);
+  $('#blueScore').html(data.scores.blue);
+  $('#orangeScore').html(data.scores.orange);
+  $('#greenScore').html(data.scores.green);
+  $('#redScore').html(data.scores.red);
 }
 
 function countdown(secondsLeft){

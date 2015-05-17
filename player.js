@@ -8,6 +8,7 @@ function Player(name, matchID, matchCreator){
   this.matchID = matchID;
   this.socket = null;
   this.activeDirection = null; // The latest inforamtion about where the player wants to go sent by client
+  this.score = 0;
 
   var match = matchesManager.manager.getMatch(this.matchID);
 
