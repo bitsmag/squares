@@ -21,15 +21,18 @@ function prepareMatch(board, thisColor){
   $( "#list" ).remove();
 }
 
-function updateBoard(board){
-  for(var i=0; i<board.board.length; i++){
+function tickUpdate(data){
+  for(var i=0; i<data.board.length; i++){
     elementSelector = '#square' + i;
-    $(elementSelector).html(board.board[i].color)
+    $(elementSelector).html(data.board[i].color)
   }
+  $('#countdown').html(tickUpdate.duration);
 }
 
 function countdown(secondsLeft){
   if(secondsLeft===0){
+    setKeyListener();
+    startDirectionEmits();
     $('#countdown').html('GO!');
     setTimeout(function() {
       $('#countdown').html('');
@@ -37,8 +40,6 @@ function countdown(secondsLeft){
   }
   else{
     $('#countdown').html(secondsLeft);
-    setKeyListener();
-    startDirectionEmits();
   }
 }
 
@@ -101,7 +102,7 @@ matchSockets.on('connect', function () {
   matchSockets.on('prepare match', prepareMatch);
 
   // Received when four players are in the room
-  matchSockets.on('update board', updateBoard);
+  matchSockets.on('tickUpdate', tickUpdate);
 
   // Received every second (x times) as soon as four players are in the room
   matchSockets.on('countdown', countdown);
