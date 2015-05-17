@@ -8,7 +8,7 @@ function Board(){
                       orange: 8,
                       green: 72,
                       red: 80}
-  this.matchDuration = 40;
+  this.matchDuration = 4000;
 
   var square0  = new square.Square(0,  [1, 9],           {x: 0, y: 0}, this.startPoints);
   var square1  = new square.Square(1,  [0, 10, 2],       {x: 1, y: 0}, this.startPoints);
@@ -59,13 +59,13 @@ function Board(){
   this.board.push(square27, square28, square29, square30, square31, square32, square33, square34, square35);
 
   var square36 = new square.Square(36, [27, 37, 45],     {x: 0, y: 4}, this.startPoints);
-  var square37 = new square.Square(37, [28, 38, 46, 26], {x: 1, y: 4}, this.startPoints);
-  var square38 = new square.Square(38, [29, 39, 47, 27], {x: 2, y: 4}, this.startPoints);
-  var square39 = new square.Square(39, [30, 40, 48, 28], {x: 3, y: 4}, this.startPoints);
-  var square40 = new square.Square(40, [31, 41, 49, 29], {x: 4, y: 4}, this.startPoints);
-  var square41 = new square.Square(41, [32, 42, 50, 30], {x: 5, y: 4}, this.startPoints);
-  var square42 = new square.Square(42, [33, 43, 51, 31], {x: 6, y: 4}, this.startPoints);
-  var square43 = new square.Square(43, [34, 44, 52, 32], {x: 7, y: 4}, this.startPoints);
+  var square37 = new square.Square(37, [28, 38, 46, 36], {x: 1, y: 4}, this.startPoints);
+  var square38 = new square.Square(38, [29, 39, 47, 37], {x: 2, y: 4}, this.startPoints);
+  var square39 = new square.Square(39, [30, 40, 48, 38], {x: 3, y: 4}, this.startPoints);
+  var square40 = new square.Square(40, [31, 41, 49, 39], {x: 4, y: 4}, this.startPoints);
+  var square41 = new square.Square(41, [32, 42, 50, 40], {x: 5, y: 4}, this.startPoints);
+  var square42 = new square.Square(42, [33, 43, 51, 41], {x: 6, y: 4}, this.startPoints);
+  var square43 = new square.Square(43, [34, 44, 52, 42], {x: 7, y: 4}, this.startPoints);
   var square44 = new square.Square(44, [35, 43, 53],     {x: 8, y: 4}, this.startPoints);
 
   this.board.push(square36, square37, square38, square39, square40, square41, square42, square43, square44);
