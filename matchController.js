@@ -55,7 +55,8 @@ MatchController.prototype.matchTicker = function(){
     }
     else{
       that.updateBoard();
-      matchSockets.sendUpdateBoardEvent(that.match.id);
+      that.checkForCircuits();
+      matchSockets.sendTickUpdateEvent(that.match.id);
     }
   }
   var that = this;
@@ -242,5 +243,102 @@ MatchController.prototype.calculateStep = function(currentPosition, activeDirect
       return currentPosition;
   }
 }
+
+MatchController.prototype.checkForCircuits = function(){
+
+  for(var i = 0; i < this.match.players.length; i++){
+    var theSquare = this.match.board.getSquare(this.match.players[i].position); // SquareID of the players position
+    var theColor = this.match.players[i].color; // The players color
+    var circuit = this.searchForCircuit(theSquare, theColor);
+    if(circuit.isCircuit){
+      this.match.players[i].score += circuit.stack.length;
+
+      for(var j = 0; j < this.match.board.board.length; j++){
+        if(this.match.board.board[j].color === this.match.players[i].color){
+          this.match.board.board[j].color = '';
+        }
+      }
+
+
+      // TODO remove only the squeares which created the circuit, calculate the right score
+    }
+}
+
+
+  /*var theSquare = this.match.board.getSquare(this.match.getPlayerByColor('blue').position); // SquareID of the players position
+  var theColor = 'blue'; // The players color
+
+  var stack = this.searchForCircuit(theSquare, theColor); // Returns array of the squares building the circuit
+  console.log(stack.isCircuit);*/
+}
+
+MatchController.prototype.searchForCircuit = function(theSquare, theColor){
+
+  var that = this;
+  var stack = new Array();
+  var justPopped;
+  isCircuit = false;
+  dfs(theSquare, theColor);
+
+  function getVertices(s, c){ // Returns all squares in the same color reachable from the current square
+    var vertices = new Array();
+    for(var i = 0; i < s.edgesTo.length; i++){
+      var edgeSquare = that.match.board.getSquare(s.edgesTo[i]);
+      if(edgeSquare.color === c && !(edgeSquare === justPopped)){
+        vertices.push(edgeSquare);
+      }
+    }
+    return vertices;
+  }
+
+  function setAllSquaresUnvisited(){
+    for(var i = 0; i < that.match.board.board.length; i++){
+      that.match.board.board[i].dfsVisited = false;
+    }
+  }
+
+  function dfs(theSquare, theColor){
+    if(theSquare || stack.length > 0){ // (A) If no square is passed and stack is empty end of dfs is reached
+
+      // (B) Use the square on top of the stack in none is passed
+      if(theSquare){
+        stack.push(theSquare);
+      }
+      else{
+        theSquare = stack[stack.length-1];
+      }
+
+      theSquare.dfsVisited = true; // (C) The square is visited now
+
+      var vertices = getVertices(theSquare, theColor);  // (D) Get all vertices from the current square
+
+      for(var i = 0; i < vertices.length; i++){
+        if(!isCircuit){ // (E) Check some stuff if no circuit is recognized yet
+          if(vertices[i].dfsVisited && !(vertices[i] === stack[stack.length-2])){ // (F) Visited and not the same as before
+              if(stack.length>1){
+                isCircuit = true;
+              }
+          }
+          else if(vertices[i].dfsVisited && (vertices[i] === stack[stack.length-2])){ // (G) Visited and the same as before
+            if(i===vertices.length-1){ // (H) Last vertex to check
+              stack.pop(theSquare);
+              justPopped = theSquare;
+              dfs(null, theColor);
+            }
+          }
+          else if(!vertices[i].dfsVisited){ // (I) Not visited yet - A new way is found
+            justPopped = null;
+            dfs(vertices[i], theColor);
+          }
+        }
+      }
+    }
+  }
+  setAllSquaresUnvisited();
+  return {isCircuit: isCircuit,
+    stack: stack};
+}
+
+
 
 exports.MatchController = MatchController;
