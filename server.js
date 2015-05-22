@@ -4,11 +4,11 @@ var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var swig  = require('swig');
 
-var createMatchSockets = require('./createMatchSockets');
-var matchSockets = require('./matchSockets');
-var matchesManager = require('./matchesManager');
-var match = require('./match');
-var player = require('./player');
+var createMatchSockets = require('./clientInterface/createMatchSockets');
+var matchSockets = require('./clientInterface/matchSockets');
+var matchesManager = require('./models/matchesManager');
+var match = require('./models/match');
+var player = require('./models/player');
 
 // Set swig as the template engine
 app.engine('html', swig.renderFile);

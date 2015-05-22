@@ -1,6 +1,6 @@
 var matchesManager = require('./matchesManager');
-var matchController = require('./matchController');
-var createMatchSockets = require('./createMatchSockets');
+var matchController = require('../controllers/matchController');
+var createMatchSockets = require('../clientInterface/createMatchSockets');
 var board = require('./board');
 
 function Match(){
@@ -9,6 +9,7 @@ function Match(){
   this.board = new board.Board();
   this.controller = new matchController.MatchController(this);
   this.duration = this.board.matchDuration;
+  this.countdownDuration = this.board.countdownDuration
   this.running  = false;
 
   // Create unique matchID

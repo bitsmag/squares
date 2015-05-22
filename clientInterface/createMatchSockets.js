@@ -1,4 +1,4 @@
-var matchesManager = require('./matchesManager');
+var matchesManager = require('../models/matchesManager');
 
 function respond(socket){
   socket.on('connectionInfo',function(matchID){
@@ -11,7 +11,7 @@ function respond(socket){
 function sendMatchReadyEvent(matchID){
   var enquiredMatch = matchesManager.manager.getMatch(matchID);
   var matchCreator = enquiredMatch.getMatchCreator();
-  matchCreator.socket.emit('match ready'); 
+  matchCreator.socket.emit('match ready');
 }
 
 exports.respond = respond;
