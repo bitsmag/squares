@@ -119,10 +119,6 @@ function Board(){
 
   this.board.push(square72, square73, square74, square75, square76, square77, square78, square79, square80);
 
-
-
-  this.board.push(square0, square1, square2, square3, square4, square5, square6, square7, square8);
-
   Board.prototype.getSquare = function(id) {
     for(var i = 0; i < this.board.length; i++){
       if(this.board[i].id === id){
