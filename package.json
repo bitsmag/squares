@@ -2,7 +2,7 @@
   "name": "squares",
   "version": "0.0.0",
   "description": "socket based multiplayer game",
-  "main": "server.js",
+  "main": "index.js",
   "dependencies": {
     "express": "~4.12.2",
     "swig": "^1.4.2"
@@ -12,7 +12,8 @@
     "mocha": "*"
   },
   "scripts": {
-    "test": "./node_modules/mocha/bin/mocha --recursive"
+    "test": "./node_modules/mocha/bin/mocha --recursive",
+    "start": "node index.js"
   },
   "repository": {
     "type": "git",

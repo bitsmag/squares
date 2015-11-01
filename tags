@@ -55,7 +55,7 @@ getPoints.vertices.move	controllers/matchTicker/circuitsChecker.js	/^    var ver
 joinMatch	controllers/createMatch.js	/^var joinMatch = function(matchID, playerName){$/;"	f
 keywords	package.json	/^  "keywords": [$/;"	f
 license	package.json	/^  "license": "BSD-2-Clause"$/;"	f
-main	package.json	/^  "main": "server.js",$/;"	f
+main	package.json	/^  "main": "index.js",$/;"	f
 matchesManager.createUniqueID	models/match.js	/^var createUniqueID = function(){   \/\/ Create unique matchID$/;"	f
 mocha	package.json	/^    "mocha": "*"$/;"	f
 name	package.json	/^  "name": "squares",$/;"	f
@@ -71,9 +71,10 @@ sendPrepareGameEvent	clientInterface/matchSockets.js	/^function sendPrepareGameE
 sendUpdateBoardEvent	clientInterface/matchSockets.js	/^function sendUpdateBoardEvent(matchID){$/;"	f
 sendUpdateScoreEvent	clientInterface/matchSockets.js	/^function sendUpdateScoreEvent(matchID){$/;"	f
 setKeyListener	views/assets/js/match.js	/^function setKeyListener(){$/;"	f
+start	package.json	/^    "start": "node index.js"$/;"	f
 startDirectionEmits	views/assets/js/match.js	/^function startDirectionEmits(){$/;"	f
 swig	package.json	/^    "swig": "^1.4.2"$/;"	f
-test	package.json	/^    "test": ".\/node_modules\/mocha\/bin\/mocha --recursive"$/;"	f
+test	package.json	/^    "test": ".\/node_modules\/mocha\/bin\/mocha --recursive",$/;"	f
 type	package.json	/^    "type": "git",$/;"	f
 update	controllers/matchTicker/positionUpdater.js	/^$/;"	f
 updateBoard	views/assets/js/match.js	/^function updateBoard(data){$/;"	f
