@@ -16,6 +16,8 @@ app.engine('html', swig.renderFile);
 app.set('view engine', 'swig');
 // Swig caches the templates -> no need that express caches them too
 app.set('view cache', false);
+// Set Port (heroku-style)
+app.set('port', (process.env.PORT || 3000));
 // Get statoc filse serverd like "/js/match.js"
 app.use(express.static(__dirname + '/views/assets'));
 
@@ -63,6 +65,6 @@ app.get('/match/:matchID/:playerName', function(req, res){
                                   playerName: req.params.playerName});
 });
 
-http.listen(3000, function(){
-  console.log('listening on *:3000');
+http.listen(app.get('port'), function(){
+  console.log('listening on *:' + app.get('port'));
 });
