@@ -3,28 +3,74 @@
   <head>
     <title>Squares</title>
     <style>
-
+    table{
+      margin-left: auto;
+      margin-right: auto;
+    }
     td{
-        border: 1px solid black;
-        height: 100px;
-        width: 100px;
+      border: 1px solid black;
+      height: 50px;
+      width: 50px;
+    }
+
+    #logo{
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+      margin-top: 5%;
+      margin-bottom: 3%;
+    }
+
+    #scores{
+      margin-left: auto;
+      margin-right: auto;
+      width: 450px;
+    }
+
+    #scores td{
+      width: 25%;
+      text-align: center;
+    }
+
+    #countdown{
+      text-align: center;
+    }
+
+    .blueScore{
+      background-color: #4fc1df;
+    }
+    .redScore{
+      background-color: #e5337f;
+    }
+    .orangeScore{
+      background-color: #fab823;
+    }
+    .greenScore{
+      background-color: #15b3ab;
     }
     </style>
   </head>
   <script>
   // Information about the player which is sent with every socket
-  var playerInfo = {matchID: {{matchID}},
+  var playerInfo = {matchID: '{{matchID}}',
             playerName: '{{playerName}}'};
   </script>
   <body>
-    <h1>SQUARES</h1>
-    <h2>{{ matchID }}</h2>
+    <img id="logo" src="/img/logo.svg"/>
+    <!--<h2>{{ matchID }}</h2>-->
     <h3 id="countdown"></h3>
-    <ul id="scores">
+    <br/><br/>
+
+    <table id="scores">
+    </table>
+
+    <!--<ul id="scores">
       <li>blue: <span id="blueScore"></span></li>
       <li>orange: <span id="orangeScore"></span></li>
       <li>green: <span id="greenScore"></span></li>
       <li>red: <span id="redScore"></span></li>
+    </ul>
+  -->
     <ul id="list"></ul>
     <div id=board></div>
 

@@ -9,7 +9,6 @@ update = function(match){
   match.getPlayerByColor('red').position = positions.red;
 
   // Set color property on board
-  // TODO: Don't apply color if player is not moving
   match.board.getSquare(positions.blue).color = 'blue';
   match.board.getSquare(positions.orange).color = 'orange';
   match.board.getSquare(positions.green).color = 'green';
@@ -18,7 +17,7 @@ update = function(match){
 
 getNewPlayerPositions = function(match){ // Uses players directions to calculate the position of each player after the current matchTick
                                                               // Handles conflicts (two players wants to be on the same square)
-                                                              // TODO: Make this function a little bit nicer...
+                                                              // TODO: Make this function neat...
   // Current Positions
   var blueCurrent = match.getPlayerByColor('blue').position;
   var orangeCurrent = match.getPlayerByColor('orange').position;
@@ -27,9 +26,9 @@ getNewPlayerPositions = function(match){ // Uses players directions to calculate
 
   // Positions players wants to move to
   var blueFuture = calculateStep(blueCurrent, match.getPlayerByColor('blue').activeDirection, match.board);
-  var orangeFuture = calculateStep(orangeCurrent, match.getPlayerByColor('orange').activeDirection);
-  var greenFuture = calculateStep(greenCurrent, match.getPlayerByColor('green').activeDirection);
-  var redFuture = calculateStep(redCurrent, match.getPlayerByColor('red').activeDirection);
+  var orangeFuture = calculateStep(orangeCurrent, match.getPlayerByColor('orange').activeDirection, match.board);
+  var greenFuture = calculateStep(greenCurrent, match.getPlayerByColor('green').activeDirection, match.board);
+  var redFuture = calculateStep(redCurrent, match.getPlayerByColor('red').activeDirection, match.board);
 
   // If a player stands still it has priority on conflict calculation
   var blueP, orangeP, greenP, redP = false;

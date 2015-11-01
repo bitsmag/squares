@@ -32,6 +32,11 @@ function Player(name, matchID, matchCreator){
         break;
   }
 
+  var x = match.addPlayer(this);
+  if(x instanceof Error){
+    return x;
+  }
+
 }
 
 exports.Player = Player;

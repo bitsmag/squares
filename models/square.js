@@ -3,7 +3,7 @@ function Square(squareID, edgesTo, position, startPoints){
   this.edgesTo = edgesTo;
   this.position = position;
   this.color = '';
-  this.dfsVisited = false; // property for dfs algorithm matchController.searchForCircuit()
+  this.dfsVisited = false; // property for dfs algorithm circuitsChecker
 
   // Set the color if the square is the startpoint of some player
   switch(squareID){

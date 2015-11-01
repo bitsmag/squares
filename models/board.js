@@ -8,7 +8,7 @@ function Board(){
                       orange: 8,
                       green: 72,
                       red: 80}
-  this.matchDuration = 4000;
+  this.matchDuration = 100;
   this.countdownDuration = 5;
 
   var square0  = new square.Square(0,  [1, 9],           {x: 0, y: 0}, this.startPoints);
@@ -125,8 +125,17 @@ function Board(){
         return this.board[i];
       }
     }
-    return null;
+    return new Error('square (id:' + id + ') not found');
   };
+
+  Board.prototype.getSquareByPos = function(x, y){
+    for(var i = 0; i < this.board.length; i++){
+      if(this.board[i].position.x === x && this.board[i].position.y === y){
+        return this.board[i];
+      }
+    }
+    return new Error('square (pos:' + x + '/' + y + ' not found');
+  }
 
 }
 

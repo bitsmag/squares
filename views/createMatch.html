@@ -1,30 +1,47 @@
 <html>
   <head>
     <title>{{ title }}</title>
+    <style>
+      #logo{
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        margin-top: 5%;
+        margin-bottom: 5%;
+      }
+      .centerTextBox{
+        margin-left: auto;
+        margin-right: auto;
+        text-align: center;
+      }
+    </style>
   </head>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
   <script src="/socket.io/socket.io.js"></script>
   <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
   <body>
-    <h1>SQUARES</h1>
-    Your match is ready. Invite three friends to play with you by telling them your match id.
+    <img id ="logo" src="/img/logo.svg"/>
+    <div class="centerTextBox">Your match is ready. Invite three friends to play with you by telling them your match id.
     <h2>{{ matchID }}</h2>
-    The start button will be activated after 4 players has joined your match.
-    <button id="startMatchBtn">Start Match</button>
+    You can start the match after all three players has joined your match.
+    <br/><br/>
+    <button id="startMatchBtn">Start Match</button></div>
     <script>
 
     var createMatchSockets = io.connect('/createMatchSockets');
 
 
     createMatchSockets.on('connect', function () {
-      createMatchSockets.emit('connectionInfo', {{matchID}});
+      createMatchSockets.emit('connectionInfo', '{{matchID}}');
 
       createMatchSockets.on('match ready', function(){
         alert("matchready");
         $('#startMatchBtn').click(function(){
-          window.location.replace('/match/' + {{matchID}} + '/{{playerName}}');
+          window.location.replace('/match/' + '{{matchID}}' + '/{{playerName}}');
         })
-
+      });
+      createMatchSockets.on('error', function(message){
+        alert('Error: ' + message + ' // Please try again');
       });
     });
 

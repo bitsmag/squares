@@ -1,0 +1,318 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Code coverage report for controllers/matchController.js</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="../prettify.css">
+    <link rel="stylesheet" href="../base.css">
+    <style type='text/css'>
+        div.coverage-summary .sorter {
+            background-image: url(../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+<body>
+<div class="header low">
+    <h1>Code coverage report for <span class="entity">controllers/matchController.js</span></h1>
+    <h2>
+        Statements: <span class="metric">26.42% <small>(14 / 53)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        Branches: <span class="metric">0% <small>(0 / 10)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        Functions: <span class="metric">9.09% <small>(1 / 11)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        Lines: <span class="metric">26.42% <small>(14 / 53)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        Ignored: <span class="metric"><span class="ignore-none">none</span></span> &nbsp;&nbsp;&nbsp;&nbsp;
+    </h2>
+    <div class="path"><a href="../index.html">All files</a> &#187; <a href="index.html">controllers/</a> &#187; matchController.js</div>
+</div>
+<div class="body">
+<pre><table class="coverage">
+<tr><td class="line-count">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92</td><td class="line-coverage"><span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">24</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">var square = require('../models/square');
+var matchSockets = require('../clientInterface/matchSockets');
+var positionUpdater = require('./matchTicker/positionUpdater');
+var circuitsChecker = require('./matchTicker/circuitsChecker');
+&nbsp;
+function MatchController(match){
+  this.match = match;
+}
+&nbsp;
+MatchController.prototype.runMatch = <span class="fstat-no" title="function not covered" >function(){</span>
+<span class="cstat-no" title="statement not covered" >  this.countdown(this.match.countdownDuration); </span>// After Countdown is finished match is started
+}
+&nbsp;
+MatchController.prototype.countdown = <span class="fstat-no" title="function not covered" >function(countdownDuration){</span> // The Countdown to start the match
+<span class="fstat-no" title="function not covered" >  function decrementCountdown(x){</span>
+<span class="cstat-no" title="statement not covered" >    var secondsAlreadyCounted = x;</span>
+<span class="cstat-no" title="statement not covered" >    setTimeout(<span class="fstat-no" title="function not covered" >function(){</span></span>
+<span class="cstat-no" title="statement not covered" >      var secondsLeft = countdownDuration - secondsAlreadyCounted;</span>
+<span class="cstat-no" title="statement not covered" >      matchSockets.sendCountdownEvent(that.match.id, secondsLeft)</span>
+<span class="cstat-no" title="statement not covered" >      if(secondsLeft&gt;0){</span>
+<span class="cstat-no" title="statement not covered" >        secondsAlreadyCounted++;</span>
+<span class="cstat-no" title="statement not covered" >        decrementCountdown(secondsAlreadyCounted);</span>
+      }
+      else{
+        // Start the match
+<span class="cstat-no" title="statement not covered" >        that.match.running = true;</span>
+<span class="cstat-no" title="statement not covered" >        that.timer(that.match.duration);</span>
+<span class="cstat-no" title="statement not covered" >        that.matchTicker();</span>
+      }
+    }, 1000);
+  }
+<span class="cstat-no" title="statement not covered" >  var that = this;</span>
+<span class="cstat-no" title="statement not covered" >  decrementCountdown(0);</span>
+}
+&nbsp;
+MatchController.prototype.timer = <span class="fstat-no" title="function not covered" >function(duration){</span> // The timer which indicates the duration of the match
+<span class="fstat-no" title="function not covered" >  function durationDecrement(){</span>
+<span class="cstat-no" title="statement not covered" >    setTimeout(<span class="fstat-no" title="function not covered" >function() {</span></span>
+<span class="cstat-no" title="statement not covered" >      that.match.duration--;</span>
+<span class="cstat-no" title="statement not covered" >      if(that.match.duration&gt;0){</span>
+<span class="cstat-no" title="statement not covered" >        durationDecrement();</span>
+      }
+      else{
+<span class="cstat-no" title="statement not covered" >        that.match.running = false;</span>
+      }
+    }, 1000);
+  }
+<span class="cstat-no" title="statement not covered" >  var that = this;</span>
+<span class="cstat-no" title="statement not covered" >  durationDecrement();</span>
+}
+&nbsp;
+MatchController.prototype.matchTicker = <span class="fstat-no" title="function not covered" >function(){</span>
+<span class="fstat-no" title="function not covered" >  function tick(){</span>
+<span class="cstat-no" title="statement not covered" >    if(!that.match.running){</span>
+<span class="cstat-no" title="statement not covered" >      clearInterval(tickerInterval);</span>
+    }
+    else{
+<span class="cstat-no" title="statement not covered" >      positionUpdater.update(that.match); </span>// Set new player position and colors on board
+&nbsp;
+<span class="cstat-no" title="statement not covered" >      matchSockets.sendUpdateBoardEvent(that.match.id);</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >      var playerPoints = circuitsChecker.check(that.match); </span>// Returns the points made by each player this tick
+&nbsp;
+      // Add Points to player.score
+<span class="cstat-no" title="statement not covered" >      that.match.getPlayerByColor('blue').score += playerPoints.blue;</span>
+<span class="cstat-no" title="statement not covered" >      that.match.getPlayerByColor('orange').score += playerPoints.orange;</span>
+<span class="cstat-no" title="statement not covered" >      that.match.getPlayerByColor('green').score += playerPoints.green;</span>
+<span class="cstat-no" title="statement not covered" >      that.match.getPlayerByColor('red').score += playerPoints.red;</span>
+&nbsp;
+      // Remove color from squares
+<span class="cstat-no" title="statement not covered" >      for(var color in playerPoints){</span>
+<span class="cstat-no" title="statement not covered" >        if(playerPoints[color] &gt; 0){</span>
+<span class="cstat-no" title="statement not covered" >          clearSquares(color);</span>
+        }
+      }
+<span class="cstat-no" title="statement not covered" >      clearSquares = <span class="fstat-no" title="function not covered" >function(color) {</span></span>
+<span class="cstat-no" title="statement not covered" >        for(var j = 0; j &lt; that.match.board.board.length; j++){</span>
+<span class="cstat-no" title="statement not covered" >          if(that.match.board.board[j].color === color){</span>
+<span class="cstat-no" title="statement not covered" >            that.match.board.board[j].color = '';</span>
+          }
+        }
+      }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >      matchSockets.sendUpdateScoreEvent(that.match.id);</span>
+    }
+  }
+<span class="cstat-no" title="statement not covered" >  var that = this;</span>
+<span class="cstat-no" title="statement not covered" >  var tickerInterval = setInterval(tick, 300);</span>
+}
+&nbsp;
+exports.MatchController = MatchController;
+&nbsp;</pre></td></tr>
+</table></pre>
+
+</div>
+<div class="footer">
+    <div class="meta">Generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Sun Nov 01 2015 22:39:00 GMT+0100 (CET)</div>
+</div>
+<script src="../prettify.js"></script>
+<script>
+window.onload = function () {
+        if (typeof prettyPrint === 'function') {
+            prettyPrint();
+        }
+};
+</script>
+<script src="../sorter.js"></script>
+</body>
+</html>

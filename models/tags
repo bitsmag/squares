@@ -1,0 +1,18 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+Board	board.js	/^  this.board.push(square72, square73, square74, square75, square76, square77, square78, square79, square80);$/;"	c
+Board.getSquare	board.js	/^  Board.prototype.getSquare = function(id) {$/;"	m
+Match	match.js	/^function Match(){$/;"	c
+Match.addPlayer	match.js	/^Match.prototype.addPlayer = function(player) {$/;"	m
+Match.getMatchCreator	match.js	/^Match.prototype.getMatchCreator = function() {$/;"	m
+Match.getPlayerByColor	match.js	/^Match.prototype.getPlayerByColor = function(playerColor) {$/;"	m
+MatchesManager	matchesManager.js	/^function MatchesManager(){$/;"	c
+MatchesManager.addMatch	matchesManager.js	/^MatchesManager.prototype.addMatch = function(match) {$/;"	m
+MatchesManager.getMatch	matchesManager.js	/^MatchesManager.prototype.getMatch = function(matchID) {$/;"	m
+Player	player.js	/^function Player(name, matchID, matchCreator){$/;"	c
+Square	square.js	/^function Square(squareID, edgesTo, position, startPoints){$/;"	c
+matchesManager.createUniqueID	match.js	/^}$/;"	f

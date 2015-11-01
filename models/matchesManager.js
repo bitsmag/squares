@@ -8,23 +8,27 @@ MatchesManager.prototype.addMatch = function(match) {
 
 MatchesManager.prototype.getMatch = function(matchID) {
   for(var i = 0; i < this.matches.length; i++){
-    if(parseInt(this.matches[i].id) === parseInt(matchID)){
+    if(this.matches[i].id === matchID){
       return this.matches[i];
     }
   }
-  return null;
+  return new Error('match with id ' + matchID + ' not found');
 };
 
-/* not tested
 MatchesManager.prototype.removeMatch = function(matchID) {
-  for(var i = 0; i++; i<this.matches.length){
+  var removed = false;
+  for(var i = 0; i < this.matches.length; i++){
     if(this.matches[i].id === matchID){
       var index = this.matches.indexOf(this.matches[i]);
       this.matches.splice(index, 1);
+      removed = true;
     };
   };
+  if(!removed){
+    return new Error('match with id ' + matchID + ' not found');
+  }
 };
-*/
+
 
 // Singelton to be exported
 var manager = (function () {

@@ -1,0 +1,390 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Code coverage report for clientInterface/matchSockets.js</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="../prettify.css">
+    <link rel="stylesheet" href="../base.css">
+    <style type='text/css'>
+        div.coverage-summary .sorter {
+            background-image: url(../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+<body>
+<div class="header low">
+    <h1>Code coverage report for <span class="entity">clientInterface/matchSockets.js</span></h1>
+    <h2>
+        Statements: <span class="metric">24.56% <small>(14 / 57)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        Branches: <span class="metric">0% <small>(0 / 2)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        Functions: <span class="metric">0% <small>(0 / 12)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        Lines: <span class="metric">24.56% <small>(14 / 57)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        Ignored: <span class="metric"><span class="ignore-none">none</span></span> &nbsp;&nbsp;&nbsp;&nbsp;
+    </h2>
+    <div class="path"><a href="../index.html">All files</a> &#187; <a href="index.html">clientInterface/</a> &#187; matchSockets.js</div>
+</div>
+<div class="body">
+<pre><table class="coverage">
+<tr><td class="line-count">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116</td><td class="line-coverage"><span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">var matchesManager = require('../models/matchesManager');
+&nbsp;
+/*
+  * LISTENERS
+  */
+&nbsp;
+<span class="fstat-no" title="function not covered" >function respond(socket, io){</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >  socket.on('connectionInfo',<span class="fstat-no" title="function not covered" >function(info){</span></span>
+<span class="fstat-no" title="function not covered" >    function playerJoined(){</span>
+      // Notify all players in room a player joined
+<span class="cstat-no" title="statement not covered" >      sendPlayerConnectedEvent(enquiringPlayer);</span>
+&nbsp;
+      // If four players joined (last one is always matchCreator) send startGameEvent
+<span class="cstat-no" title="statement not covered" >      if(Object.keys(io.nsps['/matchSockets'].adapter.rooms[info.matchID]).length === 4){</span>
+<span class="cstat-no" title="statement not covered" >        sendPrepareGameEvent(info.matchID);</span>
+<span class="cstat-no" title="statement not covered" >        associatedMatch.controller.runMatch();</span>
+      }
+    }
+<span class="cstat-no" title="statement not covered" >    var enquiringPlayer = matchesManager.manager.getMatch(info.matchID).getPlayer(info.playerName);</span>
+<span class="cstat-no" title="statement not covered" >    var associatedMatch = matchesManager.manager.getMatch(info.matchID);</span>
+    // Save socket in player object
+<span class="cstat-no" title="statement not covered" >    enquiringPlayer.socket = socket;</span>
+    // Join room + callback
+<span class="cstat-no" title="statement not covered" >    enquiringPlayer.socket.join(info.matchID.toString(), playerJoined);</span>
+  });
+&nbsp;
+<span class="cstat-no" title="statement not covered" >  socket.on('goLeft',<span class="fstat-no" title="function not covered" >function(info){</span></span>
+<span class="cstat-no" title="statement not covered" >    var enquiringPlayer = matchesManager.manager.getMatch(info.matchID).getPlayer(info.playerName);</span>
+<span class="cstat-no" title="statement not covered" >    enquiringPlayer.activeDirection = 'left';</span>
+  });
+&nbsp;
+<span class="cstat-no" title="statement not covered" >  socket.on('goUp',<span class="fstat-no" title="function not covered" >function(info){</span></span>
+<span class="cstat-no" title="statement not covered" >    var enquiringPlayer = matchesManager.manager.getMatch(info.matchID).getPlayer(info.playerName);</span>
+<span class="cstat-no" title="statement not covered" >    enquiringPlayer.activeDirection = 'up';</span>
+  });
+&nbsp;
+<span class="cstat-no" title="statement not covered" >  socket.on('goRight',<span class="fstat-no" title="function not covered" >function(info){</span></span>
+<span class="cstat-no" title="statement not covered" >    var enquiringPlayer = matchesManager.manager.getMatch(info.matchID).getPlayer(info.playerName);</span>
+<span class="cstat-no" title="statement not covered" >    enquiringPlayer.activeDirection = 'right';</span>
+  });
+&nbsp;
+<span class="cstat-no" title="statement not covered" >  socket.on('goDown',<span class="fstat-no" title="function not covered" >function(info){</span></span>
+<span class="cstat-no" title="statement not covered" >    var enquiringPlayer = matchesManager.manager.getMatch(info.matchID).getPlayer(info.playerName);</span>
+<span class="cstat-no" title="statement not covered" >    enquiringPlayer.activeDirection = 'down';</span>
+  });
+}
+&nbsp;
+/*
+  * EMITERS
+  */
+&nbsp;
+// Sends the "player x has joined..." information to all clients in room
+<span class="fstat-no" title="function not covered" >function sendPlayerConnectedEvent(enquiringPlayer){</span>
+<span class="cstat-no" title="statement not covered" >  var playerInfo = {playerName: enquiringPlayer.name,</span>
+            playerColor: enquiringPlayer.color,
+            matchID: enquiringPlayer.matchID};
+<span class="cstat-no" title="statement not covered" >  for(var i = 0; i &lt; matchesManager.manager.getMatch(playerInfo.matchID).players.length; i++){</span>
+<span class="cstat-no" title="statement not covered" >    matchesManager.manager.getMatch(playerInfo.matchID).players[i].socket.emit('player connected', playerInfo);</span>
+  }
+}
+&nbsp;
+// Sends prepare match event
+<span class="fstat-no" title="function not covered" >function sendPrepareGameEvent(matchID){</span>
+<span class="cstat-no" title="statement not covered" >  var board = matchesManager.manager.getMatch(matchID).board;</span>
+<span class="cstat-no" title="statement not covered" >  var players = new Array();</span>
+<span class="cstat-no" title="statement not covered" >  for(var i = 0; i &lt; matchesManager.manager.getMatch(matchID).players.length; i++){</span>
+<span class="cstat-no" title="statement not covered" >    players[i] = {</span>
+      name: matchesManager.manager.getMatch(matchID).players[i].name,
+      color: matchesManager.manager.getMatch(matchID).players[i].color
+    };
+  }
+<span class="cstat-no" title="statement not covered" >  for(var i = 0; i &lt; matchesManager.manager.getMatch(matchID).players.length; i++){</span>
+<span class="cstat-no" title="statement not covered" >    var thisColor = matchesManager.manager.getMatch(matchID).players[i].color;</span>
+<span class="cstat-no" title="statement not covered" >    matchesManager.manager.getMatch(matchID).players[i].socket.emit('prepare match', board, thisColor, players);</span>
+  }
+}
+&nbsp;
+// Sends updateBoard event - new Board state, match duration
+<span class="fstat-no" title="function not covered" >function sendUpdateBoardEvent(matchID){</span>
+<span class="cstat-no" title="statement not covered" >  var match = matchesManager.manager.getMatch(matchID);</span>
+<span class="cstat-no" title="statement not covered" >  var data = {board: match.board.board,</span>
+      duration: match.duration};
+<span class="cstat-no" title="statement not covered" >  for(var i = 0; i &lt; matchesManager.manager.getMatch(matchID).players.length; i++){</span>
+<span class="cstat-no" title="statement not covered" >    var thisColor = matchesManager.manager.getMatch(matchID).players[i].color;</span>
+<span class="cstat-no" title="statement not covered" >    matchesManager.manager.getMatch(matchID).players[i].socket.emit('updateBoard', data);</span>
+  }
+}
+&nbsp;
+// Sends updateScore event - new player score
+<span class="fstat-no" title="function not covered" >function sendUpdateScoreEvent(matchID){</span>
+<span class="cstat-no" title="statement not covered" >  var match = matchesManager.manager.getMatch(matchID);</span>
+<span class="cstat-no" title="statement not covered" >  var data = {scores: {blue: match.getPlayerByColor('blue').score,</span>
+    orange: match.getPlayerByColor('orange').score,
+    green: match.getPlayerByColor('green').score,
+    red: match.getPlayerByColor('red').score}};
+<span class="cstat-no" title="statement not covered" >  for(var i = 0; i &lt; matchesManager.manager.getMatch(matchID).players.length; i++){</span>
+<span class="cstat-no" title="statement not covered" >    var thisColor = matchesManager.manager.getMatch(matchID).players[i].color;</span>
+<span class="cstat-no" title="statement not covered" >    matchesManager.manager.getMatch(matchID).players[i].socket.emit('updateScore', data);</span>
+  }
+}
+&nbsp;
+// Send countdown event
+<span class="fstat-no" title="function not covered" >function sendCountdownEvent(matchID, secondsLeft){</span>
+<span class="cstat-no" title="statement not covered" >  for(var i = 0; i &lt; matchesManager.manager.getMatch(matchID).players.length; i++){</span>
+<span class="cstat-no" title="statement not covered" >    matchesManager.manager.getMatch(matchID).players[i].socket.emit('countdown', secondsLeft);</span>
+  }
+}
+&nbsp;
+exports.respond = respond;
+exports.sendPlayerConnectedEvent = sendPlayerConnectedEvent;
+exports.sendPrepareGameEvent = sendPrepareGameEvent;
+exports.sendUpdateBoardEvent = sendUpdateBoardEvent;
+exports.sendUpdateScoreEvent = sendUpdateScoreEvent;
+exports.sendCountdownEvent = sendCountdownEvent;
+&nbsp;</pre></td></tr>
+</table></pre>
+
+</div>
+<div class="footer">
+    <div class="meta">Generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Sun Nov 01 2015 22:39:00 GMT+0100 (CET)</div>
+</div>
+<script src="../prettify.js"></script>
+<script>
+window.onload = function () {
+        if (typeof prettyPrint === 'function') {
+            prettyPrint();
+        }
+};
+</script>
+<script src="../sorter.js"></script>
+</body>
+</html>

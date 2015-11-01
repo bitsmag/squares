@@ -1,15 +1,18 @@
 {
-  "name": "helloNode",
+  "name": "squares",
   "version": "0.0.0",
-  "description": "helloNode description",
-  "main": "helloNode.js",
+  "description": "socket based multiplayer game",
+  "main": "server.js",
   "dependencies": {
     "express": "~4.12.2",
     "swig": "^1.4.2"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "chai": "*",
+    "mocha": "*"
+  },
   "scripts": {
-    "test": "test"
+    "test": "./node_modules/mocha/bin/mocha"
   },
   "repository": {
     "type": "git",

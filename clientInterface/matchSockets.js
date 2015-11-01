@@ -7,7 +7,7 @@ var matchesManager = require('../models/matchesManager');
 function respond(socket, io){
 
   socket.on('connectionInfo',function(info){
-    function playerJoined(){ // TODO Should be in controller
+    function playerJoined(){
       // Notify all players in room a player joined
       sendPlayerConnectedEvent(enquiringPlayer);
 
@@ -17,7 +17,6 @@ function respond(socket, io){
         associatedMatch.controller.runMatch();
       }
     }
-
     var enquiringPlayer = matchesManager.manager.getMatch(info.matchID).getPlayer(info.playerName);
     var associatedMatch = matchesManager.manager.getMatch(info.matchID);
     // Save socket in player object
@@ -64,24 +63,40 @@ function sendPlayerConnectedEvent(enquiringPlayer){
 // Sends prepare match event
 function sendPrepareGameEvent(matchID){
   var board = matchesManager.manager.getMatch(matchID).board;
+  var players = new Array();
+  for(var i = 0; i < matchesManager.manager.getMatch(matchID).players.length; i++){
+    players[i] = {
+      name: matchesManager.manager.getMatch(matchID).players[i].name,
+      color: matchesManager.manager.getMatch(matchID).players[i].color
+    };
+  }
   for(var i = 0; i < matchesManager.manager.getMatch(matchID).players.length; i++){
     var thisColor = matchesManager.manager.getMatch(matchID).players[i].color;
-    matchesManager.manager.getMatch(matchID).players[i].socket.emit('prepare match', board, thisColor);
+    matchesManager.manager.getMatch(matchID).players[i].socket.emit('prepare match', board, thisColor, players);
   }
 }
 
-// Sends tickUpdate event - new Board state, match duration, player score ...
-function sendTickUpdateEvent(matchID){
+// Sends updateBoard event - new Board state, match duration
+function sendUpdateBoardEvent(matchID){
   var match = matchesManager.manager.getMatch(matchID);
   var data = {board: match.board.board,
-      duration: match.duration,
-      scores: {blue: match.getPlayerByColor('blue').score,
-        orange: match.getPlayerByColor('orange').score,
-        green: match.getPlayerByColor('green').score,
-        red: match.getPlayerByColor('red').score}};
+      duration: match.duration};
   for(var i = 0; i < matchesManager.manager.getMatch(matchID).players.length; i++){
     var thisColor = matchesManager.manager.getMatch(matchID).players[i].color;
-    matchesManager.manager.getMatch(matchID).players[i].socket.emit('tickUpdate', data);
+    matchesManager.manager.getMatch(matchID).players[i].socket.emit('updateBoard', data);
+  }
+}
+
+// Sends updateScore event - new player score
+function sendUpdateScoreEvent(matchID){
+  var match = matchesManager.manager.getMatch(matchID);
+  var data = {scores: {blue: match.getPlayerByColor('blue').score,
+    orange: match.getPlayerByColor('orange').score,
+    green: match.getPlayerByColor('green').score,
+    red: match.getPlayerByColor('red').score}};
+  for(var i = 0; i < matchesManager.manager.getMatch(matchID).players.length; i++){
+    var thisColor = matchesManager.manager.getMatch(matchID).players[i].color;
+    matchesManager.manager.getMatch(matchID).players[i].socket.emit('updateScore', data);
   }
 }
 
@@ -95,5 +110,6 @@ function sendCountdownEvent(matchID, secondsLeft){
 exports.respond = respond;
 exports.sendPlayerConnectedEvent = sendPlayerConnectedEvent;
 exports.sendPrepareGameEvent = sendPrepareGameEvent;
-exports.sendTickUpdateEvent = sendTickUpdateEvent;
+exports.sendUpdateBoardEvent = sendUpdateBoardEvent;
+exports.sendUpdateScoreEvent = sendUpdateScoreEvent;
 exports.sendCountdownEvent = sendCountdownEvent;

@@ -56,9 +56,12 @@ MatchController.prototype.matchTicker = function(){
     }
     else{
       positionUpdater.update(that.match); // Set new player position and colors on board
-      var playerPoints = circuitsChecker.check(that.match); // Returns the points made by each player this tcik
 
-      // Add Pints to player.score
+      matchSockets.sendUpdateBoardEvent(that.match.id);
+
+      var playerPoints = circuitsChecker.check(that.match); // Returns the points made by each player this tick
+
+      // Add Points to player.score
       that.match.getPlayerByColor('blue').score += playerPoints.blue;
       that.match.getPlayerByColor('orange').score += playerPoints.orange;
       that.match.getPlayerByColor('green').score += playerPoints.green;
@@ -78,15 +81,11 @@ MatchController.prototype.matchTicker = function(){
         }
       }
 
-      matchSockets.sendTickUpdateEvent(that.match.id);
+      matchSockets.sendUpdateScoreEvent(that.match.id);
     }
   }
   var that = this;
-  var tickerInterval = setInterval(tick, 500);
+  var tickerInterval = setInterval(tick, 300);
 }
-
-
-
-
 
 exports.MatchController = MatchController;

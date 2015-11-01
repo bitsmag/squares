@@ -9,6 +9,7 @@ var matchSockets = require('./clientInterface/matchSockets');
 var matchesManager = require('./models/matchesManager');
 var match = require('./models/match');
 var player = require('./models/player');
+var createMatch = require('./controllers/createMatch');
 
 // Set swig as the template engine
 app.engine('html', swig.renderFile);
@@ -44,28 +45,16 @@ app.get('/', function(req, res){
 });
 
 app.get('/createMatch/:playerName', function(req, res){
-  // Create new Match
-  var newMatch = new match.Match();
-  // Add matchCreator as new Player
-  var newPlayer = new player.Player(req.params.playerName, newMatch.id, true);
-  newMatch.addPlayer(newPlayer);
+  var matchID = createMatch.createMatch(req.params.playerName);
   // Send back html
-  res.render(__dirname + '/views/createMatch.html', {matchID: newMatch.id,
+  res.render(__dirname + '/views/createMatch.html', {matchID: matchID,
                                   playerName: req.params.playerName});
 });
 
 app.get('/joinMatch/:matchID/:playerName', function(req, res){
-  var enquiredMatch = matchesManager.manager.getMatch(req.params.matchID);
-  // If match exists create new player and add it to the match. Send info to client.
-  if(enquiredMatch){
-    var newPlayer = new player.Player(req.params.playerName, req.params.matchID, false);
-    enquiredMatch.addPlayer(newPlayer);
+    createMatch.joinMatch(req.params.matchID, req.params.playerName);
     res.send({matchID: req.params.matchID,
               playerName: req.params.playerName}) // TODO dont send the data back as the client already has this information
-  }
-  else{
-    res.send(null);
-  }
 });
 
 app.get('/match/:matchID/:playerName', function(req, res){
