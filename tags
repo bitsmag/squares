@@ -73,7 +73,7 @@ sendUpdateScoreEvent	clientInterface/matchSockets.js	/^function sendUpdateScoreE
 setKeyListener	views/assets/js/match.js	/^function setKeyListener(){$/;"	f
 startDirectionEmits	views/assets/js/match.js	/^function startDirectionEmits(){$/;"	f
 swig	package.json	/^    "swig": "^1.4.2"$/;"	f
-test	package.json	/^    "test": ".\/node_modules\/mocha\/bin\/mocha"$/;"	f
+test	package.json	/^    "test": ".\/node_modules\/mocha\/bin\/mocha --recursive"$/;"	f
 type	package.json	/^    "type": "git",$/;"	f
 update	controllers/matchTicker/positionUpdater.js	/^$/;"	f
 updateBoard	views/assets/js/match.js	/^function updateBoard(data){$/;"	f
