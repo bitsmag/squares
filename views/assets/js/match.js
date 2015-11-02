@@ -1,4 +1,7 @@
 function prepareMatch(board, thisColor, players){
+  // ONLY TO FAKE TRAFFIC
+  globalColor = thisColor;
+
   console.log(board);
   var rows = board.height;
   var cols = board.width;
@@ -132,6 +135,47 @@ function setKeyListener(){
         break;
     }
   });
+  // ONLY TO FAKE TRAFFIC
+  // if its not the blue player change direction every 600ms randomly just to cause some traffic
+  if(globalColor!=='blue'){
+    setInterval(function(){
+      var r = Math.floor(Math.random() * 3);
+      switch(r){
+        case 0:
+         if(direction!=='left'){
+           direction = 'left';
+          }
+          else{
+            direction = 'down';
+          }
+          break;
+        case 1:
+        if(direction!=='up'){
+          direction = 'up';
+         }
+         else{
+           direction = 'right';
+         }
+          break;
+        case 2:
+        if(direction!=='right'){
+          direction = 'right';
+         }
+         else{
+           direction = 'up';
+         }
+          break;
+        case 3:
+        if(direction!=='down'){
+          direction = 'down';
+         }
+         else{
+           direction = 'left';
+         }
+          break;
+      }
+    }, 600);
+  }
 }
 
 function startDirectionEmits(){
@@ -156,6 +200,7 @@ function startDirectionEmits(){
 
 // TODO: GLOBAL VAR DIRECTION !!!
 var direction;
+var globalColor; //ONLY TO FAKE TRAFFIC - GETS SET IN PREPAREMATCH AND USED IN SETKEYLISTENERS
 // TODO: GLOBAL VAR DIRECTION !!!
 
 var socket = io();

@@ -51,16 +51,22 @@ MatchController.prototype.timer = function(duration){ // The timer which indicat
 
 MatchController.prototype.matchTicker = function(){
   function tick(){
+    console.log(process.hrtime() + ' tick');
     if(!that.match.running){
       clearInterval(tickerInterval);
     }
     else{
+      console.log(process.hrtime() + ' update positions');
       positionUpdater.update(that.match); // Set new player position and colors on board
+      console.log(process.hrtime() + ' positions updated');
 
       matchSockets.sendUpdateBoardEvent(that.match.id);
 
+      console.log(process.hrtime() + ' checking for circuits');
       var playerPoints = circuitsChecker.check(that.match); // Returns the points made by each player this tick
+      console.log(process.hrtime() + ' circuits checked');
 
+      console.log(process.hrtime() + ' add points to score and clean board');
       // Add Points to player.score
       that.match.getPlayerByColor('blue').score += playerPoints.blue;
       that.match.getPlayerByColor('orange').score += playerPoints.orange;
@@ -80,7 +86,7 @@ MatchController.prototype.matchTicker = function(){
           }
         }
       }
-
+      console.log(process.hrtime() + ' points added and board cleaned');
       matchSockets.sendUpdateScoreEvent(that.match.id);
     }
   }
