@@ -42,7 +42,7 @@ var createUniqueID = function(){   // Create unique matchID
 };
 
 Match.prototype.addPlayer = function(player) { //ERROR: matchIsFull, nameAlreadyInUse
-    var nameDuplicate = this.isNameInUse(this.name);
+    var nameDuplicate = this.isNameInUse(player.name);
     if(this.players.length>=4){
       return new Error('matchIsFull');
     }

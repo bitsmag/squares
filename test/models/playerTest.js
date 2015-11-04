@@ -57,14 +57,5 @@ describe('Hooks', function() {
         expect(p2).to.be.instanceof(Error);
       });
     });
-    describe('#construct05', function () {
-      it('creating a player as matchCreator should throw an error if another matchCreator already exists in this match', function () {
-        m = new match.Match();
-        var p = new player.Player('bob', m.id, true);
-
-        var p2 = new player.Player('mara', m.id, true);
-        expect(p2).to.be.instanceof(Error);
-      });
-    });
   });
 });
