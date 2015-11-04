@@ -19,7 +19,7 @@
   </head>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
   <body>
-    <img id="logo" src="/img/logo.svg"/>
+    <img id="logo" src="/img/logo01.svg"/>
     <form id="createMatchForm" action="">
       <input id="cPlayerName" autocomplete="off" value="Your Name">
       <br/>
@@ -37,26 +37,48 @@
   </body>
   <script>
   $('#createMatchForm').submit(function(){
-        window.location.replace('/createMatch/' + $('#cPlayerName').val());
-        return false;
+    $.post('/nameCheck',{playerName: $('#cPlayerName').val()},function(data, status){
+      if(status='success'){
+        window.location.replace('/createMatch/' + data);
+      }
+      else{
+        alert('Something went wrong :(')
+      }
+    });
   });
 
   $('#joinMatchForm').submit(function(){
-    var url = '/joinMatch/' + $('#matchID').val() + '/' + $('#jPlayerName').val();
     $.ajax({
-      type: "GET",
-      url: url,
-      context: this,
-      success: function(data){
-        if(data){
+      type: "POST",
+      url: '/joinMatch',
+      data: {playerName: $('#jPlayerName').val(), matchID: $('#matchID').val()},
+      success: function(data, status){
+        if(status='success'){
           window.location.replace('/match/' + data.matchID + '/' + data.playerName);
         }
-        else{
-          alert('Could not find a match with the given ID');
-        }
+      },
+      error: function(jqXHR,error, errorThrown) {
+       if(jqXHR.status&&jqXHR.status==418){
+          var res = jQuery.parseJSON(jqXHR.responseText);
+          if(res.error==='nameAlreadyInUse'){
+            alert('Please choose another name, this one is already in use.');
+          }
+          else if(res.error==='matchNotFound'){
+            alert('We could not find a match for the given ID.');
+          }
+          else if(res.error==='matchIsFull'){
+            alert('It seems the match you wanted to join is already full.');
+          }
+          else{
+            alert('There was a unknown issue - please try again.');
+          };
+       }
+       else{
+           alert('There was a unknown issue - please try again.');
+       }
       }
-    })
-    return false;
+    });
+  return false;
   });
   </script>
 </html>

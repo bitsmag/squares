@@ -6,13 +6,13 @@ MatchesManager.prototype.addMatch = function(match) {
   this.matches.push(match);
 };
 
-MatchesManager.prototype.getMatch = function(matchID) {
+MatchesManager.prototype.getMatch = function(matchID) { //ERROR: matchNotFound
   for(var i = 0; i < this.matches.length; i++){
     if(this.matches[i].id === matchID){
       return this.matches[i];
     }
   }
-  return new Error('match with id ' + matchID + ' not found');
+  return new Error('matchNotFound');
 };
 
 MatchesManager.prototype.removeMatch = function(matchID) {

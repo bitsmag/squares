@@ -1,6 +1,6 @@
 var matchesManager = require('./matchesManager');
 
-function Player(name, matchID, matchCreator){
+function Player(name, matchID, matchCreator){ //ERROR: matchNotFound, matchIsFull, nameAlreadyInUse
   this.name = name;
   this.color = '';
   this.position = 0; // squareID
@@ -11,6 +11,9 @@ function Player(name, matchID, matchCreator){
   this.score = 0;
 
   var match = matchesManager.manager.getMatch(this.matchID);
+  if(match instanceof Error){
+    return match;
+  }
 
   // Set color (depending on the order the players join) and the startposition (as defined in board)
   switch(match.players.length) {

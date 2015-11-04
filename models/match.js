@@ -41,29 +41,13 @@ var createUniqueID = function(){   // Create unique matchID
   return matchID;
 };
 
-Match.prototype.addPlayer = function(player) {
-    var nameDuplicate;
-    for(var i=0; i<this.players.length; i++){
-      if(player.name === this.players[i].name){
-        nameDuplicate = true;
-      }
-    }
-    var matchCreatorConflict;
-    if(player.matchCreator){
-      for(var i=0; i<this.players.length; i++){
-        if(this.players[i].matchCreator){
-          matchCreatorConflict = true;
-        }
-      }
-    }
+Match.prototype.addPlayer = function(player) { //ERROR: matchIsFull, nameAlreadyInUse
+    var nameDuplicate = this.isNameInUse(this.name);
     if(this.players.length>=4){
-      return new Error('match is full');
+      return new Error('matchIsFull');
     }
     else if(nameDuplicate){
-      return new Error('name already in use');
-    }
-    else if(matchCreatorConflict){
-      return new Error('matchCreator already exists');
+      return new Error('nameAlreadyInUse');
     }
     else{
       // Add Player
@@ -75,13 +59,13 @@ Match.prototype.addPlayer = function(player) {
     }
 };
 
-Match.prototype.getPlayer = function(playerName) {
+Match.prototype.getPlayer = function(playerName) { //ERROR: playerNotFound
   for(var i = 0; i < this.players.length; i++){
     if(this.players[i].name === playerName){
       return this.players[i];
     }
   }
-  return new Error('there is no player named ' + playerName);
+  return new Error('playerNotFound');
 };
 
 Match.prototype.getPlayerByColor = function(playerColor) {
@@ -99,7 +83,17 @@ Match.prototype.getMatchCreator = function() {
       return this.players[i];
     }
   }
-  return new Error('no matchCreator found');
+  return new Error('matchCreatorNotFound');
+};
+
+Match.prototype.isNameInUse = function(name) {
+  var nameInUse;
+  for(var i = 0; i < this.players.length; i++){
+    if(this.players[i].name === name){
+      nameInUse = true;
+    }
+  }
+  return nameInUse;
 };
 
 exports.Match = Match;

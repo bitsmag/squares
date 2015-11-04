@@ -10,11 +10,26 @@ var createMatch = function(matchCreatorName){
   return newMatch.id;
 }
 
-var joinMatch = function(matchID, playerName){
+var joinMatch = function(matchID, playerName){ //ERROR: matchNotFound, matchIsFull, nameAlreadyInUse
   var enquiredMatch = matchesManager.manager.getMatch(matchID);
-  // If match exists create new player and add it to the match. Send info to client.
-  if(enquiredMatch){
-    var newPlayer = new player.Player(playerName, matchID, false);
+  // Check if match with given matchID exists
+  if(enquiredMatch instanceof Error){
+    return enquiredMatch;
+  }
+  else{
+    // Check if some player in this match has the same name
+    var nameInUse = enquiredMatch.isNameInUse(playerName);
+    if(nameInUse){
+      return new Error('nameAlreadyInUse');
+    }
+    else{
+      // Create new player
+      var newPlayer = new player.Player(playerName, matchID, false);
+      if(newPlayer instanceof Error){
+        return newPlayer;
+      }
+    }
+
   }
 }
 

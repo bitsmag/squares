@@ -20,7 +20,7 @@
   <script src="/socket.io/socket.io.js"></script>
   <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
   <body>
-    <img id ="logo" src="/img/logo.svg"/>
+    <img id ="logo" src="/img/logo02.svg"/>
     <div class="centerTextBox">Your match is ready. Invite three friends to play with you by telling them your match id.
     <h2>{{ matchID }}</h2>
     You can start the match after all three players has joined your match.
@@ -30,18 +30,25 @@
 
     var createMatchSockets = io.connect('/createMatchSockets');
 
-
     createMatchSockets.on('connect', function () {
       createMatchSockets.emit('connectionInfo', '{{matchID}}');
 
       createMatchSockets.on('match ready', function(){
-        alert("matchready");
+        alert("Your match is ready");
         $('#startMatchBtn').click(function(){
           window.location.replace('/match/' + '{{matchID}}' + '/{{playerName}}');
         })
       });
       createMatchSockets.on('error', function(message){
-        alert('Error: ' + message + ' // Please try again');
+        if(message==='matchNotFound'){
+          alert('There was a issue with your match. Please create a new one.');
+        }
+        else if(message==='matchCreatorNotFound'){
+          alert('There was a issue with your match. Please create a new one.');
+        }
+        else{
+          alert('There was a issue with your match. Please create a new one.');
+        };
       });
     });
 

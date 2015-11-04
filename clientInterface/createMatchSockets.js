@@ -26,6 +26,9 @@ function respond(socket){
 function sendMatchReadyEvent(matchID){
   var enquiringMatch = matchesManager.manager.getMatch(matchID);
   if(enquiringMatch instanceof Error){
+    // In case of error notify user and delete the match
+    sendErrorEvent(enquiringMatch);
+
     matchesManager.manager.removeMatch(matchID);
     console.log('error on sendMatchReadyEvent - Removed Match.');
     console.log(enquiringMatch.message);
@@ -33,6 +36,9 @@ function sendMatchReadyEvent(matchID){
   else{
     var matchCreator = enquiringMatch.getMatchCreator();
     if(matchCreator instanceof Error){
+      // In case of error notify user and delete the match
+      sendErrorEvent(matchCreator);
+
       matchesManager.manager.removeMatch(matchID);
       console.log('error on sendMatchReadyEvent - Removed Match.');
       console.log(matchCreator.message);
@@ -41,6 +47,18 @@ function sendMatchReadyEvent(matchID){
       // Send the match ready event
       matchCreator.socket.emit('match ready');
     }
+  }
+}
+
+function sendErrorEvent(error){
+  if(error.message==='matchNotFound'){
+    matchCreator.socket.emit('error', 'matchNotFound');
+  }
+  else if(error.message==='matchCreatorNotFound'){
+    matchCreator.socket.emit('error', 'matchCreatorNotFound');
+  }
+  else{
+    matchCreator.socket.emit('error', 'unknownError');
   }
 }
 
