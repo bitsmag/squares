@@ -14,16 +14,47 @@ function respond(socket, io){
       // If four players joined (last one is always matchCreator) send startGameEvent
       if(Object.keys(io.nsps['/matchSockets'].adapter.rooms[info.matchID]).length === 4){
         sendPrepareGameEvent(info.matchID);
-        associatedMatch.controller.runMatch();
+        enquiringMatch.controller.runMatch();
       }
     }
-    var enquiringPlayer = matchesManager.manager.getMatch(info.matchID).getPlayer(info.playerName);
-    var associatedMatch = matchesManager.manager.getMatch(info.matchID);
-    // Save socket in player object
-    enquiringPlayer.socket = socket;
-    // Join room + callback
-    enquiringPlayer.socket.join(info.matchID.toString(), playerJoined);
-  });
+
+    var enquiringMatch = matchesManager.manager.getMatch(info.matchID);
+    if(enquiringMatch instanceof Error){
+      // In case of error notify user and delete the match
+      if(enquiringPlayer.message==='matchNotFound'){
+        socket.emit('error', 'matchNotFound');
+      }
+      else{
+        socket.emit('error', 'unknownError');
+      }
+
+      matchesManager.manager.removeMatch(matchID);
+      console.log('error on createMatchSockets - Removed Match.');
+      console.log(enquiringMatch.message);
+    }
+    else{
+      var enquiringPlayer = enquiringMatch.getPlayer(info.playerName);
+      if(enquiringPlayer instanceof Error){
+        // In case of error notify user and delete the match
+        if(enquiringPlayer.message==='playerNotFound'){
+          socket.emit('error', 'playerNotFound');
+        }
+        else{
+          socket.emit('error', 'unknownError');
+        }
+
+        matchesManager.manager.removeMatch(matchID);
+        console.log('error on createMatchSockets - Removed Match.');
+        console.log(enquiringPlayer.message);
+      }
+      else{
+        // Save socket in player object
+        enquiringPlayer.socket = socket;
+        // Join room + callback
+        enquiringPlayer.socket.join(info.matchID.toString(), playerJoined);
+      }
+  }
+});
 
   socket.on('goLeft',function(info){
     var enquiringPlayer = matchesManager.manager.getMatch(info.matchID).getPlayer(info.playerName);

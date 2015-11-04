@@ -128,7 +128,7 @@ app.get('/match/:matchID/:playerName', function(req, res){
   else{
     var enquiringPlayer = enquiredMatch.getPlayer(playerName);
     // Check if player with given name exists
-    if(enquiringPlsayer instanceof Error){
+    if(enquiringPlayer instanceof Error){
       errorOccured = true;
       if(enquiringPlayer.message==='playerNotFound'){
         res.status(500).send('We could not find your player in this match.');

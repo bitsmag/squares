@@ -4,6 +4,14 @@ function respond(socket){
   socket.on('connectionInfo',function(matchID){
       var enquiringMatch = matchesManager.manager.getMatch(matchID);
       if(enquiringMatch instanceof Error){
+        // In case of error notify user and delete the match
+        if(enquiringPlayer.message==='matchNotFound'){
+          socket.emit('error', 'matchNotFound');
+        }
+        else{
+          socket.emit('error', 'unknownError');
+        }
+
         matchesManager.manager.removeMatch(matchID);
         console.log('error on createMatchSockets - Removed Match.');
         console.log(enquiringMatch.message);
@@ -11,6 +19,14 @@ function respond(socket){
       else{
         var enquiringPlayer = enquiringMatch.getMatchCreator();
         if(enquiringPlayer instanceof Error){
+          // In case of error notify user and delete the match
+          if(enquiringPlayer.message==='playerNotFound'){
+            socket.emit('error', 'playerNotFound');
+          }
+          else{
+            socket.emit('error', 'unknownError');
+          }
+
           matchesManager.manager.removeMatch(matchID);
           console.log('error on createMatchSockets - Removed Match.');
           console.log(enquiringPlayer.message);
