@@ -1,13 +1,19 @@
 
 update = function(match){
+  // Get new position of players
   var positions = getNewPlayerPositions(match);
 
   // Set position property of players
-  match.getPlayerByColor('blue').position = positions.blue;
-  match.getPlayerByColor('orange').position = positions.orange;
-  match.getPlayerByColor('green').position = positions.green;
-  match.getPlayerByColor('red').position = positions.red;
-
+  var colors = ['blue', 'orange', 'green', 'red'];
+  for(i=0; i<colors.length; i++){
+    var player = match.getPlayerByColor(colors[i]);
+    if(player instanceof Error){
+      console.warn(match.message + ' // positionUpdater.update() - getPlayerByColor() // matchID=' + match.id + ', color=' + colors[i]);
+    }
+    else{
+      player.position = positions[colors[i]];
+    }
+  }
   // Set color property on board
   match.board.getSquare(positions.blue).color = 'blue';
   match.board.getSquare(positions.orange).color = 'orange';
@@ -16,130 +22,84 @@ update = function(match){
 }
 
 getNewPlayerPositions = function(match){ // Uses players directions to calculate the position of each player after the current matchTick
-                                                              // Handles conflicts (two players wants to be on the same square)
-                                                              // TODO: Make this function neat...
-  // Current Positions
-  var blueCurrent = match.getPlayerByColor('blue').position;
-  var orangeCurrent = match.getPlayerByColor('orange').position;
-  var greenCurrent = match.getPlayerByColor('green').position;
-  var redCurrent = match.getPlayerByColor('red').position;
+  var colors = ['blue', 'orange', 'green', 'red'];
 
-  // Positions players wants to move to
-  var blueFuture = calculateStep(blueCurrent, match.getPlayerByColor('blue').activeDirection, match.board);
-  var orangeFuture = calculateStep(orangeCurrent, match.getPlayerByColor('orange').activeDirection, match.board);
-  var greenFuture = calculateStep(greenCurrent, match.getPlayerByColor('green').activeDirection, match.board);
-  var redFuture = calculateStep(redCurrent, match.getPlayerByColor('red').activeDirection, match.board);
+  // Current/future position and prio of each player
+  var currentPos = {blue: null, orange: null, green: null, red: null};
+  var futurePos = {blue: null, orange: null, green: null, red: null};
+  var prio = {blue: false, orange: false, green: false, red: false};
 
-  // If a player stands still it has priority on conflict calculation
-  var blueP, orangeP, greenP, redP = false;
-  if(blueCurrent === blueFuture) blueP = true;
-  if(orangeCurrent === orangeFuture) orangeP = true;
-  if(greenCurrent === greenFuture) greenP = true;
-  if(redCurrent === redFuture) redP = true;
-
-  // Deal with conflicts
-  if(blueFuture === orangeFuture){
-    if(!blueP && !orangeP){ // If noone has priority decide randomly
-      if(Math.floor(Math.random()*2)===0){
-        blueFuture = blueCurrent;
+  for(i=0; i<colors.length; i++){
+    var player = match.getPlayerByColor(colors[i]);
+    if(player instanceof Error){
+      console.warn(match.message + ' // positionUpdater.getNewPlayerPositions() - getPlayerByColor() // matchID=' + match.id + ', color=' + colors[i]);
+    }
+    else{
+      // Current Positions
+      currentPos[colors[i]] = player.position;
+      // Positions players wants to move to
+      futurePos[colors[i]] = calculateStep(player.position, player.activeDirection, match.board);
+      // If a player stands still it has priority on conflict calculation
+      if(currentPos[colors[i]]===futurePos[colors[i]]){
+        prio[colors[i]]=true;
       }
-      else{
-        orangeFuture = orangeCurrent;
-      }
-    }
-    else if(blueP){ // If blue has priority orange cant move
-      orangeFuture = orangeCurrent;
-    }
-    else if(orangeP){ // If orange has priority blue cant move
-      blueFuture = blueCurrent;
-    }
-  }
-  if(blueFuture === redFuture){
-    if(!blueP && !redP){
-      if(Math.floor(Math.random()*2)===0){
-        blueFuture = blueCurrent;
-      }
-      else{
-        redFuture = redCurrent;
-      }
-    }
-    else if(blueP){
-      redFuture = redCurrent;
-    }
-    else if(redP){
-      blueFuture = blueCurrent;
-    }
-  }
-  if(blueFuture === greenFuture){
-    if(!blueP && !greenP){
-      if(Math.floor(Math.random()*2)===0){
-        blueFuture = blueCurrent;
-      }
-      else{
-        greenFuture = greenCurrent;
-      }
-    }
-    else if(blueP){
-      greenFuture = greenCurrent;
-    }
-    else if(greenP){
-      blueFuture = blueCurrent;
-    }
-  }
-  if(redFuture === greenFuture){
-    if(!redP && ! greenP){
-      if(Math.floor(Math.random()*2)===0){
-        redFuture = redCurrent;
-      }
-      else{
-        greenFuture = greenCurrent;
-      }
-    }
-    else if(redP){
-      greenFuture = greenCurrent;
-    }
-    else if(greenP){
-      redFuture = redCurrent;
-    }
-  }
-  if(redFuture === orangeFuture){
-    if(!redP && !orangeP){
-      if(Math.floor(Math.random()*2)===0){
-        redFuture = redCurrent;
-      }
-      else{
-        orangeFuture = orangeCurrent;
-      }
-    }
-    else if(redP){
-      orangeFuture = orangeCurrent;
-    }
-    else if(orangeP){
-      redFuture = redCurrent;
-    }
-  }
-  if(greenFuture === orangeFuture){
-    if(!greenP && !orangeP){
-      if(Math.floor(Math.random()*2)===0){
-        greenFuture = greenCurrent;
-      }
-      else{
-        orangeFuture = orangeCurrent;
-      }
-    }
-    else if(greenP){
-      orangeFuture = orangeCurrent;
-    }
-    else if(orangeP){
-      greenFuture = greenCurrent;
     }
   }
 
-  var positions = {blue: blueFuture,
-    orange: orangeFuture,
-    green: greenFuture,
-    red: redFuture}
-  return positions;
+  // Conflict (1) multiple players want to move on the same square
+
+  // Loosing squares (futurePos=currentPos)
+  var loosers = new Array();
+
+  for(var i=0; i<colors.length; i++){
+    for(var j=0; j<colors.length; j++){
+      // If both colors have the same future position we have to solve this conflict
+      if(i !== j && futurePos[colors[i]]===futurePos[colors[j]]){
+        // If one of them is prio the other looses
+        if(prio[colors[i]]){
+          loosers.push(colors[j]);
+        }
+        else if(prio[colors[j]]){
+          loosers.push(colors[i]);
+        }
+        // If none is prio we solve the conflict with random numbers
+        else {
+          // Generate a unique random number for each color.
+          var uniqueRandomNumbers = {};
+          for(i=0; i<colors.length; i++){
+            uniqueRandomNumbers[colors[i]] = Math.random();
+          }
+          // Find the max of the random numbers and push the corresponding colors to loosers
+          var fav = Math.max(uniqueRandomNumbers[colors[i]], uniqueRandomNumbers[colors[j]]);
+          if(fav===uniqueRandomNumbers[colors[i]]){
+            loosers.push(colors[j]);
+          }
+          else if(fav===uniqueRandomNumbers[colors[j]]){
+            loosers.push(colors[i]);
+          }
+        }
+      }
+    }
+  }
+
+  // Conflict (2) two players want to jump 'over' each other (switch squares)
+
+  for(var i=0; i<colors.length; i++){
+    for(var j=0; j<colors.length; j++){
+      if(i !== j && futurePos[colors[i]]===currentPos[colors[j]] && futurePos[colors[j]]===currentPos[colors[i]]){
+        loosers.push(colors[i]);
+        loosers.push(colors[j]);
+      }
+    }
+  }
+
+  // Remove duplicates
+  loosers = loosers.reduce(function(a,b){if(a.indexOf(b)<0)a.push(b);return a;},[]);
+  // Set futurePos = currentPos for loosers
+  for(var i=0; i<loosers.length; i++){
+    futurePos[loosers[i]] = currentPos[loosers[i]];
+  }
+  return futurePos;
 }
 
 calculateStep = function(currentPosition, activeDirection, board){ // Uses players direction to calculate the Position a player wants to move to

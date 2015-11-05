@@ -1,6 +1,6 @@
 function prepareMatch(board, thisColor, players){
   // ONLY TO FAKE TRAFFIC
-  globalColor = thisColor;
+  //globalColor = thisColor;
 
   console.log(board);
   var rows = board.height;
@@ -41,7 +41,6 @@ function prepareMatch(board, thisColor, players){
     div += '<span id="' + players[i].color + 'Score">0</span><br/><br/></td>';
     $('#scores').append(div);
   }
-
 
   // Delete the "player has joined list"
   $( "#list" ).remove();
@@ -137,7 +136,7 @@ function setKeyListener(){
   });
   // ONLY TO FAKE TRAFFIC
   // if its not the blue player change direction every 600ms randomly just to cause some traffic
-  if(globalColor!=='blue'){
+  /*if(globalColor!=='blue'){
     setInterval(function(){
       var r = Math.floor(Math.random() * 3);
       switch(r){
@@ -175,7 +174,7 @@ function setKeyListener(){
           break;
       }
     }, 600);
-  }
+  }*/
 }
 
 function startDirectionEmits(){
@@ -200,7 +199,7 @@ function startDirectionEmits(){
 
 // TODO: GLOBAL VAR DIRECTION !!!
 var direction;
-var globalColor; //ONLY TO FAKE TRAFFIC - GETS SET IN PREPAREMATCH AND USED IN SETKEYLISTENERS
+//var globalColor; //ONLY TO FAKE TRAFFIC - GETS SET IN PREPAREMATCH AND USED IN SETKEYLISTENERS
 // TODO: GLOBAL VAR DIRECTION !!!
 
 var socket = io();
@@ -211,8 +210,8 @@ matchSockets.on('connect', function () {
   matchSockets.emit('connectionInfo', playerInfo);
 
   // Received when a player connects to the room
-  matchSockets.on('player connected', function(playerInfo){
-    $('#list').append($('<li>').text('Player ' + playerInfo.playerName + ' with color ' + playerInfo.playerColor + ' connected to this match (' + playerInfo.matchID + ')'));
+  matchSockets.on('player connected', function(connectedPlayer){
+    $('#list').append($('<li>').text('Player ' + connectedPlayer.playerName + ' with color ' + connectedPlayer.playerColor + ' connected to this match (' + connectedPlayer.matchID + ')'));
   });
 
   // Received when four players are in the room
@@ -226,4 +225,16 @@ matchSockets.on('connect', function () {
 
   // Received every second (x times) as soon as four players are in the room
   matchSockets.on('countdown', countdown);
+
+  matchSockets.on('error', function(message){
+    if(message==='matchNotFound'){
+      alert('Sorry. There was a issue with your match. [' + message + ']');
+    }
+    else if(message==='playerNotFound'){
+      alert('Sorry. There was a issue with your match. [' + message + ']');
+    }
+    else if(message==='unknownError'){
+      alert('Sorry. There was a issue with your match. [' + message + ']');
+    }
+  });
 });

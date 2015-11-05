@@ -41,14 +41,14 @@
       });
       createMatchSockets.on('error', function(message){
         if(message==='matchNotFound'){
-          alert('There was a issue with your match. Please create a new one.');
+          alert('Sorry. There was a issue with your match. Please create a new one. [' + message + ']');
         }
         else if(message==='matchCreatorNotFound'){
-          alert('There was a issue with your match. Please create a new one.');
+          alert('Sorry. There was a issue with your match. Please create a new one. [' + message + ']');
         }
-        else{
-          alert('There was a issue with your match. Please create a new one.');
-        };
+        else if(message==='unknownError'){
+          alert('Sorry. There was a issue with your match. Please create a new one. [' + message + ']');
+        }
       });
     });
 

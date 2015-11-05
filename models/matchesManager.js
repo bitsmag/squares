@@ -25,7 +25,7 @@ MatchesManager.prototype.removeMatch = function(matchID) {
     };
   };
   if(!removed){
-    return new Error('match with id ' + matchID + ' not found');
+    return new Error('matchNotFound');
   }
 };
 
