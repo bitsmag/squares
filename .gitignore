@@ -3,3 +3,6 @@
 
 # Ignore istanbul test coverage
 coverage
+
+# Ignore atom tag-file
+tags
