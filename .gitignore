@@ -1,5 +1,5 @@
 # Ignore Mac DS_Store files
 .DS_Store
 
-# Ignore node dependencies
-node_modules
+# Ignore istanbul test coverage
+coverage
