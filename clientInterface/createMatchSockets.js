@@ -24,7 +24,31 @@ function sendPlayerConnectedEvent(enquiringPlayer){
   var playerInfo = {playerName: enquiringPlayer.name,
             playerColor: enquiringPlayer.color,
             matchID: enquiringPlayer.matchID};
-  matchCreator.socket.emit('player connected', playerInfo);
+
+  var enquiringMatch = matchesManager.manager.getMatch(enquiringPlayer.matchID);
+  if(enquiringMatch instanceof Error){
+    // In case of error notify user and delete the match
+    sendErrorEvent(enquiringMatch);
+
+    matchesManager.manager.removeMatch(matchID);
+    console.log('error on sendMatchReadyEvent - Removed Match.');
+    console.log(enquiringMatch.message);
+  }
+  else{
+    var matchCreator = enquiringMatch.getMatchCreator();
+    if(matchCreator instanceof Error){
+      // In case of error notify user and delete the match
+      sendErrorEvent(matchCreator);
+
+      matchesManager.manager.removeMatch(matchID);
+      console.log('error on sendMatchReadyEvent - Removed Match.');
+      console.log(matchCreator.message);
+    }
+    else {
+      // Send the match ready event
+      matchCreator.socket.emit('player connected', playerInfo);
+    }
+  }
 }
 
 
