@@ -8,10 +8,12 @@ function MatchController(match){
 }
 
 MatchController.prototype.runMatch = function(){
-  this.countdown(this.match.countdownDuration); // After Countdown is finished match is started
+  // After Countdown is finished match is started
+  this.countdown(this.match.countdownDuration);
 }
 
-MatchController.prototype.countdown = function(countdownDuration){ // The Countdown to start the match
+// The Countdown to start the match
+MatchController.prototype.countdown = function(countdownDuration){
   function decrementCountdown(x){
     var secondsAlreadyCounted = x;
     setTimeout(function(){
@@ -33,7 +35,8 @@ MatchController.prototype.countdown = function(countdownDuration){ // The Countd
   decrementCountdown(0);
 }
 
-MatchController.prototype.timer = function(duration){ // The timer which indicates the duration of the match
+// The timer which indicates the duration of the match
+MatchController.prototype.timer = function(duration){
   function durationDecrement(){
     setTimeout(function() {
       that.match.duration--;
@@ -55,11 +58,13 @@ MatchController.prototype.matchTicker = function(){
       clearInterval(tickerInterval);
     }
     else{
-      positionUpdater.update(that.match); // Set new player position and colors on board
+      // Set new player position and colors on board
+      positionUpdater.update(that.match);
 
       matchSockets.sendUpdateBoardEvent(that.match.id);
 
-      var playerPoints = circuitsChecker.check(that.match); // Returns the points made by each player this tick
+      // Check for circuits / get points made by each player this tick
+      var playerPoints = circuitsChecker.check(that.match);
 
       // Add Points to player.score
       that.match.getPlayerByColor('blue').score += playerPoints.blue;

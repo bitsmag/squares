@@ -19,6 +19,15 @@ function respond(socket){
   });
 }
 
+// Sends the "player x has joined..." information to the matchCreator
+function sendPlayerConnectedEvent(enquiringPlayer){
+  var playerInfo = {playerName: enquiringPlayer.name,
+            playerColor: enquiringPlayer.color,
+            matchID: enquiringPlayer.matchID};
+  matchCreator.socket.emit('player connected', playerInfo);
+}
+
+
 function sendMatchReadyEvent(matchID){
   var enquiringMatch = matchesManager.manager.getMatch(matchID);
   if(enquiringMatch instanceof Error){
@@ -60,3 +69,4 @@ function sendErrorEvent(error){
 
 exports.respond = respond;
 exports.sendMatchReadyEvent = sendMatchReadyEvent;
+exports.sendPlayerConnectedEvent = sendPlayerConnectedEvent;

@@ -1,4 +1,5 @@
 var matchesManager = require('../models/matchesManager');
+var createMatchSockets = require('../clientInterface/createMatchSockets');
 
 /*
   * LISTENERS
@@ -6,10 +7,12 @@ var matchesManager = require('../models/matchesManager');
 
 function respond(socket, io){
 
-  socket.on('connectionInfo',function(info){ 
+  socket.on('connectionInfo',function(info){
     function playerJoined(){
       // Notify all players in room a player joined
       sendPlayerConnectedEvent(enquiringPlayer);
+      // Notify matchCreator
+      createMatchSockets.sendPlayerConnectedEvent(enquiringPlayer);
 
       // If four players joined (last one is always matchCreator) send startGameEvent
       if(Object.keys(io.nsps['/matchSockets'].adapter.rooms[info.matchID]).length === 4){

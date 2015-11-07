@@ -26,12 +26,17 @@
     You can start the match after all three players has joined your match.
     <br/><br/>
     <button id="startMatchBtn">Start Match</button></div>
+    <ul id="list"></ul>
     <script>
 
     var createMatchSockets = io.connect('/createMatchSockets');
 
     createMatchSockets.on('connect', function () {
       createMatchSockets.emit('connectionInfo', '{{matchID}}');
+
+      createMatchSockets.on('player connected', function(connectedPlayer){
+        $('#list').append($('<li>').text('Player ' + connectedPlayer.playerName + ' with color ' + connectedPlayer.playerColor + ' connected to this match (' + connectedPlayer.matchID + ')'));
+      });
 
       createMatchSockets.on('match ready', function(){
         alert("Your match is ready");
