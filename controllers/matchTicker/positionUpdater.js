@@ -1,4 +1,4 @@
-
+// Updates board and player state and returns current direction and pos of players
 update = function(match){
   // Get new position of players
   var positions = getNewPlayerPositions(match);
@@ -11,19 +11,27 @@ update = function(match){
       console.warn(match.message + ' // positionUpdater.update() - getPlayerByColor() // matchID=' + match.id + ', color=' + colors[i]);
     }
     else{
-      player.position = positions[colors[i]];
+      player.position = positions[colors[i]].pos;
     }
   }
   // Set color property on board
-  match.board.getSquare(positions.blue).color = 'blue';
-  match.board.getSquare(positions.orange).color = 'orange';
-  match.board.getSquare(positions.green).color = 'green';
-  match.board.getSquare(positions.red).color = 'red';
+  match.board.getSquare(positions.blue.pos).color = 'blue';
+  match.board.getSquare(positions.orange.pos).color = 'orange';
+  match.board.getSquare(positions.green.pos).color = 'green';
+  match.board.getSquare(positions.red.pos).color = 'red';
+
+  return positions;
 }
 
-getNewPlayerPositions = function(match){ // Uses players directions to calculate the position of each player after the current matchTick
+// Uses players directions to calculate the position of each player after the current matchTick
+getNewPlayerPositions = function(match){
+  var playerStatus = {
+    blue: {pos: null, dir: null},
+    orange: {pos: null, dir: null},
+    green: {pos: null, dir: null},
+    red: {pos: null, dir: null},
+  }
   var colors = ['blue', 'orange', 'green', 'red'];
-
   // Current/future position and prio of each player
   var currentPos = {blue: null, orange: null, green: null, red: null};
   var futurePos = {blue: null, orange: null, green: null, red: null};
@@ -39,6 +47,8 @@ getNewPlayerPositions = function(match){ // Uses players directions to calculate
       currentPos[colors[i]] = player.position;
       // Positions players wants to move to
       futurePos[colors[i]] = calculateStep(player.position, player.activeDirection, match.board);
+      // Save direction in return object
+      playerStatus[colors[i]].dir = player.activeDirection;
       // If a player stands still it has priority on conflict calculation
       if(currentPos[colors[i]]===futurePos[colors[i]]){
         prio[colors[i]]=true;
@@ -99,10 +109,15 @@ getNewPlayerPositions = function(match){ // Uses players directions to calculate
   for(var i=0; i<loosers.length; i++){
     futurePos[loosers[i]] = currentPos[loosers[i]];
   }
-  return futurePos;
+  // Set pos in return object
+  for(var i=0; i<colors.length; i++){
+    playerStatus[colors[i]].pos = futurePos[colors[i]];
+  }
+  return playerStatus;
 }
 
-calculateStep = function(currentPosition, activeDirection, board){ // Uses players direction to calculate the Position a player wants to move to
+// Uses players direction to calculate the Position a player wants to move to
+calculateStep = function(currentPosition, activeDirection, board){
   switch(activeDirection){
     case 'left':
       if(board.getSquare(currentPosition).position.x>0){

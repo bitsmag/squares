@@ -164,6 +164,23 @@ function sendUpdateBoardEvent(matchID){
   }
 }
 
+// Sends updateBoard event - new Board state, match duration
+function sendUpdateBoardEventX(oldBoard, matchID, playerStatus){
+  var match = matchesManager.manager.getMatch(matchID);
+  if(match instanceof Error){
+    console.warn(match.message + ' // matchSockets.sendUpdateBoardEvent() - getMatch() // matchID=' + matchID);
+  }
+  else{
+    var data = {playerStatus: playerStatus,
+        duration: match.duration,
+        board: oldBoard};
+    for(var i = 0; i < match.players.length; i++){
+      var thisColor = match.players[i].color;
+      match.players[i].socket.emit('updateBoard', data);
+    }
+  }
+}
+
 // Sends updateScore event - new player score
 function sendUpdateScoreEvent(matchID){
   var match = matchesManager.manager.getMatch(matchID);
@@ -199,5 +216,6 @@ exports.respond = respond;
 exports.sendPlayerConnectedEvent = sendPlayerConnectedEvent;
 exports.sendPrepareGameEvent = sendPrepareGameEvent;
 exports.sendUpdateBoardEvent = sendUpdateBoardEvent;
+exports.sendUpdateBoardEventX = sendUpdateBoardEventX;
 exports.sendUpdateScoreEvent = sendUpdateScoreEvent;
 exports.sendCountdownEvent = sendCountdownEvent;

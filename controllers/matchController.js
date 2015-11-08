@@ -58,10 +58,14 @@ MatchController.prototype.matchTicker = function(){
       clearInterval(tickerInterval);
     }
     else{
+      // Copy current board so we have the old board status after positionUpdater.update and can send it to the clients
+      // The client will draw the old board and execute animations on it to create the new board
+      var board = JSON.parse(JSON.stringify(that.match.board.board));
       // Set new player position and colors on board
-      positionUpdater.update(that.match);
+      var playerStatus = positionUpdater.update(that.match);
 
-      matchSockets.sendUpdateBoardEvent(that.match.id);
+      //matchSockets.sendUpdateBoardEvent(that.match.id);
+      matchSockets.sendUpdateBoardEventX(board, that.match.id, playerStatus);
 
       // Check for circuits / get points made by each player this tick
       var playerPoints = circuitsChecker.check(that.match);
@@ -89,7 +93,7 @@ MatchController.prototype.matchTicker = function(){
     }
   }
   var that = this;
-  var tickerInterval = setInterval(tick, 300);
+  var tickerInterval = setInterval(tick, 500);
 }
 
 exports.MatchController = MatchController;
