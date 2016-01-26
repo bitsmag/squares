@@ -4,7 +4,6 @@
   "description": "socket based multiplayer game",
   "main": "index.js",
   "dependencies": {
-    "body-parser": "*",
     "express": "*",
     "swig": "*",
     "socket.io": "*"
