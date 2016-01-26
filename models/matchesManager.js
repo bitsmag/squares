@@ -7,14 +7,11 @@ MatchesManager.prototype.getMatches = function(matchId) {
 };
 
 MatchesManager.prototype.getMatch = function(matchId) { //ERROR: matchNotFound
-  var error = false;
+  var error = true;
   for(var i = 0; i < this.matches.length; i++){
     if(this.matches[i].id === matchId){
       error = false;
       return this.matches[i];
-    }
-    else{
-      error = true;
     }
   }
   if (error) {
