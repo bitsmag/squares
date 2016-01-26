@@ -1,99 +1,100 @@
-var square = require('../models/square');
-var matchSockets = require('../clientInterface/matchSockets');
-var positionUpdater = require('./matchTicker/positionUpdater');
-var circuitsChecker = require('./matchTicker/circuitsChecker');
+var positionCalc      = require('./matchTicker/positionCalc');
+var circuitsCheck     = require('./matchTicker/circuitsCheck');
+var matchSockets      = require('../sockets/matchSockets');
 
 function MatchController(match){
   this.match = match;
 }
 
-MatchController.prototype.runMatch = function(){
-  // After Countdown is finished match is started
-  this.countdown(this.match.countdownDuration);
-}
-
-// The Countdown to start the match
-MatchController.prototype.countdown = function(countdownDuration){
-  function decrementCountdown(x){
-    var secondsAlreadyCounted = x;
-    setTimeout(function(){
-      var secondsLeft = countdownDuration - secondsAlreadyCounted;
-      matchSockets.sendCountdownEvent(that.match.id, secondsLeft)
-      if(secondsLeft>0){
-        secondsAlreadyCounted++;
-        decrementCountdown(secondsAlreadyCounted);
+MatchController.prototype.startMatch = function(){
+  function runMatch(){
+    that.timer(that.match.getDuration());
+    that.matchTicker();
+  }
+  function countdownDurationDecrement(){
+    if(!that.match.isActive()){
+      clearInterval(countdownDurationDecrementInterval);
+    }
+    else {
+      that.match.countdownDurationDecrement();
+      matchSockets.sendCountdownEvent(that.match);
+      if(that.match.getCountdownDuration()===0){
+        clearInterval(countdownDurationDecrementInterval);
+        runMatch();
       }
-      else{
-        // Start the match
-        that.match.running = true;
-        that.timer(that.match.duration);
-        that.matchTicker();
-      }
-    }, 1000);
+    }
   }
   var that = this;
-  decrementCountdown(0);
+  var countdownDurationDecrementInterval = setInterval(countdownDurationDecrement, 1000);
 }
 
-// The timer which indicates the duration of the match
 MatchController.prototype.timer = function(duration){
   function durationDecrement(){
-    setTimeout(function() {
-      that.match.duration--;
-      if(that.match.duration>0){
-        durationDecrement();
+    if(!that.match.isActive()){
+      clearInterval(durationDecrementInterval);
+    }
+    else{
+      that.match.durationDecrement();
+      if(that.match.getDuration()===0){
+        clearInterval(durationDecrementInterval);
+        that.match.setActive(false);
       }
-      else{
-        that.match.running = false;
-      }
-    }, 1000);
+    }
   }
   var that = this;
-  durationDecrement();
+  var durationDecrementInterval = setInterval(durationDecrement, 1000);
 }
 
 MatchController.prototype.matchTicker = function(){
   function tick(){
-    if(!that.match.running){
+    if(!that.match.isActive()){
       clearInterval(tickerInterval);
     }
     else{
-      // Copy current board so we have the old board status after positionUpdater.update and can send it to the clients
-      // The client will draw the old board and execute animations on it to create the new board
-      var board = JSON.parse(JSON.stringify(that.match.board.board));
-      // Set new player position and colors on board
-      var playerStatus = positionUpdater.update(that.match);
+      var playerPositions = positionCalc.calculateNewPlayerPositions(that.match);
+      that.match.updatePlayers(playerPositions);
+      that.match.updateBoard(playerPositions);
 
-      //matchSockets.sendUpdateBoardEvent(that.match.id);
-      matchSockets.sendUpdateBoardEventX(board, that.match.id, playerStatus);
+      var playerPoints = circuitsCheck.getPlayerPoints(that.match);
 
-      // Check for circuits / get points made by each player this tick
-      var playerPoints = circuitsChecker.check(that.match);
+      var activeColors = [];
+      var players = that.match.getPlayers();
+      for(var i = 0; i<players.length; i++){
+        activeColors.push(players[i].getColor())
+      }
 
-      // Add Points to player.score
-      that.match.getPlayerByColor('blue').score += playerPoints.blue;
-      that.match.getPlayerByColor('orange').score += playerPoints.orange;
-      that.match.getPlayerByColor('green').score += playerPoints.green;
-      that.match.getPlayerByColor('red').score += playerPoints.red;
-
-      // Remove color from squares
-      for(var color in playerPoints){
-        if(playerPoints[color] > 0){
-          clearSquares(color);
+      for(i=0; i<activeColors.length; i++){
+        try{
+          that.match.getPlayerByColor(activeColors[i]).increaseScore(playerPoints[activeColors[i]]);
+        }
+        catch(err){
+          matchSockets.sendFatalErrorEvent(that.match);
+          that.match.destroy();
+          console.warn(err.message + ' // match.Controller.matchTicker()');
+          console.trace();
         }
       }
-      clearSquares = function(color) {
-        for(var j = 0; j < that.match.board.board.length; j++){
-          if(that.match.board.board[j].color === color){
-            that.match.board.board[j].color = '';
+
+      var clearSquares = [];
+      for(var color in playerPoints){
+        if(playerPoints[color] > 0){
+          for(var i = 0; i < that.match.getBoard().getSquares().length; i++){
+            var square = that.match.getBoard().getSquares()[i];
+            if(square.getColor() === color){
+              square.setColor('');
+              clearSquares.push(square.getId())
+            }
           }
         }
       }
-      matchSockets.sendUpdateScoreEvent(that.match.id);
+
+      matchSockets.sendUpdateBoardEvent(that.match);
+      matchSockets.sendClearSquaresEvent(that.match, clearSquares);
+      matchSockets.sendUpdateScoreEvent(that.match);
     }
   }
   var that = this;
-  var tickerInterval = setInterval(tick, 500);
+  var tickerInterval = setInterval(tick, 300);
 }
 
 exports.MatchController = MatchController;

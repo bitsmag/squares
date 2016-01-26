@@ -4,80 +4,124 @@
 !_TAG_PROGRAM_NAME	Exuberant Ctags	//
 !_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
 !_TAG_PROGRAM_VERSION	5.8	//
-Board	models/board.js	/^  this.board.push(square72, square73, square74, square75, square76, square77, square78, square79, square80);$/;"	c
-Board.getSquare	models/board.js	/^  Board.prototype.getSquare = function(id) {$/;"	m
-Board.getSquareByPos	models/board.js	/^  Board.prototype.getSquareByPos = function(x, y){$/;"	m
-Match	models/match.js	/^function Match(){$/;"	c
-Match.addPlayer	models/match.js	/^Match.prototype.addPlayer = function(player) { \/\/ERROR: matchIsFull, nameAlreadyInUse$/;"	m
-Match.getMatchCreator	models/match.js	/^Match.prototype.getMatchCreator = function() {$/;"	m
-Match.getPlayer	models/match.js	/^Match.prototype.getPlayer = function(playerName) { \/\/ERROR: playerNotFound$/;"	m
-Match.getPlayerByColor	models/match.js	/^Match.prototype.getPlayerByColor = function(playerColor) {$/;"	m
-Match.isNameInUse	models/match.js	/^Match.prototype.isNameInUse = function(name) {$/;"	m
 MatchController	controllers/matchController.js	/^function MatchController(match){$/;"	c
-MatchController.countdown	controllers/matchController.js	/^MatchController.prototype.countdown = function(countdownDuration){$/;"	m
-MatchController.function.decrementCountdown	controllers/matchController.js	/^  function decrementCountdown(x){$/;"	f
-MatchController.function.durationDecrement	controllers/matchController.js	/^  function durationDecrement(){$/;"	f
-MatchController.function.tick	controllers/matchController.js	/^  function tick(){$/;"	f
-MatchController.matchTicker	controllers/matchController.js	/^MatchController.prototype.matchTicker = function(){$/;"	m
-MatchController.runMatch	controllers/matchController.js	/^MatchController.prototype.runMatch = function(){$/;"	m
+MatchController.startMatch	controllers/matchController.js	/^MatchController.prototype.startMatch = function(){$/;"	m
+MatchController.function.runMatch	controllers/matchController.js	/^  function runMatch(){$/;"	f
+MatchController.function.countdownDurationDecrement	controllers/matchController.js	/^  function countdownDurationDecrement(){$/;"	f
 MatchController.timer	controllers/matchController.js	/^MatchController.prototype.timer = function(duration){$/;"	m
-MatchesManager	models/matchesManager.js	/^function MatchesManager(){$/;"	c
+MatchController.function.durationDecrement	controllers/matchController.js	/^  function durationDecrement(){$/;"	f
+MatchController.matchTicker	controllers/matchController.js	/^MatchController.prototype.matchTicker = function(){$/;"	m
+MatchController.function.tick	controllers/matchController.js	/^  function tick(){$/;"	f
+getTickPlayerScores	controllers/matchTicker/circuitsCheck.js	/^function getTickPlayerScores(match){$/;"	f
+getPoints.vertices.move	controllers/matchTicker/circuitsCheck.js	/^    var vertices = new Array();$/;"	c
+getPoints.getVertices	controllers/matchTicker/circuitsCheck.js	/^  function getVertices(s, c){ \/\/ Returns all squares in the same color reachable from the current square (neighbors)$/;"	f
+getPoints.setAllSquaresUnvisited	controllers/matchTicker/circuitsCheck.js	/^  function setAllSquaresUnvisited(){ \/\/ dfsVisited is a helper property for the algorithm -> set it to false for each square in the end$/;"	f
+getPoints.setPrefDir	controllers/matchTicker/circuitsCheck.js	/^  function setPrefDir(theSquare, nextSquare){ \/\/ Returns the direction the algorithm is "going"$/;"	f
+getPoints.checkValidity	controllers/matchTicker/circuitsCheck.js	/^  function checkValidity(stack, alreadyVisitedVertex){ \/\/ Will check if a circuit is valid. returns the value (score) of the circuit if valid, otherwise 0$/;"	f
+getPoints.dfs	controllers/matchTicker/circuitsCheck.js	/^  function dfs(theSquare, theColor){ \/\/ The actual algorithm (Depth First Search)$/;"	f
+getPoints	controllers/matchTicker/circuitsCheck.js	/^function getPoints(theSquare, theColor, board){$/;"	f
+calculateNewPlayerPositions	controllers/matchTicker/positionCalc.js	/^function calculateNewPlayerPositions(match){$/;"	f
+calculateFuturePos	controllers/matchTicker/positionCalc.js	/^function calculateFuturePos(currentPosition, activeDirection, board, match){$/;"	f
+Board	models/board.js	/^function Board(){$/;"	c
+Board.getSquares	models/board.js	/^Board.prototype.getSquares = function() {$/;"	m
+Board.getWidth	models/board.js	/^Board.prototype.getWidth = function() {$/;"	m
+Board.getHeight	models/board.js	/^Board.prototype.getHeight = function() {$/;"	m
+Board.getStartPoints	models/board.js	/^Board.prototype.getStartPoints = function() {$/;"	m
+Board.getMatchDuration	models/board.js	/^Board.prototype.getMatchDuration = function() {$/;"	m
+Board.getCountdownDuration	models/board.js	/^Board.prototype.getCountdownDuration = function() {$/;"	m
+Board.getSquare	models/board.js	/^Board.prototype.getSquare = function(id) { \/\/ ERROR: squareNotFound$/;"	m
+Match	models/match.js	/^function Match(){$/;"	c
+matchesManager.Match	models/match.js	/^}$/;"	c
+matchesManager.matchesManager.Match.getId	models/match.js	/^Match.prototype.getId = function() {$/;"	m
+Match.getPlayers	models/match.js	/^Match.prototype.getPlayers = function() {$/;"	m
+Match.getPlayer	models/match.js	/^Match.prototype.getPlayer = function(playerName) { \/\/ ERROR: playerNotFound$/;"	m
+Match.getPlayerByColor	models/match.js	/^Match.prototype.getPlayerByColor = function(playerColor) { \/\/ ERROR: playerNotFound$/;"	m
+Match.getMatchCreator	models/match.js	/^Match.prototype.getMatchCreator = function() { \/\/ ERROR: matchCreatorNotFound$/;"	m
+Match.addPlayer	models/match.js	/^Match.prototype.addPlayer = function(player) { \/\/ ERROR: matchIsFull, nameInUse$/;"	m
+Match.removePlayer	models/match.js	/^Match.prototype.removePlayer = function(player) {$/;"	m
+Match.getBoard	models/match.js	/^Match.prototype.getBoard = function() {$/;"	m
+Match.getController	models/match.js	/^Match.prototype.getController = function() {$/;"	m
+Match.getDuration	models/match.js	/^Match.prototype.getDuration = function() {$/;"	m
+Match.durationDecrement	models/match.js	/^Match.prototype.durationDecrement = function() {$/;"	m
+Match.getCountdownDuration	models/match.js	/^Match.prototype.getCountdownDuration = function() {$/;"	m
+Match.countdownDurationDecrement	models/match.js	/^Match.prototype.countdownDurationDecrement = function() {$/;"	m
+Match.run	models/match.js	/^Match.prototype.run = function() {$/;"	m
+Match.stop	models/match.js	/^Match.prototype.stop = function() {$/;"	m
+Match.isRunning	models/match.js	/^Match.prototype.isRunning = function() {$/;"	m
+Match.start	models/match.js	/^Match.prototype.start = function() {$/;"	m
+Match.isStarted	models/match.js	/^Match.prototype.isStarted = function() {$/;"	m
+Match.activate	models/match.js	/^Match.prototype.activate = function() {$/;"	m
+Match.isActivated	models/match.js	/^Match.prototype.isActivated = function() {$/;"	m
+Match.isNameInUse	models/match.js	/^Match.prototype.isNameInUse = function(name) {$/;"	m
+Match.updatePlayers	models/match.js	/^Match.prototype.updatePlayers = function(playerPositions) {$/;"	m
+Match.updateBoard	models/match.js	/^Match.prototype.updateBoard = function(playerPositions) {$/;"	m
+Match.destroy	models/match.js	/^  Match.prototype.destroy = function() {$/;"	m
+createUniqueId	models/match.js	/^var createUniqueId = function(){$/;"	f
+MatchesManager	models/matchesManager.js	/^ function MatchesManager(){$/;"	c
 MatchesManager.addMatch	models/matchesManager.js	/^MatchesManager.prototype.addMatch = function(match) {$/;"	m
-MatchesManager.getMatch	models/matchesManager.js	/^MatchesManager.prototype.getMatch = function(matchID) { \/\/ERROR: matchNotFound$/;"	m
-MatchesManager.removeMatch	models/matchesManager.js	/^MatchesManager.prototype.removeMatch = function(matchID) {$/;"	m
-Player	models/player.js	/^function Player(name, matchID, matchCreator){ \/\/ERROR: matchNotFound, matchIsFull, nameAlreadyInUse$/;"	c
-Square	models/square.js	/^function Square(squareID, edgesTo, position, startPoints){$/;"	c
-author	package.json	/^  "author": "sven",$/;"	f
-body-parser	package.json	/^    "body-parser": "^1.14.1",$/;"	f
-calculateStep	controllers/matchTicker/positionUpdater.js	/^}$/;"	f
-chai	package.json	/^    "chai": "*",$/;"	f
-check	controllers/matchTicker/circuitsChecker.js	/^var util = require('util');$/;"	f
-clearFlipAnimationAfterTimeout	views/assets/js/match.js	/^  function clearFlipAnimationAfterTimeout(elementSelector, i){$/;"	f
-clearSquares	controllers/matchController.js	/^      }$/;"	f
-clearStillFlipAnimationAfterTimeout	views/assets/js/match.js	/^  function clearStillFlipAnimationAfterTimeout(elementSelector, i){$/;"	f
-countdown	views/assets/js/match.js	/^function countdown(secondsLeft){$/;"	f
-createMatch	controllers/createMatch.js	/^var createMatch = function(matchCreatorName){$/;"	f
-dependencies	package.json	/^  "dependencies": {$/;"	f
-description	package.json	/^  "description": "socket based multiplayer game",$/;"	f
-devDependencies	package.json	/^  "devDependencies": {$/;"	f
-express	package.json	/^    "express": "~4.12.2",$/;"	f
-getNewPlayerPositions	controllers/matchTicker/positionUpdater.js	/^}$/;"	f
-getPoints	controllers/matchTicker/circuitsChecker.js	/^};$/;"	f
-getPoints.checkValidity	controllers/matchTicker/circuitsChecker.js	/^  function checkValidity(stack, alreadyVisitedVertex){ \/\/ Will check if a circuit is valid. returns the value (score) of the circuit if valid, otherwise 0$/;"	f
-getPoints.dfs	controllers/matchTicker/circuitsChecker.js	/^  function dfs(theSquare, theColor){ \/\/ The actual algorithm (Depth First Search)$/;"	f
-getPoints.getVertices	controllers/matchTicker/circuitsChecker.js	/^  function getVertices(s, c){ \/\/ Returns all squares in the same color reachable from the current square (neighbors)$/;"	f
-getPoints.setAllSquaresUnvisited	controllers/matchTicker/circuitsChecker.js	/^  function setAllSquaresUnvisited(){ \/\/ dfsVisited is a helper property for the algorithm -> set it to false for each square in the end$/;"	f
-getPoints.setPrefDir	controllers/matchTicker/circuitsChecker.js	/^  function setPrefDir(theSquare, nextSquare){ \/\/ Returns the direction the algorithm is "going"$/;"	f
-getPoints.vertices.move	controllers/matchTicker/circuitsChecker.js	/^    var vertices = new Array();$/;"	c
-joinMatch	controllers/createMatch.js	/^var joinMatch = function(matchID, playerName){ \/\/ERROR: matchNotFound, matchIsFull, nameAlreadyInUse$/;"	f
-keywords	package.json	/^  "keywords": [$/;"	f
-license	package.json	/^  "license": "BSD-2-Clause"$/;"	f
-main	package.json	/^  "main": "index.js",$/;"	f
-matchesManager.createUniqueID	models/match.js	/^var createUniqueID = function(){   \/\/ Create unique matchID$/;"	f
-mocha	package.json	/^    "mocha": "*"$/;"	f
+MatchesManager.getMatches	models/matchesManager.js	/^MatchesManager.prototype.getMatches = function(matchId) {$/;"	m
+MatchesManager.getMatch	models/matchesManager.js	/^MatchesManager.prototype.getMatch = function(matchId) { \/\/ERROR: matchNotFound$/;"	m
+MatchesManager.removeMatch	models/matchesManager.js	/^MatchesManager.prototype.removeMatch = function(match) {$/;"	m
+Player	models/player.js	/^function Player(name, match, matchCreator){ \/\/ERROR: matchNotFound, matchIsFull, nameInUse, matchIsActivated$/;"	c
+Player.getName	models/player.js	/^Player.prototype.getName = function() {$/;"	m
+Player.getColor	models/player.js	/^Player.prototype.getColor = function() {$/;"	m
+Player.getPosition	models/player.js	/^Player.prototype.getPosition = function() {$/;"	m
+Player.setPosition	models/player.js	/^Player.prototype.setPosition = function(pos) {$/;"	m
+Player.isMatchCreator	models/player.js	/^Player.prototype.isMatchCreator = function() {$/;"	m
+Player.getSocket	models/player.js	/^Player.prototype.getSocket = function() {$/;"	m
+Player.setSocket	models/player.js	/^Player.prototype.setSocket = function(socket) {$/;"	m
+Player.getActiveDirection	models/player.js	/^Player.prototype.getActiveDirection = function() {$/;"	m
+Player.setActiveDirection	models/player.js	/^Player.prototype.setActiveDirection = function(dir) {$/;"	m
+Player.getScore	models/player.js	/^Player.prototype.getScore = function() {$/;"	m
+Player.increaseScore	models/player.js	/^Player.prototype.increaseScore = function(points) {$/;"	m
+getUnusedColor	models/player.js	/^function getUnusedColor(match) { \/\/ ERROR: matchIsFull$/;"	f
+Square	models/square.js	/^function Square(squareId, edgesTo, position, startPoints){$/;"	c
+Square.getId	models/square.js	/^Square.prototype.getId = function() {$/;"	m
+Square.getEdgesTo	models/square.js	/^Square.prototype.getEdgesTo = function() {$/;"	m
+Square.getPosition	models/square.js	/^Square.prototype.getPosition = function() {$/;"	m
+Square.getColor	models/square.js	/^Square.prototype.getColor = function() {$/;"	m
+Square.setColor	models/square.js	/^Square.prototype.setColor = function(color) {$/;"	m
+Square.isDfsVisited	models/square.js	/^Square.prototype.isDfsVisited = function() {$/;"	m
+Square.setDfsVisited	models/square.js	/^Square.prototype.setDfsVisited = function(visited) {$/;"	m
 name	package.json	/^  "name": "squares",$/;"	f
-prepareMatch	views/assets/js/match.js	/^function prepareMatch(board, thisColor, players){$/;"	f
-repository	package.json	/^  "repository": {$/;"	f
-respond	clientInterface/createMatchSockets.js	/^function respond(socket){$/;"	f
-respond	clientInterface/matchSockets.js	/^function respond(socket, io){$/;"	f
-scripts	package.json	/^  "scripts": {$/;"	f
-sendCountdownEvent	clientInterface/matchSockets.js	/^function sendCountdownEvent(matchID, secondsLeft){$/;"	f
-sendErrorEvent	clientInterface/createMatchSockets.js	/^function sendErrorEvent(error){$/;"	f
-sendMatchReadyEvent	clientInterface/createMatchSockets.js	/^function sendMatchReadyEvent(matchID){$/;"	f
-sendPlayerConnectedEvent	clientInterface/createMatchSockets.js	/^function sendPlayerConnectedEvent(enquiringPlayer){$/;"	f
-sendPlayerConnectedEvent	clientInterface/matchSockets.js	/^function sendPlayerConnectedEvent(enquiringPlayer){$/;"	f
-sendPrepareGameEvent	clientInterface/matchSockets.js	/^function sendPrepareGameEvent(matchID){$/;"	f
-sendUpdateBoardEvent	clientInterface/matchSockets.js	/^function sendUpdateBoardEvent(matchID){$/;"	f
-sendUpdateBoardEventX	clientInterface/matchSockets.js	/^function sendUpdateBoardEventX(oldBoard, matchID, playerStatus){$/;"	f
-sendUpdateScoreEvent	clientInterface/matchSockets.js	/^function sendUpdateScoreEvent(matchID){$/;"	f
-setKeyListener	views/assets/js/match.js	/^function setKeyListener(){$/;"	f
-start	package.json	/^    "start": "node index.js"$/;"	f
-startDirectionEmits	views/assets/js/match.js	/^function startDirectionEmits(){$/;"	f
-swig	package.json	/^    "swig": "^1.4.2"$/;"	f
-test	package.json	/^    "test": ".\/node_modules\/mocha\/bin\/mocha --recursive",$/;"	f
-type	package.json	/^    "type": "git",$/;"	f
-update	controllers/matchTicker/positionUpdater.js	/^\/\/ Updates board and player state and returns current direction and pos of players$/;"	f
-updateBoard	views/assets/js/match.js	/^function updateBoard(data){$/;"	f
-updateScore	views/assets/js/match.js	/^function updateScore(data){$/;"	f
-url	package.json	/^    "url": "no"$/;"	f
 version	package.json	/^  "version": "0.0.0",$/;"	f
+description	package.json	/^  "description": "socket based multiplayer game",$/;"	f
+main	package.json	/^  "main": "index.js",$/;"	f
+dependencies	package.json	/^  "dependencies": {$/;"	f
+body-parser	package.json	/^    "body-parser": "*",$/;"	f
+express	package.json	/^    "express": "*",$/;"	f
+swig	package.json	/^    "swig": "*",$/;"	f
+socket.io	package.json	/^    "socket.io": "*"$/;"	f
+devDependencies	package.json	/^  "devDependencies": {$/;"	f
+chai	package.json	/^    "chai": "*",$/;"	f
+mocha	package.json	/^    "mocha": "*",$/;"	f
+istanbul	package.json	/^    "istanbul": "*"$/;"	f
+scripts	package.json	/^  "scripts": {$/;"	f
+test	package.json	/^    "test": ".\/node_modules\/mocha\/bin\/mocha --recursive",$/;"	f
+start	package.json	/^    "start": "node index.js"$/;"	f
+repository	package.json	/^  "repository": {$/;"	f
+type	package.json	/^    "type": "git",$/;"	f
+url	package.json	/^    "url": "no"$/;"	f
+keywords	package.json	/^  "keywords": [$/;"	f
+author	package.json	/^  "author": "sven",$/;"	f
+license	package.json	/^  "license": "BSD-2-Clause"$/;"	f
+respond	sockets/createMatchSockets.js	/^function respond(socket){$/;"	f
+respond	sockets/matchSockets.js	/^function respond(socket){$/;"	f
+sendPlayerConnectedEvent	sockets/matchSockets.js	/^function sendPlayerConnectedEvent(match, player){$/;"	f
+sendPlayerDisconnectedEvent	sockets/matchSockets.js	/^function sendPlayerDisconnectedEvent(match, player){$/;"	f
+sendMatchCreatorDisconnectedEvent	sockets/matchSockets.js	/^function sendMatchCreatorDisconnectedEvent(match){$/;"	f
+sendPrepareMatchEvent	sockets/matchSockets.js	/^function sendPrepareMatchEvent(match){$/;"	f
+sendUpdateBoardEvent	sockets/matchSockets.js	/^function sendUpdateBoardEvent(match){$/;"	f
+sendClearSquaresEvent	sockets/matchSockets.js	/^function sendClearSquaresEvent(match, clearSquares){$/;"	f
+sendUpdateScoreEvent.sendCountdownEvent	sockets/matchSockets.js	/^function sendCountdownEvent(match){ \/\/ ERROR: invalidParameter, matchNotFound$/;"	f
+sendUpdateScoreEvent.sendFatalErrorEvent	sockets/matchSockets.js	/^function sendFatalErrorEvent(match){$/;"	f
+prepareMatch	views/assets/js/match.js	/^function prepareMatch(data){$/;"	f
+updateBoard	views/assets/js/match.js	/^function updateBoard(data){$/;"	f
+clearFlipAnimationAfterTimeout	views/assets/js/match.js	/^  function clearFlipAnimationAfterTimeout(elementSelector, i){$/;"	f
+clearStillFlipAnimationAfterTimeout	views/assets/js/match.js	/^  function clearStillFlipAnimationAfterTimeout(elementSelector, i){$/;"	f
+clearSquares.clearSquaresAfterTimeout	views/assets/js/match.js	/^  function clearSquaresAfterTimeout(){$/;"	f
+clearSquares	views/assets/js/match.js	/^function clearSquares(data){$/;"	f
+updateScore	views/assets/js/match.js	/^function updateScore(data){$/;"	f
+countdown	views/assets/js/match.js	/^function countdown(data){$/;"	f
+setKeyListener	views/assets/js/match.js	/^function setKeyListener(){$/;"	f
+startDirectionEmits	views/assets/js/match.js	/^function startDirectionEmits(){$/;"	f

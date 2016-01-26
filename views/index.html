@@ -3,8 +3,8 @@
   <head>
     <title>Squares</title>
     <style>
-    body {
-            font-family: Arial, Helvetica, sans-serif;
+      body {
+        font-family: Arial, Helvetica, sans-serif;
     }
       #logo{
         display: block;
@@ -24,64 +24,32 @@
   <body>
     <img id="logo" src="/img/logo01.svg"/>
     <form id="createMatchForm" action="">
-      <input id="cPlayerName" autocomplete="off" value="Your Name">
+      <input id="cPlayerName" autocomplete="off" placeholder="Name">
       <br/>
-      <input type="submit" value="CreateMatch Match">
+      <input id="createMatchButton" type="submit" value="Create New Match">
     </form>
     <br/>
     <br/>
     <form id="joinMatchForm" action="">
-      <input id="jPlayerName" autocomplete="off" value="Your Name">
+      <input id="jPlayerName" autocomplete="off" placeholder="Name">
       <br/>
-      <input id="matchID" autocomplete="off" value="Match ID">
+      <input id="matchId" autocomplete="off" placeholder="Match Id">
       <br/>
-      <input type="submit" value="Join Match">
+      <input id="joinMatchButton" type="submit" value="Join Match">
     </form>
   </body>
+
   <script>
-  $('#createMatchForm').submit(function(){
-    $.post('/nameCheck',{playerName: $('#cPlayerName').val()},function(data, status){
-      if(status='success'){
-        window.location.replace('/createMatch/' + data);
-      }
-      else{
-        alert('Something went wrong :(')
-      }
-    });
+  $('#createMatchButton').click(function(){
+    var redirect = '/createMatch/' + $('#cPlayerName').val();;
+    window.location.assign(redirect);
+    return false;
   });
 
-  $('#joinMatchForm').submit(function(){
-    $.ajax({
-      type: "POST",
-      url: '/joinMatch',
-      data: {playerName: $('#jPlayerName').val(), matchID: $('#matchID').val()},
-      success: function(data, status){
-        if(status='success'){
-          window.location.replace('/match/' + data.matchID + '/' + data.playerName);
-        }
-      },
-      error: function(jqXHR,error, errorThrown) {
-       if(jqXHR.status&&jqXHR.status==418){
-          var res = jQuery.parseJSON(jqXHR.responseText);
-          if(res.error==='nameAlreadyInUse'){
-            alert('Please choose another name, this one is already in use.');
-          }
-          else if(res.error==='matchNotFound'){
-            alert('We could not find a match for the given ID.');
-          }
-          else if(res.error==='matchIsFull'){
-            alert('It seems the match you wanted to join is already full.');
-          }
-          else{
-            alert('There was a unknown issue - please try again.');
-          };
-       }
-       else{
-           alert('There was a unknown issue - please try again.');
-       }
-      }
-    });
-  return false;
+  $('#joinMatchButton').click(function(){
+    var redirect = '/match/f/' + $('#matchId').val() + '/' + $('#jPlayerName').val();
+    window.location.assign(redirect);
+    return false;
   });
   </script>
 </html>

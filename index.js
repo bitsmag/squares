@@ -3,33 +3,21 @@ var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var swig  = require('swig');
-var bodyParser = require("body-parser");
 
-var createMatchSockets = require('./clientInterface/createMatchSockets');
-var matchSockets = require('./clientInterface/matchSockets');
+var createMatchSockets = require('./sockets/createMatchSockets');
+var matchSockets = require('./sockets/matchSockets');
 var matchesManager = require('./models/matchesManager');
 var match = require('./models/match');
 var player = require('./models/player');
-var createMatch = require('./controllers/createMatch');
 
-// Set swig as the template engine
+// Set swig as the template engine for html files
 app.engine('html', swig.renderFile);
-app.set('view engine', 'swig');
-// Swig caches the templates -> no need that express caches them too
-app.set('view cache', false);
+// Express cache is active, no nee for swig-cahce
+swig.setDefaults({ cache: false });
+// Set path for static files
+app.use(express.static(__dirname + '/views/assets'));
 // Set Port (heroku-style)
 app.set('port', (process.env.PORT || 3000));
-// Get statoc filse serverd like "/js/match.js"
-app.use(express.static(__dirname + '/views/assets'));
-// Send failure page in case of error
-app.use(function(err, req, res, next) {
-  console.error(err.stack);
-  res.status(500).send('Sorry, something went wrong :(');
-});
-//Here we are configuring express to use body-parser as middle-ware.
-app.use(bodyParser.urlencoded({ extended: false }));
-
-
 
 /*
   * SOCKETS
@@ -56,93 +44,104 @@ app.get('/', function(req, res){
   res.sendFile(__dirname + '/views/index.html');
 });
 
-app.post('/nameCheck', function (req, res) {
-  //Filter all non alphanumeric values
-  var playerName = req.body.playerName;
-  playerName = playerName.replace(/\W/g, '');
-  //Send back clean name
-  res.send(playerName);
-});
-
 app.get('/createMatch/:playerName', function(req, res){
-  //Filter all non alphanumeric values
-  var playerName = req.params.playerName;
-  playerName = playerName.replace(/\W/g, '');
-  //Create match
-  var matchID = createMatch.createMatch(playerName);
-  //Send back HTML
-  res.render(__dirname + '/views/createMatch.html', {matchID: matchID, playerName: playerName});
-});
-
-app.post('/joinMatch', function(req, res){
-  //Filter all non alphanumeric values
-  var matchID = req.body.matchID;
-  matchID = matchID.replace(/\W/g, '');
-  var playerName = req.body.playerName;
-  playerName = playerName.replace(/\W/g, '');
-  //Join match
-  var joinMatch = createMatch.joinMatch(matchID, playerName);
-  //Handle errors
-  if(joinMatch instanceof Error){
-    console.log(joinMatch);
-    if(joinMatch.message==='nameAlreadyInUse'){
-      res.status(418).json({ error: 'nameAlreadyInUse'});
-    }
-    else if(joinMatch.message==='matchNotFound'){
-      res.status(418).json({ error: 'matchNotFound'});
-    }
-    else if(joinMatch.message==='matchIsFull'){
-      res.status(418).json({ error: 'matchIsFull'});
-    }
-    else{
-      res.status(418).json({ error: 'unknownError'});
-    }
-  }
-  //Success
-  else{
-    res.send({matchID: matchID, playerName: playerName})
-  }
-});
-
-app.get('/match/:matchID/:playerName', function(req, res){
-  //Filter all non alphanumeric values
-  var matchID = req.params.matchID;
-  matchID = matchID.replace(/\W/g, '');
+  //Filter all non alphanumeric values in params
   var playerName = req.params.playerName;
   playerName = playerName.replace(/\W/g, '');
 
-  //Check if match and player exist
-  var errorOccured = false;
+  if(playerName===''){
+    res.status(500).send('Your name must contain only alphanumeric characters.');
+  }
+  else {
+    var newMatch = new match.Match();
+    var error = false;
+    // try {
+      var newPlayer = new player.Player(playerName, newMatch, true);
+    // }
+    // catch(err){
+    //   error = true;
+    //   res.status(500).send('There was a unknown issue - please try again.');
+    //   newMatch.destroy();
+    //   console.warn(err.message + ' // index/createMatch/:playerName');
+    //   console.trace();
+    // }
+    if(!error) {
+      //Send back HTML
+      res.render(__dirname + '/views/createMatch.html', {matchId: newMatch.getId(), playerName: playerName});
+    }
+  }
+});
 
-  var enquiredMatch = matchesManager.manager.getMatch(matchID);
-  // Check if match with given matchID exists
-  if(enquiredMatch instanceof Error){
-    errorOccured = true;
-    if(enquiredMatch.message==='matchNotFound'){
-      res.status(500).send('We could not find the match you are looking for.');
+app.get('/match/:matchCreatorFlag/:matchId/:playerName', function(req, res){
+  // Filter all non alphanumeric values in params
+  var matchCreatorFlag = req.params.matchCreatorFlag;
+  matchCreatorFlag = matchCreatorFlag.replace(/\W/g, '');
+  var matchId = req.params.matchId;
+  matchId = matchId.replace(/\W/g, '');
+  var playerName = req.params.playerName;
+  playerName = playerName.replace(/\W/g, '');
+
+  var match;
+  var error = false;
+  try {
+    match = matchesManager.manager.getMatch(matchId);
+  }
+  catch(err){
+    error = true;
+    if(err.message==='matchNotFound'){
+      res.status(500).send('The match you are looking for was not found.');
     }
     else{
       res.status(500).send('There was a unknown issue - please try again.');
     }
   }
-  else{
-    var enquiringPlayer = enquiredMatch.getPlayer(playerName);
-    // Check if player with given name exists
-    if(enquiringPlayer instanceof Error){
-      errorOccured = true;
-      if(enquiringPlayer.message==='playerNotFound'){
-        res.status(500).send('We could not find your player in this match.');
+  if(!error){
+    // If the matchCreator requests this page, the player
+    // object already exists (was created in /createMatch).
+    // Otherwise the player-object must be created.
+    if(matchCreatorFlag==='t'){
+      if(!match.isActive() && playerName===match.getMatchCreator().getName()){
+        match.setActive(true);
+        res.render(__dirname + '/views/match.html', { matchId: matchId,
+                                        playerName: playerName});
       }
       else{
         res.status(500).send('There was a unknown issue - please try again.');
       }
     }
-  }
-
-  // Everything fine (both exists)
-  if(!errorOccured){
-    res.render(__dirname + '/views/match.html', { matchID: req.params.matchID,
-                                  playerName: req.params.playerName});
+    else if(matchCreatorFlag==='f'){
+      if(playerName===''){
+        res.status(500).send('Please use only alphanumeric chars in your name.');
+      }
+      else {
+        var error = false;
+        try {
+          var newPlayer = new player.Player(playerName, match, false);
+        }
+        catch(err){
+          error = true;
+          if(err.message === 'matchIsFull'){
+            res.status(500).send('Sorry, you\'re too late. The match is full already.');
+          }
+          else if(err.message === 'matchIsStarted'){
+            res.status(500).send('Sorry, you\'re too late. The match has already started.');
+          }
+          else if(err.message === 'nameInUse'){
+            res.status(500).send('Sorry, it seems that your name is already used by another player. Please choose a diffrent name.');
+          }
+          else{
+            res.status(500).send('There was a unknown issue - please try again.');
+          }
+        }
+        if(!error) {
+          res.render(__dirname + '/views/match.html', { matchId: matchId,
+                                          playerName: playerName});
+        }
+      }
+    }
+    else {
+      res.status(500).send('There was a unknown issue - please try again.');
+    }
   }
 });
 

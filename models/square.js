@@ -1,28 +1,51 @@
-function Square(squareID, edgesTo, position, startPoints){
-  this.id = squareID;
+function Square(squareId, edgesTo, position, startSquares){
+  this.id = squareId;
   this.edgesTo = edgesTo;
   this.position = position;
   this.color = '';
-  this.dfsVisited = false; // property for dfs algorithm circuitsChecker
+  this.dfsVisited = false;
 
-  // Set the color if the square is the startpoint of some player
-  switch(squareID){
-    case startPoints.blue:
+  switch(squareId){
+    case startSquares.blue:
       this.color = 'blue';
       break;
-    case startPoints.orange:
+    case startSquares.orange:
       this.color = 'orange';
       break;
-    case startPoints.green:
+    case startSquares.green:
       this.color = 'green';
       break;
-    case startPoints.red:
+    case startSquares.red:
       this.color = 'red';
       break;
   }
-
-  //ownedBy
-  //occupiedBy
 }
 
+Square.prototype.getId = function() {
+  return this.id;
+};
+
+Square.prototype.getEdgesTo = function() {
+  return this.edgesTo;
+};
+
+Square.prototype.getPosition = function() {
+  return this.position;
+};
+
+Square.prototype.getColor = function() {
+  return this.color;
+};
+
+Square.prototype.isDfsVisited = function() {
+  return this.dfsVisited;
+};
+
+Square.prototype.setColor = function(color) {
+    this.color = color;
+};
+
+Square.prototype.setDfsVisited = function(visited) {
+  this.dfsVisited = visited;
+};
 exports.Square = Square;

@@ -1,6 +1,6 @@
 <html>
   <head>
-    <title>{{ title }}</title>
+    <title>{{ matchId }}</title>
     <style>
     body {
             font-family: Arial, Helvetica, sans-serif;
@@ -12,54 +12,29 @@
         margin-top: 5%;
         margin-bottom: 5%;
       }
+
       .centerTextBox{
+        width: 320px;
         margin-left: auto;
         margin-right: auto;
         text-align: center;
       }
     </style>
   </head>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
-  <script src="/socket.io/socket.io.js"></script>
-  <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
+  <script>
+  // Information about the player which is sent with every socket
+  var playerInfo = {matchId: '{{matchId}}',
+            playerName: '{{playerName}}'};
+  </script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+  <script src="https://cdn.socket.io/socket.io-1.4.3.js"></script>
   <body>
     <img id ="logo" src="/img/logo02.svg"/>
-    <div class="centerTextBox">Your match is ready. Invite three friends to play with you by telling them your match id.
-    <h2>{{ matchID }}</h2>
-    You can start the match after all three players has joined your match.
-    <br/><br/>
+    <div class="centerTextBox">Your match is ready! <br>
+      Invite three friends to play with you by sharing the match id.
+    <h2>{{ matchId }}</h2>
+    <br>
     <button id="startMatchBtn">Start Match</button></div>
-    <ul id="list"></ul>
-    <script>
-
-    var createMatchSockets = io.connect('/createMatchSockets');
-
-    createMatchSockets.on('connect', function () {
-      createMatchSockets.emit('connectionInfo', '{{matchID}}');
-
-      createMatchSockets.on('player connected', function(connectedPlayer){
-        $('#list').append($('<li>').text('Player ' + connectedPlayer.playerName + ' with color ' + connectedPlayer.playerColor + ' connected to this match (' + connectedPlayer.matchID + ')'));
-      });
-
-      createMatchSockets.on('match ready', function(){
-        alert("Your match is ready");
-        $('#startMatchBtn').click(function(){
-          window.location.replace('/match/' + '{{matchID}}' + '/{{playerName}}');
-        })
-      });
-      createMatchSockets.on('error', function(message){
-        if(message==='matchNotFound'){
-          alert('Sorry. There was a issue with your match. Please create a new one. [' + message + ']');
-        }
-        else if(message==='matchCreatorNotFound'){
-          alert('Sorry. There was a issue with your match. Please create a new one. [' + message + ']');
-        }
-        else if(message==='unknownError'){
-          alert('Sorry. There was a issue with your match. Please create a new one. [' + message + ']');
-        }
-      });
-    });
-
-    </script>
   </body>
+  <script src="/js/createMatch.js"></script>
 </html>

@@ -2,35 +2,38 @@ function MatchesManager(){
   this.matches = [];
 }
 
+MatchesManager.prototype.getMatches = function(matchId) {
+    return this.matches;
+};
+
+MatchesManager.prototype.getMatch = function(matchId) { //ERROR: matchNotFound
+  var error = false;
+  for(var i = 0; i < this.matches.length; i++){
+    if(this.matches[i].id === matchId){
+      error = false;
+      return this.matches[i];
+    }
+    else{
+      error = true;
+    }
+  }
+  if (error) {
+    throw new Error('matchNotFound');
+  }
+};
+
 MatchesManager.prototype.addMatch = function(match) {
   this.matches.push(match);
 };
 
-MatchesManager.prototype.getMatch = function(matchID) { //ERROR: matchNotFound
-  for(var i = 0; i < this.matches.length; i++){
-    if(this.matches[i].id === matchID){
-      return this.matches[i];
-    }
-  }
-  return new Error('matchNotFound');
-};
-
-MatchesManager.prototype.removeMatch = function(matchID) {
-  var removed = false;
-  for(var i = 0; i < this.matches.length; i++){
-    if(this.matches[i].id === matchID){
-      var index = this.matches.indexOf(this.matches[i]);
-      this.matches.splice(index, 1);
-      removed = true;
-    };
-  };
-  if(!removed){
-    return new Error('matchNotFound');
+MatchesManager.prototype.removeMatch = function(match) {
+  var index = this.matches.indexOf(match);
+  if (index > -1) {
+    this.matches.splice(index, 1);
   }
 };
 
-
-// Singelton to be exported
+// Singelton
 var manager = (function () {
   var instance;
 
