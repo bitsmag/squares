@@ -81,7 +81,7 @@ function prepareMatch(data){
   $('#infoDiv').append('<table id="scores"></table><h2 id="countdown">...</h2>');
 
   for(var i = 0; i<data.players.length; i++){
-    var div = '<td id="' + data.players[i].playerColor + 'Score"><br/><span class="name" class="underlined">';
+    var div = '<td id="' + data.players[i].playerColor + 'Score"><br/><span class="name underlined">';
     div += data.players[i].playerName;
     div += '</span><br><br>'
     div += '<span class="score">0</span><br/><br/></td>';
