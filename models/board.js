@@ -5,7 +5,7 @@ function Board(){
   this.width = 9;
   this.height = 9;
   this.startSquares = {blue: 0, orange: 8, green: 72, red: 80}
-  this.matchDuration = 100;
+  this.matchDuration = 60;
   this.countdownDuration = 4;
 
   var square0  = new square.Square(0,  [1, 9],           {x: 0, y: 0}, this.startSquares);

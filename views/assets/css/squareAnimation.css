@@ -1090,14 +1090,14 @@ background-color: rgb(200, 200, 200);
 
 
 .still_left {
-  animation: still_left 0.3s 1 linear;
+  animation: still_left 0.5s 1 linear;
 }
 .still_right {
-  animation: still_right 0.3s 1 linear;
+  animation: still_right 0.5s 1 linear;
 }
 .still_up {
-  animation: still_up 0.3s 1 linear;
+  animation: still_up 0.5s 1 linear;
 }
 .still_down {
-  animation: still_down 0.3s 1 linear;
+  animation: still_down 0.5s 1 linear;
 }

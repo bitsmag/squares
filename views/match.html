@@ -3,26 +3,6 @@
   <head>
     <title>Squares</title>
     <style>
-    body {
-            font-family: Arial, Helvetica, sans-serif;
-    }
-    table, #waitingDiv{
-      margin-left: auto;
-      margin-right: auto;
-    }
-    #waitingDiv {
-      width: 320px;
-    }
-
-    .warning {
-      color: #CC3333;
-    }
-
-    .square{
-      height: 50px;
-      width: 50px;
-    }
-
     #logo{
       display: block;
       margin-left: auto;
@@ -30,54 +10,24 @@
       margin-top: 5%;
       margin-bottom: 5%;
     }
-
-    #scores{
-      margin-left: auto;
-      margin-right: auto;
-      width: 485px;
-    }
-
-    #scores td{
-      width: 25%;
-      text-align: center;
-    }
-
-    #countdown{
-      text-align: center;
-    }
-
-    .blueScore{
-      background-color: #4fc1df;
-    }
-    .redScore{
-      background-color: #e5337f;
-    }
-    .orangeScore{
-      background-color: #fab823;
-    }
-    .greenScore{
-      background-color: #15b3ab;
-    }
-
     </style>
   </head>
-  <script>
-  // Information about the player which is sent with every socket
-  var playerInfo = {matchId: '{{matchId}}',
-            playerName: '{{playerName}}'};
-  </script>
   <body>
-    <img id="logo" src="/img/logo03.svg"/>
-    <div id="waitingDiv">
-      <h4 id="waitingText">Waiting for the host to start the match...</h4>
-      <ul id="list"></ul>
-    </div>
-    <h3 id="countdown"></h3>
-    <br/><br/>
+    <img id="logo" src="/img/logo.svg"/>
 
-    <table id="scores"></table>
+    <div id="infoDiv" class="form-style-8 no-bottom-padding">
+      <h2>Waiting for the host to start the match...</h2>
+      <ul id="connectionList"></ul>
+    </div>
+
     <div id=board></div>
 
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/match.css">
+    <script>
+    var playerInfo = {matchId: '{{matchId}}',
+              playerName: '{{playerName}}'};
+    </script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
     <script src="https://cdn.socket.io/socket.io-1.4.3.js"></script>
     <script src="/js/match.js"></script>

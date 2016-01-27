@@ -1,10 +1,7 @@
 <html>
   <head>
-    <title>{{ matchId }}</title>
+    <title>Squares</title>
     <style>
-    body {
-            font-family: Arial, Helvetica, sans-serif;
-    }
       #logo{
         display: block;
         margin-left: auto;
@@ -12,29 +9,25 @@
         margin-top: 5%;
         margin-bottom: 5%;
       }
-
-      .centerTextBox{
-        width: 320px;
-        margin-left: auto;
-        margin-right: auto;
-        text-align: center;
-      }
     </style>
+    <link rel="stylesheet" href="/css/main.css">
   </head>
+  <body>
+    <img id ="logo" src="/img/logo.svg"/>
+    <div class="form-style-8">
+      <h2>Your match is ready!</h2>
+      <p>Invite up to three friends to play with you.</p>
+      <p>Your match ID is: <b>{{ matchId }}</b></p>
+      <form>
+        <input id="startMatchBtn" type="button" value="Start match!"/>
+      </form>
+    </div>
+  </body>
   <script>
-  // Information about the player which is sent with every socket
   var playerInfo = {matchId: '{{matchId}}',
-            playerName: '{{playerName}}'};
+    playerName: '{{playerName}}'};
   </script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
   <script src="https://cdn.socket.io/socket.io-1.4.3.js"></script>
-  <body>
-    <img id ="logo" src="/img/logo02.svg"/>
-    <div class="centerTextBox">Your match is ready! <br>
-      Invite three friends to play with you by sharing the match id.
-    <h2>{{ matchId }}</h2>
-    <br>
-    <button id="startMatchBtn">Start Match</button></div>
-  </body>
   <script src="/js/createMatch.js"></script>
 </html>

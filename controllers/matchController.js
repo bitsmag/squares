@@ -48,6 +48,7 @@ MatchController.prototype.timer = function(duration){
 MatchController.prototype.matchTicker = function(){
   function tick(){
     if(!that.match.isActive()){
+      matchSockets.sendMatchEndEvent(that.match);
       clearInterval(tickerInterval);
     }
     else{
@@ -94,7 +95,7 @@ MatchController.prototype.matchTicker = function(){
     }
   }
   var that = this;
-  var tickerInterval = setInterval(tick, 300);
+  var tickerInterval = setInterval(tick, 500);
 }
 
 exports.MatchController = MatchController;

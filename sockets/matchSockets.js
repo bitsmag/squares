@@ -190,6 +190,13 @@ function sendUpdateScoreEvent(match){
   }
 }
 
+function sendMatchEndEvent(match){
+  for(var i = 0; i < match.getPlayers().length; i++){
+    var thisColor = match.getPlayers()[i].getColor();
+    match.getPlayers()[i].getSocket().emit('matchEnd');
+  }
+}
+
 function sendCountdownEvent(match){
   var data = {countdownDuration: match.getCountdownDuration()};
   for(var i = 0; i < match.getPlayers().length; i++){
@@ -210,5 +217,6 @@ exports.sendPrepareMatchEvent = sendPrepareMatchEvent;
 exports.sendUpdateBoardEvent = sendUpdateBoardEvent;
 exports.sendClearSquaresEvent = sendClearSquaresEvent;
 exports.sendUpdateScoreEvent = sendUpdateScoreEvent;
+exports.sendMatchEndEvent = sendMatchEndEvent;
 exports.sendCountdownEvent = sendCountdownEvent;
 exports.sendFatalErrorEvent = sendFatalErrorEvent;
