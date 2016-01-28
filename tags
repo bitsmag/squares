@@ -73,6 +73,7 @@ clearSquares	views/assets/js/match.js	/^function clearSquares(data){$/;"	f
 clearSquares.clearSquaresAfterTimeout	views/assets/js/match.js	/^  function clearSquaresAfterTimeout(){$/;"	f
 clearStillFlipAnimationAfterTimeout	views/assets/js/match.js	/^  function clearStillFlipAnimationAfterTimeout(elementSelector, i){$/;"	f
 countdown	views/assets/js/match.js	/^function countdown(data){$/;"	f
+createMatch	views/index.html	/^  function createMatch(){$/;"	f
 createUniqueId	models/match.js	/^function createUniqueId(){$/;"	f
 dependencies	package.json	/^  "dependencies": {$/;"	f
 description	package.json	/^  "description": "socket based multiplayer game",$/;"	f
@@ -88,6 +89,7 @@ getPoints.setPrefDir	controllers/matchTicker/circuitsCheck.js	/^  function setPr
 getPoints.vertices.move	controllers/matchTicker/circuitsCheck.js	/^    var vertices = new Array();$/;"	c
 getUnusedColor	models/player.js	/^function getUnusedColor(match) { \/\/ ERROR: matchIsFull$/;"	f
 istanbul	package.json	/^    "istanbul": "*"$/;"	f
+joinMatch	views/index.html	/^  function joinMatch(){$/;"	f
 keywords	package.json	/^  "keywords": [$/;"	f
 license	package.json	/^  "license": "BSD-2-Clause"$/;"	f
 main	package.json	/^  "main": "index.js",$/;"	f
@@ -113,7 +115,6 @@ sendUpdateScoreEvent.sendMatchEndEvent	sockets/matchSockets.js	/^function sendMa
 setKeyListener	views/assets/js/match.js	/^function setKeyListener(){$/;"	f
 socket.io	package.json	/^    "socket.io": "*"$/;"	f
 start	package.json	/^    "start": "node index.js"$/;"	f
-startDirectionEmits	views/assets/js/match.js	/^function startDirectionEmits(){$/;"	f
 swig	package.json	/^    "swig": "*",$/;"	f
 test	package.json	/^    "test": ".\/node_modules\/mocha\/bin\/mocha --recursive",$/;"	f
 type	package.json	/^    "type": "git",$/;"	f

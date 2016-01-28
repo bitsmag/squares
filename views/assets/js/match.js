@@ -163,7 +163,6 @@ function updateScore(data){
 function countdown(data){
   if(data.countdownDuration===0){
     setKeyListener();
-    startDirectionEmits();
     $('#countdown').html('GO!');
     setTimeout(function() {
       $('#countdown').remove();
@@ -202,35 +201,20 @@ function setKeyListener(){
     switch(event.keyCode){
       case 37:
         direction = 'left';
+        matchSockets.emit('goLeft');
         break;
       case 38:
         direction = 'up';
+        matchSockets.emit('goUp');
         break;
       case 39:
         direction = 'right';
+        matchSockets.emit('goRight');
         break;
       case 40:
-        direction = 'down'
+        direction = 'down';
+        matchSockets.emit('goDown');
         break;
     }
   });
-}
-
-function startDirectionEmits(){
-    setInterval(function(){
-      switch(direction){
-        case 'left':
-          matchSockets.emit('goLeft');
-          break;
-        case 'up':
-          matchSockets.emit('goUp');
-          break;
-        case 'right':
-          matchSockets.emit('goRight');
-          break;
-        case 'down':
-          matchSockets.emit('goDown');
-          break;
-      }
-    }, 100);
 }
