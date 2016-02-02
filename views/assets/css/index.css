@@ -1,0 +1,16 @@
+.negative_tooltip {
+  background-color: rgb(250, 184, 35);
+  padding: 2px 10px 5px 10px;
+  width: 300px;
+  position: absolute;
+  margin-top: -18px;
+  visibility: hidden;
+}
+.positive_tooltip {
+  background-color: rgba(21, 179, 171, 0.5);
+  padding: 2px 10px 5px 10px;
+  width: 300px;
+  position: absolute;
+  margin-top: -18px;
+  visibility: hidden;
+}

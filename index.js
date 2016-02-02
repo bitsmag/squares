@@ -48,6 +48,9 @@ app.get('/createMatch/:playerName', function(req, res){
   //Filter all non alphanumeric values in params
   var playerName = req.params.playerName;
   playerName = playerName.replace(/\W/g, '');
+  if(playerName.lenght>12){
+    playerName = string.substring(0, 12);
+  }
 
   if(playerName===''){
     res.status(500).send('Your name must contain only alphanumeric characters.');
@@ -80,6 +83,9 @@ app.get('/match/:matchCreatorFlag/:matchId/:playerName', function(req, res){
   matchId = matchId.replace(/\W/g, '');
   var playerName = req.params.playerName;
   playerName = playerName.replace(/\W/g, '');
+  if(playerName.lenght>12){
+    playerName = string.substring(0, 12);
+  }
 
   var match;
   var error = false;
@@ -142,6 +148,23 @@ app.get('/match/:matchCreatorFlag/:matchId/:playerName', function(req, res){
     else {
       res.status(500).send('There was a unknown issue - please try again.');
     }
+  }
+});
+
+app.get('/checkMatchId/:matchId', function(req, res){
+  var matchId = req.params.matchId;
+  matchId = matchId.replace(/\W/g, '');
+
+  var error = false;
+  try {
+    match = matchesManager.manager.getMatch(matchId);
+  }
+  catch(err){
+    error = true;
+    res.status(200).send({matchStatus: 'notFound'});
+  }
+  if(!error){
+    res.status(200).send({matchStatus: 'found'});
   }
 });
 

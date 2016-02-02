@@ -3,6 +3,7 @@
   <head>
     <title>Squares</title>
     <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/index.css">
   </head>
   <body>
     <img id ="logo" src="/img/logo.svg"/>
@@ -10,7 +11,8 @@
     <div class="form-style-8">
       <h2>Create a new match.</h2>
       <form>
-        <input id="cPlayerName" type="text" name="field1" autocomplete="off" placeholder="Name">
+        <div id="cPlayerName_invalidCharTooltip" class="negative_tooltip">Please avoid using special characters.</div>
+        <input id="cPlayerName" type="text" name="field1" autocomplete="off" placeholder="Name" maxlength="12">
         <input id="createMatchButton" type="button" value="GO!" />
       </form>
     </div>
@@ -18,8 +20,12 @@
     <div class="form-style-8">
       <h2>Join a match.</h2>
       <form>
-        <input id="jPlayerName" type="text" name="field1" autocomplete="off" placeholder="Name">
-        <input id="matchId" type="text" name="field2" autocomplete="off" placeholder="Match ID">
+        <div id="matchId_existingId" class="positive_tooltip">Valid match ID.</div>
+        <div id="jPlayerName_invalidCharTooltip" class="negative_tooltip">Please avoid using special characters.</div>
+        <div id="matchId_nonExistingId" class="negative_tooltip">No match with the given ID was found.</div>
+        <div id="matchId_tooShortId" class="negative_tooltip">A match ID must be 5 characters long.</div>
+        <input id="jPlayerName" type="text" name="field1" autocomplete="off" placeholder="Name" maxlength="12">
+        <input id="matchId" type="text" name="field2" autocomplete="off" placeholder="Match ID" maxlength="5">
         <input id="joinMatchButton" type="button" value="GO!" />
       </form>
     </div>
@@ -34,9 +40,12 @@
   $('#createMatchButton').click(function(){
     return createMatch();
   });
-  $('#cPlayerName').keydown(function(event){
+  $('#cPlayerName').keyup(function(event){
     if(event.keyCode===13){
       return createMatch();
+    }
+    else{
+      checkSpecialChars('#cPlayerName');
     }
   });
 
@@ -53,10 +62,53 @@
       return joinMatch();
     }
   });
-  $('#jPlayerName').keydown(function(event){
+  $('#jPlayerName').keyup(function(event){
     if(event.keyCode===13){
       return joinMatch();
     }
+    else{
+      checkSpecialChars('#jPlayerName');
+    }
   });
+  $('#matchId').keyup(function(event){
+    var inputVal = $('#matchId').val();
+    if(inputVal.length === 5){
+      $.get('/checkMatchId/' + $('#matchId').val(), function(data) {
+        if(data.matchStatus==='notFound'){
+          $('#matchId_nonExistingId').css('visibility', 'visible');
+          $('#matchId_tooShortId').css('visibility', 'hidden');
+          $('#matchId_existingId').css('visibility', 'hidden');
+        }
+        else{
+          $('#matchId_existingId').css('visibility', 'visible');
+          $('#matchId_nonExistingId').css('visibility', 'hidden');
+          $('#matchId_tooShortId').css('visibility', 'hidden');
+        }
+      });
+    }
+    else if (0 < inputVal.length && inputVal.length < 5){
+      $('#matchId_tooShortId').css('visibility', 'visible');
+      $('#matchId_nonExistingId').css('visibility', 'hidden');
+      $('#matchId_existingId').css('visibility', 'hidden');
+    }
+    else {
+      $('#matchId_nonExistingId').css('visibility', 'hidden');
+      $('#matchId_tooShortId').css('visibility', 'hidden');
+      $('#matchId_existingId').css('visibility', 'hidden');
+    }
+  });
+
+  function checkSpecialChars(selector){
+    var tooltipSelector = selector + '_invalidCharTooltip';
+    var str = $(selector).val();
+    if(/^[a-zA-Z0-9- ]*$/.test(str) == false) {
+      $(tooltipSelector).css('visibility', 'visible');
+    }
+    else {
+      $(tooltipSelector).css('visibility', 'hidden');
+    }
+  }
+
+
   </script>
 </html>
