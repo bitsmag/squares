@@ -1,4 +1,5 @@
 var direction;
+var playerPositions = {blue: null, orange: null, green: null, red: null}
 
 var socket = io();
 var matchSockets = io.connect('/matchSockets');
@@ -49,6 +50,7 @@ function prepareMatch(data){
   var cols = data.board.width;
   var squareId = 0;
 
+  // Create board
   var table = '<table>'
   for(var i=0; i<rows; i++){
     table += '<tr>'
@@ -77,9 +79,9 @@ function prepareMatch(data){
   table += "</table>"
   $('#board').append(table);
 
+  // Create Score-div
   $('#infoDiv').empty();
   $('#infoDiv').append('<table id="scores"></table><h2 id="countdown">...</h2>');
-
   for(var i = 0; i<data.players.length; i++){
     var div = '<td id="' + data.players[i].playerColor + 'Score"><br/><span class="name underlined">';
     div += data.players[i].playerName;
@@ -93,50 +95,54 @@ function updateBoard(data){
   // Animations
   var colors = ['blue', 'orange', 'green', 'red'];
   for(i=0; i<colors.length; i++){
-    var elementSelector = '#square' + data.playerStatuses[colors[i]].pos;
+    if(playerPositions[colors[i]] !== data.playerStatuses[colors[i]].pos){
 
-    var elementColor;
-    var rgb = {blue: 'rgb(79, 193, 223)', orange: 'rgb(250, 184, 35)', green: 'rgb(21, 179, 171)', red: 'rgb(229, 51, 127)'};
-    if ($(elementSelector).css('background-color') == rgb['blue']){
-      elementColor = 'blue';
-    }
-    else if ($(elementSelector).css('background-color') == rgb['orange']){
-      elementColor = 'orange';
-    }
-    else if ($(elementSelector).css('background-color') == rgb['green']){
-      elementColor = 'green';
-    }
-    else if ($(elementSelector).css('background-color') == rgb['red']){
-      elementColor = 'red';
-    }
-    else {
-      elementColor = 'white';
-    }
+      var oldSquareSelector = '#square' + playerPositions[colors[i]];
+      $(oldSquareSelector).css('border-color', '#C8C8C8');
 
-    if(elementColor!==colors[i]){
-      $(elementSelector).append('<div class="' + elementColor + '2' + colors[i] + '_' + data.playerStatuses[colors[i]].dir + '"></div><div class="static' + colors[i] + '_' + data.playerStatuses[colors[i]].dir + '"></div>');
-      clearFlipAnimationAfterTimeout(elementSelector, i);
-    }
-    else{
-      $(elementSelector).addClass('still_' + data.playerStatuses[colors[i]].dir);
-      clearStillFlipAnimationAfterTimeout(elementSelector, i);
+      playerPositions[colors[i]] = data.playerStatuses[colors[i]].pos;
+      var elementSelector = '#square' + data.playerStatuses[colors[i]].pos;
+
+      var elementColor;
+      var playerRgb = {blue: 'rgb(79, 193, 223)', orange: 'rgb(250, 184, 35)', green: 'rgb(21, 179, 171)', red: 'rgb(229, 51, 127)'};
+      var borderRgb = {blue: 'rgb(27, 125, 151)', orange: 'rgb(175, 122, 4)', green: 'rgb(11, 91, 87)', red: 'rgb(113, 14, 57)'};
+      if ($(elementSelector).css('background-color') == playerRgb['blue']){
+        elementColor = 'blue';
+      }
+      else if ($(elementSelector).css('background-color') == playerRgb['orange']){
+        elementColor = 'orange';
+      }
+      else if ($(elementSelector).css('background-color') == playerRgb['green']){
+        elementColor = 'green';
+      }
+      else if ($(elementSelector).css('background-color') == playerRgb['red']){
+        elementColor = 'red';
+      }
+      else {
+        elementColor = 'white';
+      }
+
+      $(elementSelector).css('border-color', borderRgb[colors[i]]);
+      var animDuration = (data.playerStatuses[colors[i]].doubleSpeed ? 0.25 : 0.5);
+      var anim = data.playerStatuses[colors[i]].dir + ' ' + animDuration + 's 1 ease-in-out,  ' + elementColor + '2' + colors[i] + ' ' + animDuration + 's 1 ease-in-out';
+      $(elementSelector).css('animation', anim);
+      clearFlipAnimationAfterTimeout(elementSelector, i, animDuration);
     }
   }
 
-  function clearFlipAnimationAfterTimeout(elementSelector, i){
-    setTimeout(
-      function(){
-        $(elementSelector).css('background-color', rgb[colors[i]]);
-        $(elementSelector).empty();
-      }, 500);
+  function clearFlipAnimationAfterTimeout(elementSelector, i, animDuration){
+    var timeout = (animDuration === 0.25 ? 250 : 500);
+    setTimeout(function(){
+        $(elementSelector).css('background-color', playerRgb[colors[i]]);
+        $(elementSelector).css('animation', 'none');
+      }, timeout);
   }
 
-  function clearStillFlipAnimationAfterTimeout(elementSelector, i){
-    setTimeout(
-      function(){
-        $(elementSelector).removeClass('still_'+data.playerStatuses[colors[i]].dir);
-      }, 500);
-  }
+  // Specials
+  var elementSelector = '#square' + data.specials.doubleSpeed[0];
+  $(elementSelector).addClass('doubleSpeed');
+
+  // Timer
   $('#timer').html(data.duration);
 }
 
@@ -146,11 +152,18 @@ function clearSquares(data){
       function(){
         for(var i=0; i<data.clearSquares.length; i++){
           var elementSelector = '#square' + data.clearSquares[i];
-          $(elementSelector).css( "background-color", 'rgb(200, 200, 200)');
+          $(elementSelector).css( 'background-color', 'rgb(200, 200, 200)');
         }
       }, 500);
   }
+
   clearSquaresAfterTimeout();
+
+  // Clear specials
+  for(var i=0; i<data.clearSpecials.length; i++){
+    var elementSelector = '#square' + data.clearSpecials[i];
+    $(elementSelector).removeClass('doubleSpeed');
+  }
 }
 
 function updateScore(data){

@@ -5,59 +5,64 @@
 !_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
 !_TAG_PROGRAM_VERSION	5.8	//
 Board	board.js	/^function Board(){$/;"	c
-Board.getSquares	board.js	/^Board.prototype.getSquares = function() {$/;"	m
-Board.getWidth	board.js	/^Board.prototype.getWidth = function() {$/;"	m
-Board.getHeight	board.js	/^Board.prototype.getHeight = function() {$/;"	m
-Board.getStartPoints	board.js	/^Board.prototype.getStartPoints = function() {$/;"	m
-Board.getMatchDuration	board.js	/^Board.prototype.getMatchDuration = function() {$/;"	m
 Board.getCountdownDuration	board.js	/^Board.prototype.getCountdownDuration = function() {$/;"	m
+Board.getDoubleSpeedDuration	board.js	/^Board.prototype.getDoubleSpeedDuration = function() {$/;"	m
+Board.getHeight	board.js	/^Board.prototype.getHeight = function() {$/;"	m
+Board.getMatchDuration	board.js	/^Board.prototype.getMatchDuration = function() {$/;"	m
 Board.getSquare	board.js	/^Board.prototype.getSquare = function(id) { \/\/ ERROR: squareNotFound$/;"	m
+Board.getSquares	board.js	/^Board.prototype.getSquares = function() {$/;"	m
+Board.getStartSquares	board.js	/^Board.prototype.getStartSquares = function() {$/;"	m
+Board.getWidth	board.js	/^Board.prototype.getWidth = function() {$/;"	m
 Match	match.js	/^function Match(){$/;"	c
-matchesManager.Match	match.js	/^}$/;"	c
-matchesManager.matchesManager.Match.getId	match.js	/^Match.prototype.getId = function() {$/;"	m
-Match.getPlayers	match.js	/^Match.prototype.getPlayers = function() {$/;"	m
-Match.getPlayer	match.js	/^Match.prototype.getPlayer = function(playerName) { \/\/ ERROR: playerNotFound$/;"	m
-Match.getPlayerByColor	match.js	/^Match.prototype.getPlayerByColor = function(playerColor) { \/\/ ERROR: playerNotFound$/;"	m
-Match.getMatchCreator	match.js	/^Match.prototype.getMatchCreator = function() { \/\/ ERROR: matchCreatorNotFound$/;"	m
 Match.addPlayer	match.js	/^Match.prototype.addPlayer = function(player) { \/\/ ERROR: matchIsFull, nameInUse$/;"	m
-Match.removePlayer	match.js	/^Match.prototype.removePlayer = function(player) {$/;"	m
+Match.countdownDurationDecrement	match.js	/^Match.prototype.countdownDurationDecrement = function() {$/;"	m
+Match.destroy	match.js	/^Match.prototype.destroy = function() {$/;"	m
+Match.durationDecrement	match.js	/^Match.prototype.durationDecrement = function() {$/;"	m
 Match.getBoard	match.js	/^Match.prototype.getBoard = function() {$/;"	m
 Match.getController	match.js	/^Match.prototype.getController = function() {$/;"	m
-Match.getDuration	match.js	/^Match.prototype.getDuration = function() {$/;"	m
-Match.durationDecrement	match.js	/^Match.prototype.durationDecrement = function() {$/;"	m
 Match.getCountdownDuration	match.js	/^Match.prototype.getCountdownDuration = function() {$/;"	m
-Match.countdownDurationDecrement	match.js	/^Match.prototype.countdownDurationDecrement = function() {$/;"	m
-Match.run	match.js	/^Match.prototype.run = function() {$/;"	m
-Match.stop	match.js	/^Match.prototype.stop = function() {$/;"	m
-Match.isRunning	match.js	/^Match.prototype.isRunning = function() {$/;"	m
+Match.getDuration	match.js	/^Match.prototype.getDuration = function() {$/;"	m
+Match.getMatchCreator	match.js	/^Match.prototype.getMatchCreator = function() { \/\/ ERROR: matchCreatorNotFound$/;"	m
+Match.getPlayer	match.js	/^Match.prototype.getPlayer = function(playerName) { \/\/ ERROR: playerNotFound$/;"	m
+Match.getPlayerByColor	match.js	/^Match.prototype.getPlayerByColor = function(playerColor) { \/\/ ERROR: playerNotFound$/;"	m
+Match.getPlayers	match.js	/^Match.prototype.getPlayers = function() {$/;"	m
+Match.isActive	match.js	/^Match.prototype.isActive = function() {$/;"	m
 Match.isNameInUse	match.js	/^Match.prototype.isNameInUse = function(name) {$/;"	m
+Match.removePlayer	match.js	/^Match.prototype.removePlayer = function(player) {$/;"	m
+Match.setActive	match.js	/^Match.prototype.setActive = function(active) {$/;"	m
+Match.updateBoard	match.js	/^Match.prototype.updateBoard = function(playerPositions, specials) {$/;"	m
 Match.updatePlayers	match.js	/^Match.prototype.updatePlayers = function(playerPositions) {$/;"	m
-Match.updateBoard	match.js	/^Match.prototype.updateBoard = function(playerPositions) {$/;"	m
-createUniqueId	match.js	/^var createUniqueId = function(){$/;"	f
-MatchesManager	matchesManager.js	/^ function MatchesManager(){$/;"	c
+Match.updateSpecials	match.js	/^Match.prototype.updateSpecials = function(specials) {$/;"	m
+MatchesManager	matchesManager.js	/^function MatchesManager(){$/;"	c
 MatchesManager.addMatch	matchesManager.js	/^MatchesManager.prototype.addMatch = function(match) {$/;"	m
-MatchesManager.getMatches	matchesManager.js	/^MatchesManager.prototype.getMatches = function(matchId) {$/;"	m
 MatchesManager.getMatch	matchesManager.js	/^MatchesManager.prototype.getMatch = function(matchId) { \/\/ERROR: matchNotFound$/;"	m
-MatchesManager.removeMatch	matchesManager.js	/^MatchesManager.prototype.removeMatch = function(matchId) {$/;"	m
-Player	player.js	/^function Player(name, matchId, matchCreator){ \/\/ERROR: matchNotFound, matchIsFull, nameInUse$/;"	c
-Player.getName	player.js	/^Player.prototype.getName = function() {$/;"	m
-Player.getColor	player.js	/^Player.prototype.getColor = function() {$/;"	m
-Player.getPosition	player.js	/^Player.prototype.getPosition = function() {$/;"	m
-Player.setPosition	player.js	/^Player.prototype.setPosition = function(pos) {$/;"	m
-Player.isMatchCreator	player.js	/^Player.prototype.isMatchCreator = function() {$/;"	m
-Player.getMatchId	player.js	/^Player.prototype.getMatchId = function() {$/;"	m
-Player.getSocket	player.js	/^Player.prototype.getSocket = function() {$/;"	m
-Player.setSocket	player.js	/^Player.prototype.setSocket = function(socket) {$/;"	m
+MatchesManager.getMatches	matchesManager.js	/^MatchesManager.prototype.getMatches = function(matchId) {$/;"	m
+MatchesManager.removeMatch	matchesManager.js	/^MatchesManager.prototype.removeMatch = function(match) {$/;"	m
+Player	player.js	/^function Player(name, match, matchCreator){ \/\/ERROR: matchNotFound, matchIsFull, nameInUse, matchIsActive$/;"	c
 Player.getActiveDirection	player.js	/^Player.prototype.getActiveDirection = function() {$/;"	m
-Player.setActiveDirection	player.js	/^Player.prototype.setActiveDirection = function(dir) {$/;"	m
+Player.getColor	player.js	/^Player.prototype.getColor = function() {$/;"	m
+Player.getDoubleSpeedSpecial	player.js	/^Player.prototype.getDoubleSpeedSpecial = function() {$/;"	m
+Player.getName	player.js	/^Player.prototype.getName = function() {$/;"	m
+Player.getPosition	player.js	/^Player.prototype.getPosition = function() {$/;"	m
 Player.getScore	player.js	/^Player.prototype.getScore = function() {$/;"	m
+Player.getSocket	player.js	/^Player.prototype.getSocket = function() {$/;"	m
 Player.increaseScore	player.js	/^Player.prototype.increaseScore = function(points) {$/;"	m
-getUnusedColor	player.js	/^function getUnusedColor(match) { \/\/ ERROR: matchIsFull$/;"	f
-Square	square.js	/^function Square(squareId, edgesTo, position, startPoints){$/;"	c
-Square.getId	square.js	/^Square.prototype.getId = function() {$/;"	m
-Square.getEdgesTo	square.js	/^Square.prototype.getEdgesTo = function() {$/;"	m
-Square.getPosition	square.js	/^Square.prototype.getPosition = function() {$/;"	m
+Player.isMatchCreator	player.js	/^Player.prototype.isMatchCreator = function() {$/;"	m
+Player.setActiveDirection	player.js	/^Player.prototype.setActiveDirection = function(dir) {$/;"	m
+Player.setPosition	player.js	/^Player.prototype.setPosition = function(pos) {$/;"	m
+Player.setSocket	player.js	/^Player.prototype.setSocket = function(socket) {$/;"	m
+Player.startDoubleSpeedSpecial	player.js	/^Player.prototype.startDoubleSpeedSpecial = function(duration) {$/;"	m
+Square	square.js	/^function Square(squareId, edgesTo, position, startSquares){$/;"	c
 Square.getColor	square.js	/^Square.prototype.getColor = function() {$/;"	m
-Square.setColor	square.js	/^Square.prototype.setColor = function(color) {$/;"	m
+Square.getDoubleSpeedSpecial	square.js	/^Square.prototype.getDoubleSpeedSpecial = function() {$/;"	m
+Square.getEdgesTo	square.js	/^Square.prototype.getEdgesTo = function() {$/;"	m
+Square.getId	square.js	/^Square.prototype.getId = function() {$/;"	m
+Square.getPosition	square.js	/^Square.prototype.getPosition = function() {$/;"	m
 Square.isDfsVisited	square.js	/^Square.prototype.isDfsVisited = function() {$/;"	m
+Square.setColor	square.js	/^Square.prototype.setColor = function(color) {$/;"	m
 Square.setDfsVisited	square.js	/^Square.prototype.setDfsVisited = function(visited) {$/;"	m
+Square.setDoubleSpeedSpecial	square.js	/^Square.prototype.setDoubleSpeedSpecial = function(doubleSpeedSpecial) {$/;"	m
+createUniqueId	match.js	/^function createUniqueId(){$/;"	f
+getUnusedColor	player.js	/^function getUnusedColor(match) { \/\/ ERROR: matchIsFull$/;"	f
+matchesManager.Match	match.js	/^}$/;"	c
+matchesManager.matchesManager.Match.getId	match.js	/^Match.prototype.getId = function() {$/;"	m

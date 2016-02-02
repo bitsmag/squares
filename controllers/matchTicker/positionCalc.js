@@ -1,6 +1,6 @@
 var matchSockets      = require('../../sockets/matchSockets');
 
-function calculateNewPlayerPositions(match){
+function calculateNewPlayerPositions(match, playerList){
   var activeColors = [];
   var players = match.getPlayers();
   for(var i = 0; i<players.length; i++){
@@ -29,8 +29,12 @@ function calculateNewPlayerPositions(match){
     if(!error){
       currentPos[activeColors[i]] = player.getPosition();
       futurePos[activeColors[i]] = calculateFuturePos(player.getPosition(), player.getActiveDirection(), match.getBoard(), match);
+      // If the player is not in the playerList it remains at the old position
+      if(playerList.indexOf(activeColors[i]) === -1){
+        futurePos[activeColors[i]]=currentPos[activeColors[i]];
+      }
       if(currentPos[activeColors[i]]===futurePos[activeColors[i]]){
-        prio[activeColors[i]] = true;
+              prio[activeColors[i]] = true;
       }
     }
   }

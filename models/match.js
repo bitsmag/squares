@@ -148,13 +148,13 @@ Match.prototype.updatePlayers = function(playerPositions) {
   }
 };
 
-Match.prototype.updateBoard = function(playerPositions) {
-  // Set color property on board
+Match.prototype.updateBoard = function(playerPositions, specials) {
   var activeColors = [];
   var players = this.getPlayers();
   for(var i = 0; i<players.length; i++){
     activeColors.push(players[i].getColor());
   }
+  // Set color of playerPosition-Squares
   for(var i=0; i<activeColors.length; i++){
     try {
       this.getBoard().getSquare(playerPositions[activeColors[i]]).setColor(activeColors[i]);
@@ -164,6 +164,18 @@ Match.prototype.updateBoard = function(playerPositions) {
       this.destroy();
       console.warn(err.message + ' // match.updateBoard()');
       console.trace();
+    }
+  }
+};
+
+Match.prototype.updateSpecials = function(specials) {
+  // Set specials
+  if(specials.doubleSpeed.length){
+    try{
+      this.getBoard().getSquare(specials.doubleSpeed[0]).setDoubleSpeedSpecial(true);
+    }
+    catch(err){
+      console.warn(err.message + ' // match.updateBoard - ' + specials.doubleSpeed[0]);
     }
   }
 };

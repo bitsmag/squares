@@ -121,12 +121,12 @@ function sendPrepareMatchEvent(match){
 }
 
 
-function sendUpdateBoardEvent(match){
+function sendUpdateBoardEvent(match, specials){
   var playerStatuses = {
-    blue: {pos: null, dir: null},
-    orange: {pos: null, dir: null},
-    green: {pos: null, dir: null},
-    red: {pos: null, dir: null}
+    blue: {pos: null, dir: null, doubleSpeed: null},
+    orange: {pos: null, dir: null, doubleSpeed: null},
+    green: {pos: null, dir: null, doubleSpeed: null},
+    red: {pos: null, dir: null, doubleSpeed: null}
   }
   var activeColors = [];
   var players = match.getPlayers();
@@ -136,7 +136,8 @@ function sendUpdateBoardEvent(match){
   for(i=0; i<activeColors.length; i++){
     try {
       playerStatuses[activeColors[i]].pos = match.getPlayerByColor(activeColors[i]).getPosition();
-      playerStatuses[activeColors[i]].dir = match.getPlayerByColor(activeColors[i]).getActiveDirection()
+      playerStatuses[activeColors[i]].dir = match.getPlayerByColor(activeColors[i]).getActiveDirection();
+      playerStatuses[activeColors[i]].doubleSpeed = match.getPlayerByColor(activeColors[i]).getDoubleSpeedSpecial();
     }
     catch(err) {
       sendFatalErrorEvent(match);
@@ -147,6 +148,7 @@ function sendUpdateBoardEvent(match){
   }
 
   var data = {playerStatuses: playerStatuses,
+      specials: specials,
       duration: match.getDuration()};
   for(var i = 0; i < match.getPlayers().length; i++){
     var thisColor = match.getPlayers()[i].getColor();
@@ -154,8 +156,8 @@ function sendUpdateBoardEvent(match){
   }
 }
 
-function sendClearSquaresEvent(match, clearSquares){
-  var data = {clearSquares: clearSquares};
+function sendClearSquaresEvent(match, clearSquares, clearSpecials){
+  var data = {clearSquares: clearSquares, clearSpecials: clearSpecials};
   for(var i = 0; i < match.getPlayers().length; i++){
     var thisColor = match.getPlayers()[i].getColor();
     match.getPlayers()[i].getSocket().emit('clearSquares', data);

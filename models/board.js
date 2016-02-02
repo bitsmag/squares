@@ -7,6 +7,7 @@ function Board(){
   this.startSquares = {blue: 0, orange: 8, green: 72, red: 80}
   this.matchDuration = 60;
   this.countdownDuration = 4;
+  this.doubleSpeedDuration = 5000;
 
   var square0  = new square.Square(0,  [1, 9],           {x: 0, y: 0}, this.startSquares);
   var square1  = new square.Square(1,  [0, 10, 2],       {x: 1, y: 0}, this.startSquares);
@@ -138,6 +139,10 @@ Board.prototype.getMatchDuration = function() {
 };
 
 Board.prototype.getCountdownDuration = function() {
+    return this.countdownDuration;
+};
+
+Board.prototype.getDoubleSpeedDuration = function() {
     return this.countdownDuration;
 };
 

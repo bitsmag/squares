@@ -3,68 +3,61 @@
 
 @keyframes left {
 0% {
-    transform: perspective(75px) rotateX(0deg) rotateY(0deg);
+    transform: perspective(150px) rotateX(0deg) rotateY(0deg);
   } 100% {
-    transform: perspective(75px) rotateX(0deg) rotateY(-180deg);
+    transform: perspective(150px) rotateX(0deg) rotateY(-180deg);
   }
 }
-
 @keyframes right {
 0% {
-    transform: perspective(75px) rotateX(0deg) rotateY(180deg);
+    transform: perspective(150px) rotateX(0deg) rotateY(180deg);
   } 100% {
-    transform: perspective(75px) rotateX(0deg) rotateY(360deg);
+    transform: perspective(150px) rotateX(0deg) rotateY(360deg);
   }
 }
-
 @keyframes down {
 0% {
-    transform: perspective(75px) rotateX(0deg) rotateY(180deg);
+    transform: perspective(150px) rotateX(0deg) rotateY(180deg);
   } 100% {
-    transform: perspective(75px) rotateX(-180deg) rotateY(180deg);
+    transform: perspective(150px) rotateX(-180deg) rotateY(180deg);
   }
 }
-
 @keyframes up {
 0% {
-    transform: perspective(75px) rotateX(180deg) rotateY(180deg);
+    transform: perspective(150px) rotateX(180deg) rotateY(180deg);
   } 100% {
-    transform: perspective(75px) rotateX(360deg) rotateY(180deg);
+    transform: perspective(150px) rotateX(360deg) rotateY(180deg);
   }
 }
 
 /*COLOR ANIMATIONS*/
 /******************/
 
-  /*blue2*/
+/*blue2*/
 @keyframes blue2red {
     0%   {background-color: rgb(79, 193, 223);}
     49.9% {background-color: rgb(79, 193, 223);}
     50.1% {background-color: rgb(229, 51, 127);}
     100% {background-color: rgb(229, 51, 127);}
 }
-
 @keyframes blue2orange {
     0%   {background-color: rgb(79, 193, 223);}
     49.9% {background-color: rgb(79, 193, 223);}
     50.1% {background-color: rgb(250, 184, 35);}
     100% {background-color: rgb(250, 184, 35);}
 }
-
 @keyframes blue2green {
     0%   {background-color: rgb(79, 193, 223);}
     49.9% {background-color: rgb(79, 193, 223);}
     50.1% {background-color: rgb(21, 179, 171);}
     100% {background-color: rgb(21, 179, 171);}
 }
-
 @keyframes blue2white {
     0%   {background-color: rgb(79, 193, 223);}
     49.9% {background-color: rgb(79, 193, 223);}
     50.1% {background-color: rgb(200, 200, 200);}
     100% {background-color: rgb(200, 200, 200);}
 }
-
 /*red2*/
 @keyframes red2blue {
     0%   {background-color: rgb(229, 51, 127);}
@@ -79,21 +72,18 @@
     50.1% {background-color: rgb(250, 184, 35);}
     100% {background-color: rgb(250, 184, 35);}
 }
-
 @keyframes red2green {
     0%   {background-color: rgb(229, 51, 127);}
     49.9% {background-color: rgb(229, 51, 127);}
     50.1% {background-color: rgb(21, 179, 171);}
     100% {background-color: rgb(21, 179, 171);}
 }
-
 @keyframes red2white {
     0%   {background-color: rgb(229, 51, 127);}
     49.9% {background-color: rgb(229, 51, 127);}
     50.1% {background-color: rgb(200, 200, 200);}
     100% {background-color: rgb(200, 200, 200);}
 }
-
 /*orange2*/
 @keyframes orange2blue {
     0%   {background-color: rgb(250, 184, 35);}
@@ -101,28 +91,24 @@
     50.1% {background-color: rgb(79, 193, 223);}
     100% {background-color: rgb(79, 193, 223);}
 }
-
 @keyframes orange2red {
     0%   {background-color: rgb(250, 184, 35);}
     49.9% {background-color: rgb(250, 184, 35);}
     50.1% {background-color: rgb(229, 51, 127);}
     100% {background-color: rgb(229, 51, 127);}
 }
-
 @keyframes orange2green {
     0%   {background-color: rgb(250, 184, 35);}
     49.9% {background-color: rgb(250, 184, 35);}
     50.1% {background-color: rgb(21, 179, 171);}
     100% {background-color: rgb(21, 179, 171);}
 }
-
 @keyframes orange2white {
     0%   {background-color: rgb(250, 184, 35);}
     49.9% {background-color: rgb(250, 184, 35);}
     50.1% {background-color: rgb(200, 200, 200);}
     100% {background-color: rgb(200, 200, 200);}
 }
-
 /*green2*/
 @keyframes green2blue {
     0%   {background-color: rgb(21, 179, 171);}
@@ -130,28 +116,24 @@
     50.1% {background-color: rgb(79, 193, 223);}
     100% {background-color: rgb(79, 193, 223);}
 }
-
 @keyframes green2red {
     0%   {background-color: rgb(21, 179, 171);}
     49.9% {background-color: rgb(21, 179, 171);}
     50.1% {background-color: rgb(229, 51, 127);}
     100% {background-color: rgb(229, 51, 127);}
 }
-
 @keyframes green2orange {
     0%   {background-color: rgb(21, 179, 171);}
     49.9% {background-color: rgb(21, 179, 171);}
     50.1% {background-color: rgb(250, 184, 35);}
     100% {background-color: rgb(250, 184, 35);}
 }
-
 @keyframes green2white {
     0%   {background-color: rgb(21, 179, 171);}
     49.9% {background-color: rgb(21, 179, 171);}
     50.1% {background-color: rgb(200, 200, 200);}
     100% {background-color: rgb(200, 200, 200);}
 }
-
 /*white2*/
 @keyframes white2blue {
     0%   {background-color: rgb(200, 200, 200);}
@@ -159,945 +141,21 @@
     50.1% {background-color: rgb(79, 193, 223);}
     100% {background-color: rgb(79, 193, 223);}
 }
-
 @keyframes white2red {
     0%   {background-color: rgb(200, 200, 200);}
     49.9% {background-color: rgb(200, 200, 200);}
     50.1% {background-color: rgb(229, 51, 127);}
     100% {background-color: rgb(229, 51, 127);}
 }
-
 @keyframes white2orange {
     0%   {background-color: rgb(200, 200, 200);}
     49.9% {background-color: rgb(200, 200, 200);}
     50.1% {background-color: rgb(250, 184, 35);}
     100% {background-color: rgb(250, 184, 35);}
 }
-
 @keyframes white2green {
     0%   {background-color: rgb(200, 200, 200);}
     49.9% {background-color: rgb(200, 200, 200);}
     50.1% {background-color: rgb(21, 179, 171);}
     100% {background-color: rgb(21, 179, 171);}
-}
-
-
-/*FLIP DIV CLASSES*/
-/******************/
-
-  /*blue2red*/
-.blue2red_right {
-  width: 25px;
-  height: 50px;
-  margin-left: 25px;
-
-  animation: right 0.5s 1 ease-in-out,  blue2red 0.5s 1 ease-in-out;
-  transform-origin: 0%;
-}
-
-.blue2red_left {
-  width: 25px;
-  height: 50px;
-  margin-left: 25px;
-
-  animation: left 0.5s 1 ease-in-out,  blue2red 0.5s 1 ease-in-out;
-  transform-origin: 0%;
-}
-
-.blue2red_down {
-  width: 50px;
-  height: 25px;
-
-  animation: down 0.5s 1 ease-in-out,  blue2red 0.5s 1 ease-in-out;
-  transform-origin: 50% 100%;
-}
-
-.blue2red_up {
-  width: 50px;
-  height: 25px;
-
-  animation: up 0.5s 1 ease-in-out,  blue2red 0.5s 1 ease-in-out;
-  transform-origin: 50% 100%;
-}
-
-  /*blue2orange*/
-.blue2orange_right {
-  width: 25px;
-  height: 50px;
-  margin-left: 25px;
-
-  animation: right 0.5s 1 ease-in-out,  blue2orange 0.5s 1 ease-in-out;
-  transform-origin: 0%;
-}
-
-.blue2orange_left {
-  width: 25px;
-  height: 50px;
-  margin-left: 25px;
-
-  animation: left 0.5s 1 ease-in-out,  blue2orange 0.5s 1 ease-in-out;
-  transform-origin: 0%;
-}
-
-.blue2orange_down {
-  width: 50px;
-  height: 25px;
-
-  animation: down 0.5s 1 ease-in-out,  blue2orange 0.5s 1 ease-in-out;
-  transform-origin: 50% 100%;
-}
-
-.blue2orange_up {
-  width: 50px;
-  height: 25px;
-
-  animation: up 0.5s 1 ease-in-out,  blue2orange 0.5s 1 ease-in-out;
-  transform-origin: 50% 100%;
-}
-
-/*blue2green*/
-.blue2green_right {
-width: 25px;
-height: 50px;
-margin-left: 25px;
-
-animation: right 0.5s 1 ease-in-out,  blue2green 0.5s 1 ease-in-out;
-transform-origin: 0%;
-}
-
-.blue2green_left {
-width: 25px;
-height: 50px;
-margin-left: 25px;
-
-animation: left 0.5s 1 ease-in-out,  blue2green 0.5s 1 ease-in-out;
-transform-origin: 0%;
-}
-
-.blue2green_down {
-width: 50px;
-height: 25px;
-
-animation: down 0.5s 1 ease-in-out,  blue2green 0.5s 1 ease-in-out;
-transform-origin: 50% 100%;
-}
-
-.blue2green_up {
-width: 50px;
-height: 25px;
-
-animation: up 0.5s 1 ease-in-out,  blue2green 0.5s 1 ease-in-out;
-transform-origin: 50% 100%;
-}
-
-/*blue2white*/
-.blue2white_right {
-width: 25px;
-height: 50px;
-margin-left: 25px;
-
-animation: right 0.5s 1 ease-in-out,  blue2white 0.5s 1 ease-in-out;
-transform-origin: 0%;
-}
-
-.blue2white_left {
-width: 25px;
-height: 50px;
-margin-left: 25px;
-
-animation: left 0.5s 1 ease-in-out,  blue2white 0.5s 1 ease-in-out;
-transform-origin: 0%;
-}
-
-.blue2white_down {
-width: 50px;
-height: 25px;
-
-animation: down 0.5s 1 ease-in-out,  blue2white 0.5s 1 ease-in-out;
-transform-origin: 50% 100%;
-}
-
-.blue2white_up {
-width: 50px;
-height: 25px;
-
-animation: up 0.5s 1 ease-in-out,  blue2white 0.5s 1 ease-in-out;
-transform-origin: 50% 100%;
-}
-
-/*red2blue*/
-.red2blue_right {
-width: 25px;
-height: 50px;
-margin-left: 25px;
-
-animation: right 0.5s 1 ease-in-out,  red2blue 0.5s 1 ease-in-out;
-transform-origin: 0%;
-}
-
-.red2blue_left {
-width: 25px;
-height: 50px;
-margin-left: 25px;
-
-animation: left 0.5s 1 ease-in-out,  red2blue 0.5s 1 ease-in-out;
-transform-origin: 0%;
-}
-
-.red2blue_down {
-width: 50px;
-height: 25px;
-
-animation: down 0.5s 1 ease-in-out,  red2blue 0.5s 1 ease-in-out;
-transform-origin: 50% 100%;
-}
-
-.red2blue_up {
-width: 50px;
-height: 25px;
-
-animation: up 0.5s 1 ease-in-out,  red2blue 0.5s 1 ease-in-out;
-transform-origin: 50% 100%;
-}
-
-/*red2orange*/
-.red2orange_right {
-width: 25px;
-height: 50px;
-margin-left: 25px;
-
-animation: right 0.5s 1 ease-in-out,  red2orange 0.5s 1 ease-in-out;
-transform-origin: 0%;
-}
-
-.red2orange_left {
-width: 25px;
-height: 50px;
-margin-left: 25px;
-
-animation: left 0.5s 1 ease-in-out,  red2orange 0.5s 1 ease-in-out;
-transform-origin: 0%;
-}
-
-.red2orange_down {
-width: 50px;
-height: 25px;
-
-animation: down 0.5s 1 ease-in-out,  red2orange 0.5s 1 ease-in-out;
-transform-origin: 50% 100%;
-}
-
-.red2orange_up {
-width: 50px;
-height: 25px;
-
-animation: up 0.5s 1 ease-in-out,  red2orange 0.5s 1 ease-in-out;
-transform-origin: 50% 100%;
-}
-
-/*red2green*/
-.red2green_right {
-width: 25px;
-height: 50px;
-margin-left: 25px;
-
-animation: right 0.5s 1 ease-in-out,  red2green 0.5s 1 ease-in-out;
-transform-origin: 0%;
-}
-
-.red2green_left {
-width: 25px;
-height: 50px;
-margin-left: 25px;
-
-animation: left 0.5s 1 ease-in-out,  red2green 0.5s 1 ease-in-out;
-transform-origin: 0%;
-}
-
-.red2green_down {
-width: 50px;
-height: 25px;
-
-animation: down 0.5s 1 ease-in-out,  red2green 0.5s 1 ease-in-out;
-transform-origin: 50% 100%;
-}
-
-.red2green_up {
-width: 50px;
-height: 25px;
-
-animation: up 0.5s 1 ease-in-out,  red2green 0.5s 1 ease-in-out;
-transform-origin: 50% 100%;
-}
-
-/*red2white*/
-.red2white_right {
-width: 25px;
-height: 50px;
-margin-left: 25px;
-
-animation: right 0.5s 1 ease-in-out,  red2white 0.5s 1 ease-in-out;
-transform-origin: 0%;
-}
-
-.red2white_left {
-width: 25px;
-height: 50px;
-margin-left: 25px;
-
-animation: left 0.5s 1 ease-in-out,  red2white 0.5s 1 ease-in-out;
-transform-origin: 0%;
-}
-
-.red2white_down {
-width: 50px;
-height: 25px;
-
-animation: down 0.5s 1 ease-in-out,  red2white 0.5s 1 ease-in-out;
-transform-origin: 50% 100%;
-}
-
-.red2white_up {
-width: 50px;
-height: 25px;
-
-animation: up 0.5s 1 ease-in-out,  red2white 0.5s 1 ease-in-out;
-transform-origin: 50% 100%;
-}
-
-/*orange2blue*/
-.orange2blue_right {
-width: 25px;
-height: 50px;
-margin-left: 25px;
-
-animation: right 0.5s 1 ease-in-out,  orange2blue 0.5s 1 ease-in-out;
-transform-origin: 0%;
-}
-
-.orange2blue_left {
-width: 25px;
-height: 50px;
-margin-left: 25px;
-
-animation: left 0.5s 1 ease-in-out,  orange2blue 0.5s 1 ease-in-out;
-transform-origin: 0%;
-}
-
-.orange2blue_down {
-width: 50px;
-height: 25px;
-
-animation: down 0.5s 1 ease-in-out,  orange2blue 0.5s 1 ease-in-out;
-transform-origin: 50% 100%;
-}
-
-.orange2blue_up {
-width: 50px;
-height: 25px;
-
-animation: up 0.5s 1 ease-in-out,  orange2blue 0.5s 1 ease-in-out;
-transform-origin: 50% 100%;
-}
-
-/*orange2red*/
-.orange2red_right {
-width: 25px;
-height: 50px;
-margin-left: 25px;
-
-animation: right 0.5s 1 ease-in-out,  orange2red 0.5s 1 ease-in-out;
-transform-origin: 0%;
-}
-
-.orange2red_left {
-width: 25px;
-height: 50px;
-margin-left: 25px;
-
-animation: left 0.5s 1 ease-in-out,  orange2red 0.5s 1 ease-in-out;
-transform-origin: 0%;
-}
-
-.orange2red_down {
-width: 50px;
-height: 25px;
-
-animation: down 0.5s 1 ease-in-out,  orange2red 0.5s 1 ease-in-out;
-transform-origin: 50% 100%;
-}
-
-.orange2red_up {
-width: 50px;
-height: 25px;
-
-animation: up 0.5s 1 ease-in-out,  orange2red 0.5s 1 ease-in-out;
-transform-origin: 50% 100%;
-}
-
-/*orange2green*/
-.orange2green_right {
-width: 25px;
-height: 50px;
-margin-left: 25px;
-
-animation: right 0.5s 1 ease-in-out,  orange2green 0.5s 1 ease-in-out;
-transform-origin: 0%;
-}
-
-.orange2green_left {
-width: 25px;
-height: 50px;
-margin-left: 25px;
-
-animation: left 0.5s 1 ease-in-out,  orange2green 0.5s 1 ease-in-out;
-transform-origin: 0%;
-}
-
-.orange2green_down {
-width: 50px;
-height: 25px;
-
-animation: down 0.5s 1 ease-in-out,  orange2green 0.5s 1 ease-in-out;
-transform-origin: 50% 100%;
-}
-
-.orange2green_up {
-width: 50px;
-height: 25px;
-
-animation: up 0.5s 1 ease-in-out,  orange2green 0.5s 1 ease-in-out;
-transform-origin: 50% 100%;
-}
-
-/*orange2white*/
-.orange2white_right {
-width: 25px;
-height: 50px;
-margin-left: 25px;
-
-animation: right 0.5s 1 ease-in-out,  orange2white 0.5s 1 ease-in-out;
-transform-origin: 0%;
-}
-
-.orange2white_left {
-width: 25px;
-height: 50px;
-margin-left: 25px;
-
-animation: left 0.5s 1 ease-in-out,  orange2white 0.5s 1 ease-in-out;
-transform-origin: 0%;
-}
-
-.orange2white_down {
-width: 50px;
-height: 25px;
-
-animation: down 0.5s 1 ease-in-out,  orange2white 0.5s 1 ease-in-out;
-transform-origin: 50% 100%;
-}
-
-.orange2white_up {
-width: 50px;
-height: 25px;
-
-animation: up 0.5s 1 ease-in-out,  orange2white 0.5s 1 ease-in-out;
-transform-origin: 50% 100%;
-}
-
-/*green2blue*/
-.green2blue_right {
-width: 25px;
-height: 50px;
-margin-left: 25px;
-
-animation: right 0.5s 1 ease-in-out,  green2blue 0.5s 1 ease-in-out;
-transform-origin: 0%;
-}
-
-.green2blue_left {
-width: 25px;
-height: 50px;
-margin-left: 25px;
-
-animation: left 0.5s 1 ease-in-out,  green2blue 0.5s 1 ease-in-out;
-transform-origin: 0%;
-}
-
-.green2blue_down {
-width: 50px;
-height: 25px;
-
-animation: down 0.5s 1 ease-in-out,  green2blue 0.5s 1 ease-in-out;
-transform-origin: 50% 100%;
-}
-
-.green2blue_up {
-width: 50px;
-height: 25px;
-
-animation: up 0.5s 1 ease-in-out,  green2blue 0.5s 1 ease-in-out;
-transform-origin: 50% 100%;
-}
-
-/*green2red*/
-.green2red_right {
-width: 25px;
-height: 50px;
-margin-left: 25px;
-
-animation: right 0.5s 1 ease-in-out,  green2red 0.5s 1 ease-in-out;
-transform-origin: 0%;
-}
-
-.green2red_left {
-width: 25px;
-height: 50px;
-margin-left: 25px;
-
-animation: left 0.5s 1 ease-in-out,  green2red 0.5s 1 ease-in-out;
-transform-origin: 0%;
-}
-
-.green2red_down {
-width: 50px;
-height: 25px;
-
-animation: down 0.5s 1 ease-in-out,  green2red 0.5s 1 ease-in-out;
-transform-origin: 50% 100%;
-}
-
-.green2red_up {
-width: 50px;
-height: 25px;
-
-animation: up 0.5s 1 ease-in-out,  green2red 0.5s 1 ease-in-out;
-transform-origin: 50% 100%;
-}
-
-/*green2orange*/
-.green2orange_right {
-width: 25px;
-height: 50px;
-margin-left: 25px;
-
-animation: right 0.5s 1 ease-in-out,  green2orange 0.5s 1 ease-in-out;
-transform-origin: 0%;
-}
-
-.green2orange_left {
-width: 25px;
-height: 50px;
-margin-left: 25px;
-
-animation: left 0.5s 1 ease-in-out,  green2orange 0.5s 1 ease-in-out;
-transform-origin: 0%;
-}
-
-.green2orange_down {
-width: 50px;
-height: 25px;
-
-animation: down 0.5s 1 ease-in-out,  green2orange 0.5s 1 ease-in-out;
-transform-origin: 50% 100%;
-}
-
-.green2orange_up {
-width: 50px;
-height: 25px;
-
-animation: up 0.5s 1 ease-in-out,  green2orange 0.5s 1 ease-in-out;
-transform-origin: 50% 100%;
-}
-
-/*green2white*/
-.green2white_right {
-width: 25px;
-height: 50px;
-margin-left: 25px;
-
-animation: right 0.5s 1 ease-in-out,  green2white 0.5s 1 ease-in-out;
-transform-origin: 0%;
-}
-
-.green2white_left {
-width: 25px;
-height: 50px;
-margin-left: 25px;
-
-animation: left 0.5s 1 ease-in-out,  green2white 0.5s 1 ease-in-out;
-transform-origin: 0%;
-}
-
-.green2white_down {
-width: 50px;
-height: 25px;
-
-animation: down 0.5s 1 ease-in-out,  green2white 0.5s 1 ease-in-out;
-transform-origin: 50% 100%;
-}
-
-.green2white_up {
-width: 50px;
-height: 25px;
-
-animation: up 0.5s 1 ease-in-out,  green2white 0.5s 1 ease-in-out;
-transform-origin: 50% 100%;
-}
-
-/*white2blue*/
-.white2blue_right {
-width: 25px;
-height: 50px;
-margin-left: 25px;
-
-animation: right 0.5s 1 ease-in-out,  white2blue 0.5s 1 ease-in-out;
-transform-origin: 0%;
-}
-
-.white2blue_left {
-width: 25px;
-height: 50px;
-margin-left: 25px;
-
-animation: left 0.5s 1 ease-in-out,  white2blue 0.5s 1 ease-in-out;
-transform-origin: 0%;
-}
-
-.white2blue_down {
-width: 50px;
-height: 25px;
-
-animation: down 0.5s 1 ease-in-out,  white2blue 0.5s 1 ease-in-out;
-transform-origin: 50% 100%;
-}
-
-.white2blue_up {
-width: 50px;
-height: 25px;
-
-animation: up 0.5s 1 ease-in-out,  white2blue 0.5s 1 ease-in-out;
-transform-origin: 50% 100%;
-}
-
-/*white2red*/
-.white2red_right {
-width: 25px;
-height: 50px;
-margin-left: 25px;
-
-animation: right 0.5s 1 ease-in-out,  white2red 0.5s 1 ease-in-out;
-transform-origin: 0%;
-}
-
-.white2red_left {
-width: 25px;
-height: 50px;
-margin-left: 25px;
-
-animation: left 0.5s 1 ease-in-out,  white2red 0.5s 1 ease-in-out;
-transform-origin: 0%;
-}
-
-.white2red_down {
-width: 50px;
-height: 25px;
-
-animation: down 0.5s 1 ease-in-out,  white2red 0.5s 1 ease-in-out;
-transform-origin: 50% 100%;
-}
-
-.white2red_up {
-width: 50px;
-height: 25px;
-
-animation: up 0.5s 1 ease-in-out,  white2red 0.5s 1 ease-in-out;
-transform-origin: 50% 100%;
-}
-
-/*green2orange*/
-.white2orange_right {
-width: 25px;
-height: 50px;
-margin-left: 25px;
-
-animation: right 0.5s 1 ease-in-out,  white2orange 0.5s 1 ease-in-out;
-transform-origin: 0%;
-}
-
-.white2orange_left {
-width: 25px;
-height: 50px;
-margin-left: 25px;
-
-animation: left 0.5s 1 ease-in-out,  white2orange 0.5s 1 ease-in-out;
-transform-origin: 0%;
-}
-
-.white2orange_down {
-width: 50px;
-height: 25px;
-
-animation: down 0.5s 1 ease-in-out,  white2orange 0.5s 1 ease-in-out;
-transform-origin: 50% 100%;
-}
-
-.white2orange_up {
-width: 50px;
-height: 25px;
-
-animation: up 0.5s 1 ease-in-out,  white2orange 0.5s 1 ease-in-out;
-transform-origin: 50% 100%;
-}
-
-/*white2green*/
-.white2green_right {
-width: 25px;
-height: 50px;
-margin-left: 25px;
-
-animation: right 0.5s 1 ease-in-out,  white2green 0.5s 1 ease-in-out;
-transform-origin: 0%;
-}
-
-.white2green_left {
-width: 25px;
-height: 50px;
-margin-left: 25px;
-
-animation: left 0.5s 1 ease-in-out,  white2green 0.5s 1 ease-in-out;
-transform-origin: 0%;
-}
-
-.white2green_down {
-width: 50px;
-height: 25px;
-
-animation: down 0.5s 1 ease-in-out,  white2green 0.5s 1 ease-in-out;
-transform-origin: 50% 100%;
-}
-
-.white2green_up {
-width: 50px;
-height: 25px;
-
-animation: up 0.5s 1 ease-in-out,  white2green 0.5s 1 ease-in-out;
-transform-origin: 50% 100%;
-}
-
-
-/*STATIC DIV CLASSES*/
-/********************/
-
-  /*red*/
-.staticred_right {
-  width: 25px;
-  height: 50px;
-  margin-left: 0px;
-  margin-top: -50px;
-  background-color: rgb(229, 51, 127);
-}
-
-.staticred_left {
-  width: 25px;
-  height: 50px;
-  margin-left: 25px;
-  margin-top: -50px;
-  background-color: rgb(229, 51, 127);
-}
-
-.staticred_down {
-  width: 50px;
-  height: 25px;
-  margin-left: 0px;
-  margin-top: -25px;
-  background-color: rgb(229, 51, 127);
-}
-
-.staticred_up {
-  width: 50px;
-  height: 25px;
-  margin-left: 0px;
-  margin-top: 0px;
-  background-color: rgb(229, 51, 127);
-}
-
-  /*orange*/
-.staticorange_right {
-  width: 25px;
-  height: 50px;
-  margin-left: 0px;
-  margin-top: -50px;
-  background-color: rgb(250, 184, 35);
-}
-
-.staticorange_left {
-  width: 25px;
-  height: 50px;
-  margin-left: 25px;
-  margin-top: -50px;
-  background-color: rgb(250, 184, 35);
-}
-
-.staticorange_down {
-  width: 50px;
-  height: 25px;
-  margin-left: 0px;
-  margin-top: -25px;
-  background-color: rgb(250, 184, 35)
-}
-
-.staticorange_up {
-  width: 50px;
-  height: 25px;
-  margin-left: 0px;
-  margin-top: 0px;
-  background-color: rgb(250, 184, 35);
-}
-
-  /*green*/
-.staticgreen_right {
-width: 25px;
-height: 50px;
-margin-left: 0px;
-margin-top: -50px;
-background-color: rgb(21, 179, 171);
-}
-
-.staticgreen_left {
-width: 25px;
-height: 50px;
-margin-left: 25px;
-margin-top: -50px;
-background-color: rgb(21, 179, 171);
-}
-
-.staticgreen_down {
-width: 50px;
-height: 25px;
-margin-left: 0px;
-margin-top: -25px;
-background-color: rgb(21, 179, 171);
-}
-
-.staticgreen_up {
-width: 50px;
-height: 25px;
-margin-left: 0px;
-margin-top: 0px;
-background-color: rgb(21, 179, 171);
-}
-
-  /*blue*/
-.staticblue_right {
-width: 25px;
-height: 50px;
-margin-left: 0px;
-margin-top: -50px;
-background-color: rgb(79, 193, 223);
-}
-
-.staticblue_left {
-width: 25px;
-height: 50px;
-margin-left: 25px;
-margin-top: -50px;
-background-color: rgb(79, 193, 223);
-}
-
-.staticblue_down {
-width: 50px;
-height: 25px;
-margin-left: 0px;
-margin-top: -25px;
-background-color: rgb(79, 193, 223);
-}
-
-.staticblue_up {
-width: 50px;
-height: 25px;
-margin-left: 0px;
-margin-top: 0px;
-background-color: rgb(79, 193, 223);
-}
-
-/*white*/
-.staticwhite_right {
-width: 25px;
-height: 50px;
-margin-left: 0px;
-margin-top: -50px;
-background-color: rgb(200, 200, 200);
-}
-
-.staticwhite_left {
-width: 25px;
-height: 50px;
-margin-left: 25px;
-margin-top: -50px;
-background-color: rgb(200, 200, 200);
-}
-
-.staticwhite_down {
-width: 50px;
-height: 25px;
-margin-left: 0px;
-margin-top: -25px;
-background-color: rgb(200, 200, 200);
-}
-
-.staticwhite_up {
-width: 50px;
-height: 25px;
-margin-left: 0px;
-margin-top: 0px;
-background-color: rgb(200, 200, 200);
-}
-
-/*STILL FLIP ANIMATIONS*/
-
-@keyframes still_left {
-0% {
-    transform: perspective(125px) rotateX(0deg) rotateY(0deg);
-  } 100% {
-    transform: perspective(125px) rotateX(0deg) rotateY(-180deg);
-  }
-}
-
-@keyframes still_right {
-0% {
-    transform: perspective(125px) rotateX(0deg) rotateY(180deg);
-  } 100% {
-    transform: perspective(125px) rotateX(0deg) rotateY(360deg);
-  }
-}
-
-@keyframes still_down {
-0% {
-    transform: perspective(125px) rotateX(0deg) rotateY(180deg);
-  } 100% {
-    transform: perspective(125px) rotateX(-180deg) rotateY(180deg);
-  }
-}
-
-@keyframes still_up {
-0% {
-    transform: perspective(125px) rotateX(180deg) rotateY(180deg);
-  } 100% {
-    transform: perspective(125px) rotateX(360deg) rotateY(180deg);
-  }
-}
-
-
-.still_left {
-  animation: still_left 0.5s 1 linear;
-}
-.still_right {
-  animation: still_right 0.5s 1 linear;
-}
-.still_up {
-  animation: still_up 0.5s 1 linear;
-}
-.still_down {
-  animation: still_down 0.5s 1 linear;
 }

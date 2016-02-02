@@ -1,6 +1,13 @@
-/* CSS from http://www.sanwebe.com/2014/08/css-html-forms-designs */
+/* based on css from http://www.sanwebe.com/2014/08/css-html-forms-designs */
 body{
-	background: #86269b;
+	background: #86267b;
+}
+#logo{
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 2%;
+  margin-bottom: 1%;
 }
 .form-style-8{
 	font-family: 'Open Sans Condensed', arial, sans;
@@ -61,8 +68,8 @@ body{
 }
 .form-style-8 input[type="button"],
 .form-style-8 input[type="submit"]{
-	background-color: #86269b;
-	border: 1px solid #9f2db8;
+	background-color: #86267b;
+	border: 1px solid #4f1749;
 	display: inline-block;
 	cursor: pointer;
 	color: #C8C8C8;
@@ -73,5 +80,5 @@ body{
 }
 .form-style-8 input[type="button"]:hover,
 .form-style-8 input[type="submit"]:hover {
-	background-color:#b132cd;
+	background-color:#9f2d92;
 }

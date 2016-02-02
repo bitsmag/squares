@@ -4,6 +4,7 @@ function Player(name, match, matchCreator){ //ERROR: matchNotFound, matchIsFull,
     this.position = 0;
     this.activeDirection = null;
     this.score = 0;
+    this.doubleSpeedSpecial = false;
     this.matchCreator = matchCreator;
     this.socket = null;
 
@@ -53,6 +54,10 @@ Player.prototype.getScore = function() {
     return this.score;
 };
 
+Player.prototype.getDoubleSpeedSpecial = function() {
+    return this.doubleSpeedSpecial;
+};
+
 Player.prototype.isMatchCreator = function() {
     return this.matchCreator;
 };
@@ -78,6 +83,16 @@ Player.prototype.setPosition = function(pos) {
 
 Player.prototype.increaseScore = function(points) {
     this.score += points;
+};
+
+Player.prototype.startDoubleSpeedSpecial = function(duration) {
+  if(!this.doubleSpeedSpecial){
+    this.doubleSpeedSpecial = true;
+    var that = this;
+    setTimeout(function(){
+      that.doubleSpeedSpecial = false;
+    }, 5000);
+  }
 };
 
 function getUnusedColor(match) { // ERROR: matchIsFull
