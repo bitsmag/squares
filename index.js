@@ -130,7 +130,7 @@ app.get('/match/:matchCreatorFlag/:matchId/:playerName', function(req, res){
           if(err.message === 'matchIsFull'){
             res.render(__dirname + '/views/error.html', {errorMessage: 'Sorry, you\'re too late. The match is full already.'});
           }
-          else if(err.message === 'matchIsStarted'){
+          else if(err.message === 'matchIsActive'){
             res.render(__dirname + '/views/error.html', {errorMessage: 'Sorry, you\'re too late. The match has already started.'});
           }
           else if(err.message === 'nameInUse'){
