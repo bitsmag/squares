@@ -24,7 +24,7 @@ matchSockets.on('connect', function () {
   matchSockets.on('matchCreatorDisconnected', function(){
     $('#connectionList').append($('<li class="warning">The host disconnected from this match. The match was canceled!</li>'));
     $('#connectionList').append($('<br>'));
-    $('#connectionList').append($('<a href="/">Create a new match or try to join another match.</a>'));
+    $('#connectionList').append($('<a href="/">Start a new match now!</a>'));
   });
 
   matchSockets.on('prepareMatch', prepareMatch);
@@ -41,7 +41,7 @@ matchSockets.on('connect', function () {
 
   matchSockets.on('fatalError', function(){
     matchSockets.disconnect();
-    alert('There went something horribly wrong. Pleas reload the page or try to create a new match.');
+    alert('There went something horribly wrong. Please start a new match.');
   });
 });
 
@@ -204,7 +204,7 @@ function matchEnd(){
     }
   });
 
-  congratsDiv += '</h2><div id="congratsSpinner"><img src="/img/cup.svg"/><br><span>' + place + '.</span></div><br><a href="/">Create a new match!</a>';
+  congratsDiv += '</h2><div id="congratsSpinner"><img src="/img/cup.svg"/><br><span>' + place + '.</span></div><br><a href="/">Start a new match now!</a>';
   $('#board').append(congratsDiv);
   $('#timer').html('...');
 }

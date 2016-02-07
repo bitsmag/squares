@@ -54,7 +54,7 @@ app.get('/createMatch/:playerName', function(req, res){
   }
 
   if(playerName===''){
-    res.status(500).send('Your name must contain only alphanumeric characters.');
+    res.render(__dirname + '/views/error.html', {errorMessage: 'Your name must contain only alphanumeric characters.'});
   }
   else {
     let newMatch = new match.Match();
@@ -96,10 +96,10 @@ app.get('/match/:matchCreatorFlag/:matchId/:playerName', function(req, res){
   catch(err){
     error = true;
     if(err.message==='matchNotFound'){
-      res.status(500).send('The match you are looking for was not found.');
+      res.render(__dirname + '/views/error.html', {errorMessage: 'The match you are looking for was not found.'});
     }
     else{
-      res.status(500).send('There was a unknown issue - please try again.');
+      res.render(__dirname + '/views/error.html', {errorMessage: 'There was a unknown issue - please try again.'});
     }
   }
   if(!error){
@@ -113,12 +113,12 @@ app.get('/match/:matchCreatorFlag/:matchId/:playerName', function(req, res){
                                         playerName: playerName});
       }
       else{
-        res.status(500).send('There was a unknown issue - please try again.');
+        res.render(__dirname + '/views/error.html', {errorMessage: 'There was a unknown issue - please try again.'});
       }
     }
     else if(matchCreatorFlag==='f'){
       if(playerName===''){
-        res.status(500).send('Please use only alphanumeric chars in your name.');
+        res.render(__dirname + '/views/error.html', {errorMessage: 'Please use only alphanumeric chars in your name.'});
       }
       else {
         let error = false;
@@ -128,16 +128,16 @@ app.get('/match/:matchCreatorFlag/:matchId/:playerName', function(req, res){
         catch(err){
           error = true;
           if(err.message === 'matchIsFull'){
-            res.status(500).send('Sorry, you\'re too late. The match is full already.');
+            res.render(__dirname + '/views/error.html', {errorMessage: 'Sorry, you\'re too late. The match is full already.'});
           }
           else if(err.message === 'matchIsStarted'){
-            res.status(500).send('Sorry, you\'re too late. The match has already started.');
+            res.render(__dirname + '/views/error.html', {errorMessage: 'Sorry, you\'re too late. The match has already started.'});
           }
           else if(err.message === 'nameInUse'){
-            res.status(500).send('Sorry, it seems that your name is already used by another player. Please choose a diffrent name.');
+            res.render(__dirname + '/views/error.html', {errorMessage: 'Sorry, it seems that your name is already used by another player. Please choose a diffrent name.'});
           }
           else{
-            res.status(500).send('There was a unknown issue - please try again.');
+            res.render(__dirname + '/views/error.html', {errorMessage: 'There was a unknown issue - please try again.'});
           }
         }
         if(!error) {
@@ -147,9 +147,14 @@ app.get('/match/:matchCreatorFlag/:matchId/:playerName', function(req, res){
       }
     }
     else {
-      res.status(500).send('There was a unknown issue - please try again.');
+      res.render(__dirname + '/views/error.html', {errorMessage: 'There was a unknown issue - please try again.'});
     }
   }
+});
+
+// 404
+app.use(function(req, res, next) {
+  res.status(404).sendFile(__dirname + '/views/404.html');
 });
 
 http.listen(app.get('port'), function(){
