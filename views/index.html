@@ -11,7 +11,7 @@
     <div class="form-style-8">
       <h2>Create a new match.</h2>
       <form>
-        <div id="cPlayerName_invalidCharTooltip" class="negative_tooltip">Please avoid using special characters.</div>
+        <div id="cPlayerName_invalidCharTooltip" class="negative_tooltip">Please use alphanumeric characters only.</div>
         <input id="cPlayerName" type="text" name="field1" autocomplete="off" placeholder="Name" maxlength="12">
         <input id="createMatchButton" type="button" value="GO!" />
       </form>
@@ -20,10 +20,7 @@
     <div class="form-style-8">
       <h2>Join a match.</h2>
       <form>
-        <div id="matchId_existingId" class="positive_tooltip">Valid match ID.</div>
-        <div id="jPlayerName_invalidCharTooltip" class="negative_tooltip">Please avoid using special characters.</div>
-        <div id="matchId_nonExistingId" class="negative_tooltip">No match with the given ID was found.</div>
-        <div id="matchId_tooShortId" class="negative_tooltip">A match ID must be 5 characters long.</div>
+        <div id="jPlayerName_invalidCharTooltip" class="negative_tooltip">Please use alphanumeric characters only.</div>
         <input id="jPlayerName" type="text" name="field1" autocomplete="off" placeholder="Name" maxlength="12">
         <input id="matchId" type="text" name="field2" autocomplete="off" placeholder="Match ID" maxlength="5">
         <input id="joinMatchButton" type="button" value="GO!" />
@@ -33,10 +30,28 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
   <script>
   function createMatch(){
-    var redirect = '/createMatch/' + $('#cPlayerName').val();;
+    var redirect = '/createMatch/' + $('#cPlayerName').val();
     window.location.assign(redirect);
     return false;
   }
+  function joinMatch(){
+    var redirect = '/match/f/' + $('#matchId').val() + '/' + $('#jPlayerName').val();
+    window.location.assign(redirect);
+    return false;
+  }
+
+  function checkSpecialChars(selector){
+    var tooltipSelector = selector + '_invalidCharTooltip';
+    var str = $(selector).val();
+    if(/[^a-zA-Z0-9]/g.test(str)) {
+      $(tooltipSelector).css('visibility', 'visible');
+    }
+    else {
+      $(tooltipSelector).css('visibility', 'hidden');
+    }
+  }
+
+  // CreateMatch Events
   $('#createMatchButton').click(function(){
     return createMatch();
   });
@@ -49,11 +64,7 @@
     }
   });
 
-  function joinMatch(){
-    var redirect = '/match/f/' + $('#matchId').val() + '/' + $('#jPlayerName').val();
-    window.location.assign(redirect);
-    return false;
-  }
+  // JoinMatch Events
   $('#joinMatchButton').click(function(){
     return joinMatch();
   });
@@ -70,45 +81,5 @@
       checkSpecialChars('#jPlayerName');
     }
   });
-  $('#matchId').keyup(function(event){
-    var inputVal = $('#matchId').val();
-    if(inputVal.length === 5){
-      $.get('/checkMatchId/' + $('#matchId').val(), function(data) {
-        if(data.matchStatus==='notFound'){
-          $('#matchId_nonExistingId').css('visibility', 'visible');
-          $('#matchId_tooShortId').css('visibility', 'hidden');
-          $('#matchId_existingId').css('visibility', 'hidden');
-        }
-        else{
-          $('#matchId_existingId').css('visibility', 'visible');
-          $('#matchId_nonExistingId').css('visibility', 'hidden');
-          $('#matchId_tooShortId').css('visibility', 'hidden');
-        }
-      });
-    }
-    else if (0 < inputVal.length && inputVal.length < 5){
-      $('#matchId_tooShortId').css('visibility', 'visible');
-      $('#matchId_nonExistingId').css('visibility', 'hidden');
-      $('#matchId_existingId').css('visibility', 'hidden');
-    }
-    else {
-      $('#matchId_nonExistingId').css('visibility', 'hidden');
-      $('#matchId_tooShortId').css('visibility', 'hidden');
-      $('#matchId_existingId').css('visibility', 'hidden');
-    }
-  });
-
-  function checkSpecialChars(selector){
-    var tooltipSelector = selector + '_invalidCharTooltip';
-    var str = $(selector).val();
-    if(/^[a-zA-Z0-9- ]*$/.test(str) == false) {
-      $(tooltipSelector).css('visibility', 'visible');
-    }
-    else {
-      $(tooltipSelector).css('visibility', 'hidden');
-    }
-  }
-
-
   </script>
 </html>

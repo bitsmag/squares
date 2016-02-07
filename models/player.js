@@ -1,3 +1,4 @@
+"use strict";
 function Player(name, match, matchCreator){ //ERROR: matchNotFound, matchIsFull, nameInUse, matchIsActive
     this.name = name;
     this.color = '';
@@ -9,8 +10,8 @@ function Player(name, match, matchCreator){ //ERROR: matchNotFound, matchIsFull,
     this.socket = null;
 
     if(!match.isActive()){
-      var unusedColor;
-      var error = false;
+      let unusedColor;
+      let error = false;
       try{
         unusedColor = getUnusedColor(match);
       }
@@ -88,7 +89,7 @@ Player.prototype.increaseScore = function(points) {
 Player.prototype.startDoubleSpeedSpecial = function(duration) {
   if(!this.doubleSpeedSpecial){
     this.doubleSpeedSpecial = true;
-    var that = this;
+    let that = this;
     setTimeout(function(){
       that.doubleSpeedSpecial = false;
     }, 5000);
@@ -96,11 +97,11 @@ Player.prototype.startDoubleSpeedSpecial = function(duration) {
 };
 
 function getUnusedColor(match) { // ERROR: matchIsFull
-  var usedColors = {blue: false,
+  let usedColors = {blue: false,
                     orange: false,
                     green: false,
                     red: false};
-  for(var i = 0; i<match.getPlayers().length; i++){
+  for(let i = 0; i<match.getPlayers().length; i++){
     switch(match.getPlayers()[i].getColor()) {
       case 'blue':
         usedColors.blue = true;

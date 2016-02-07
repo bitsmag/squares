@@ -1,27 +1,28 @@
-var matchSockets      = require('../../sockets/matchSockets');
+"use strict";
+let matchSockets      = require('../../sockets/matchSockets');
 
 function calculateNewPlayerPositions(match, playerList){
-  var activeColors = [];
-  var players = match.getPlayers();
-  for(var i = 0; i<players.length; i++){
-    activeColors.push(players[i].getColor())
+  let activeColors = [];
+  let players = match.getPlayers();
+  for(let i = 0; i<players.length; i++){
+    activeColors.push(players[i].getColor());
   }
 
   // Get currentPos, futurePos & prio of active Players
 
-  var currentPos = {blue: null, orange: null, green: null, red: null};
-  var futurePos = {blue: null, orange: null, green: null, red: null};
-  var prio = {blue: false, orange: false, green: false, red: false};
+  let currentPos = {blue: null, orange: null, green: null, red: null};
+  let futurePos = {blue: null, orange: null, green: null, red: null};
+  let prio = {blue: false, orange: false, green: false, red: false};
 
-  for(i=0; i<activeColors.length; i++){
-    var player;
-    var error = false;
+  for(let i = 0; i<activeColors.length; i++){
+    let player;
+    let error = false;
     try {
       player = match.getPlayerByColor(activeColors[i]);
     }
     catch(err){
       error = true;
-      matchSockets.sendFatalErrorEvent(that.match);
+      matchSockets.sendFatalErrorEvent(match);
       match.destroy();
       console.warn(err.message + ' // positionCalc.calculateNewPlayerPositions()');
       console.trace();
@@ -46,10 +47,10 @@ function calculateNewPlayerPositions(match, playerList){
   // standing players) he wins. If no player has priority loosers are chosen
   // randomly.
 
-  var loosers = new Array();
+  let loosers = [];
 
-  for(var i=0; i<activeColors.length; i++){
-    for(var j=0; j<activeColors.length; j++){
+  for(let i=0; i<activeColors.length; i++){
+    for(let j=0; j<activeColors.length; j++){
       if(i !== j && futurePos[activeColors[i]]===futurePos[activeColors[j]]){
         if(prio[activeColors[i]]){
           loosers.push(activeColors[j]);
@@ -58,8 +59,8 @@ function calculateNewPlayerPositions(match, playerList){
           loosers.push(activeColors[i]);
         }
         else {
-          var uniqueRandomNumbers = {};
-          for(var k=0; k<activeColors.length; k++){
+          let uniqueRandomNumbers = {};
+          for(let k=0; k<activeColors.length; k++){
             uniqueRandomNumbers[activeColors[k]] = Math.random();
           }
           if(uniqueRandomNumbers[activeColors[i]] === Math.max(uniqueRandomNumbers[activeColors[i]], uniqueRandomNumbers[activeColors[j]])){
@@ -76,8 +77,8 @@ function calculateNewPlayerPositions(match, playerList){
   // Solving Conflict (2) - two players want to jump 'over' each other (switch squares):
   // Both players must remain on their current squares.
 
-  for(var i=0; i<activeColors.length; i++){
-    for(var j=0; j<activeColors.length; j++){
+  for(let i=0; i<activeColors.length; i++){
+    for(let j=0; j<activeColors.length; j++){
       if(i !== j && futurePos[activeColors[i]] === currentPos[activeColors[j]] && futurePos[activeColors[j]] === currentPos[activeColors[i]]){
         loosers.push(activeColors[i]);
         loosers.push(activeColors[j]);
@@ -88,7 +89,7 @@ function calculateNewPlayerPositions(match, playerList){
   // Loosers must remain on their current squares
 
   loosers = loosers.reduce(function(a,b){if(a.indexOf(b)<0)a.push(b);return a;},[]);
-  for(var i=0; i<loosers.length; i++){
+  for(let i=0; i<loosers.length; i++){
     futurePos[loosers[i]] = currentPos[loosers[i]];
   }
 
@@ -96,8 +97,8 @@ function calculateNewPlayerPositions(match, playerList){
 }
 
 function calculateFuturePos(currentPosition, activeDirection, board, match){
-  var square;
-  var error = false;
+  let square;
+  let error = false;
   try{
     square = board.getSquare(currentPosition);
   }

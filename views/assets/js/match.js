@@ -1,5 +1,5 @@
 var direction;
-var playerPositions = {blue: null, orange: null, green: null, red: null}
+var playerPositions = {blue: null, orange: null, green: null, red: null};
 
 var socket = io();
 var matchSockets = io.connect('/matchSockets');
@@ -41,7 +41,7 @@ matchSockets.on('connect', function () {
 
   matchSockets.on('fatalError', function(){
     matchSockets.disconnect();
-    alert('There went something horribly wrong. Pleas reload the page or try to create a new match.')
+    alert('There went something horribly wrong. Pleas reload the page or try to create a new match.');
   });
 });
 
@@ -51,9 +51,9 @@ function prepareMatch(data){
   var squareId = 0;
 
   // Create board
-  var table = '<table>'
+  var table = '<table>';
   for(var i=0; i<rows; i++){
-    table += '<tr>'
+    table += '<tr>';
     for(var j=0; j<cols; j++){
       table += '<td><div class="square" id="square' + squareId + '"';
       if(data.board.squares[squareId].color==='red'){
@@ -76,7 +76,7 @@ function prepareMatch(data){
     }
     table += '</tr>';
   }
-  table += "</table>"
+  table += "</table>";
   $('#board').append(table);
 
   // Create Score-div
@@ -85,7 +85,7 @@ function prepareMatch(data){
   for(var i = 0; i<data.players.length; i++){
     var div = '<td id="' + data.players[i].playerColor + 'Score"><br/><span class="name underlined">';
     div += data.players[i].playerName;
-    div += '</span><br><br>'
+    div += '</span><br><br>';
     div += '<span class="score">0</span><br/><br/></td>';
     $('#scores').append(div);
   }
@@ -204,7 +204,7 @@ function matchEnd(){
     }
   });
 
-  congratsDiv += '</h2><div id="congratsSpinner"><img src="/img/cup.svg"/><br><span>' + place + '.</span></div><br><a href="/">Create a new match!</a>'
+  congratsDiv += '</h2><div id="congratsSpinner"><img src="/img/cup.svg"/><br><span>' + place + '.</span></div><br><a href="/">Create a new match!</a>';
   $('#board').append(congratsDiv);
   $('#timer').html('...');
 }

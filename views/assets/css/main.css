@@ -1,6 +1,6 @@
 /* based on css from http://www.sanwebe.com/2014/08/css-html-forms-designs */
 body{
-	background: #86267b;
+	background: #4D4D4D;
 }
 #logo{
   display: block;
@@ -68,8 +68,8 @@ body{
 }
 .form-style-8 input[type="button"],
 .form-style-8 input[type="submit"]{
-	background-color: #86267b;
-	border: 1px solid #4f1749;
+	background-color: rgb(21, 179, 171);
+	border: 1px solid #4D4D4D;
 	display: inline-block;
 	cursor: pointer;
 	color: #C8C8C8;
@@ -80,5 +80,5 @@ body{
 }
 .form-style-8 input[type="button"]:hover,
 .form-style-8 input[type="submit"]:hover {
-	background-color:#9f2d92;
+	background-color: #108983;
 }

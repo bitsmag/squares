@@ -1,9 +1,10 @@
+"use strict";
 function getSpecials(match){
-  var specials = {doubleSpeed: []};
+  let specials = {doubleSpeed: []};
 
-  var r = Math.random();
+  let r = Math.random();
   if(r < 0.023){
-    var randomSquare = Math.floor((Math.random() * match.getBoard().getSquares().length-1) + 1);
+    let randomSquare = Math.floor((Math.random() * match.getBoard().getSquares().length-1) + 1);
     specials.doubleSpeed.push(randomSquare);
   }
 

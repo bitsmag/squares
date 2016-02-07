@@ -1,3 +1,4 @@
+"use strict";
 function MatchesManager(){
   this.matches = [];
 }
@@ -7,8 +8,8 @@ MatchesManager.prototype.getMatches = function(matchId) {
 };
 
 MatchesManager.prototype.getMatch = function(matchId) { //ERROR: matchNotFound
-  var error = true;
-  for(var i = 0; i < this.matches.length; i++){
+  let error = true;
+  for(let i = 0; i < this.matches.length; i++){
     if(this.matches[i].id === matchId){
       error = false;
       return this.matches[i];
@@ -24,18 +25,18 @@ MatchesManager.prototype.addMatch = function(match) {
 };
 
 MatchesManager.prototype.removeMatch = function(match) {
-  var index = this.matches.indexOf(match);
+  let index = this.matches.indexOf(match);
   if (index > -1) {
     this.matches.splice(index, 1);
   }
 };
 
 // Singelton
-var manager = (function () {
-  var instance;
+let manager = (function () {
+  let instance;
 
   function createInstance() {
-      var theManager = new MatchesManager();
+      let theManager = new MatchesManager();
       return theManager;
   }
   if (!instance) {

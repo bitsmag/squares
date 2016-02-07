@@ -1,0 +1,4 @@
+{
+  "node":         true,   // node is global var. no error on consol.log etc.
+  "esversion":    6       // using 'let' keyword without errors
+}

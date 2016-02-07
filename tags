@@ -34,9 +34,7 @@ Match.updateBoard	models/match.js	/^Match.prototype.updateBoard = function(playe
 Match.updatePlayers	models/match.js	/^Match.prototype.updatePlayers = function(playerPositions) {$/;"	m
 Match.updateSpecials	models/match.js	/^Match.prototype.updateSpecials = function(specials) {$/;"	m
 MatchController	controllers/matchController.js	/^function MatchController(match){$/;"	c
-MatchController.function.countdownDurationDecrement	controllers/matchController.js	/^  function countdownDurationDecrement(){$/;"	f
 MatchController.function.durationDecrement	controllers/matchController.js	/^  function durationDecrement(){$/;"	f
-MatchController.function.runMatch	controllers/matchController.js	/^  function runMatch(){$/;"	f
 MatchController.function.tick	controllers/matchController.js	/^  function tick(){$/;"	f
 MatchController.matchTicker	controllers/matchController.js	/^MatchController.prototype.matchTicker = function(){$/;"	m
 MatchController.startMatch	controllers/matchController.js	/^MatchController.prototype.startMatch = function(){$/;"	m
@@ -85,6 +83,8 @@ dependencies	package.json	/^  "dependencies": {$/;"	f
 description	package.json	/^  "description": "socket based multiplayer game",$/;"	f
 devDependencies	package.json	/^  "devDependencies": {$/;"	f
 express	package.json	/^    "express": "*",$/;"	f
+function.countdownDurationDecrement	controllers/matchController.js	/^  function countdownDurationDecrement(){$/;"	f
+function.runMatch	controllers/matchController.js	/^  function runMatch(){$/;"	f
 getPlayerPoints	controllers/matchTicker/circuitsCheck.js	/^function getPlayerPoints(match){$/;"	f
 getPoints	controllers/matchTicker/circuitsCheck.js	/^function getPoints(theSquare, theColor, match){$/;"	f
 getPoints.checkValidity	controllers/matchTicker/circuitsCheck.js	/^  function checkValidity(stack, alreadyVisitedVertex){ \/\/ Will check if a circuit is valid. returns the value of the circuit if valid, otherwise 0$/;"	f
@@ -92,7 +92,6 @@ getPoints.dfs	controllers/matchTicker/circuitsCheck.js	/^  function dfs(theSquar
 getPoints.getVertices	controllers/matchTicker/circuitsCheck.js	/^  function getVertices(s, c){ \/\/ Returns all squares in the same color reachable from the current square (neighbors)$/;"	f
 getPoints.setAllSquaresUnvisited	controllers/matchTicker/circuitsCheck.js	/^  function setAllSquaresUnvisited(){ \/\/ dfsVisited is a helper property for the algorithm -> set it to false for each square in the end$/;"	f
 getPoints.setPrefDir	controllers/matchTicker/circuitsCheck.js	/^  function setPrefDir(theSquare, nextSquare){ \/\/ Returns the direction the algorithm is "going"$/;"	f
-getPoints.vertices.move	controllers/matchTicker/circuitsCheck.js	/^    var vertices = new Array();$/;"	c
 getSpecials	controllers/matchTicker/randomSpecials.js	/^function getSpecials(match){$/;"	f
 getUnusedColor	models/player.js	/^function getUnusedColor(match) { \/\/ ERROR: matchIsFull$/;"	f
 istanbul	package.json	/^    "istanbul": "*"$/;"	f
@@ -111,14 +110,15 @@ respond	sockets/createMatchSockets.js	/^function respond(socket){$/;"	f
 respond	sockets/matchSockets.js	/^function respond(socket){$/;"	f
 scripts	package.json	/^  "scripts": {$/;"	f
 sendClearSquaresEvent	sockets/matchSockets.js	/^function sendClearSquaresEvent(match, clearSquares, clearSpecials){$/;"	f
+sendCountdownEvent	sockets/matchSockets.js	/^function sendCountdownEvent(match){$/;"	f
+sendFatalErrorEvent	sockets/matchSockets.js	/^function sendFatalErrorEvent(match){$/;"	f
 sendMatchCreatorDisconnectedEvent	sockets/matchSockets.js	/^function sendMatchCreatorDisconnectedEvent(match){$/;"	f
+sendMatchEndEvent	sockets/matchSockets.js	/^function sendMatchEndEvent(match){$/;"	f
 sendPlayerConnectedEvent	sockets/matchSockets.js	/^function sendPlayerConnectedEvent(match, player){$/;"	f
 sendPlayerDisconnectedEvent	sockets/matchSockets.js	/^function sendPlayerDisconnectedEvent(match, player){$/;"	f
 sendPrepareMatchEvent	sockets/matchSockets.js	/^function sendPrepareMatchEvent(match){$/;"	f
 sendUpdateBoardEvent	sockets/matchSockets.js	/^function sendUpdateBoardEvent(match, specials){$/;"	f
-sendUpdateScoreEvent.sendCountdownEvent	sockets/matchSockets.js	/^function sendCountdownEvent(match){$/;"	f
-sendUpdateScoreEvent.sendFatalErrorEvent	sockets/matchSockets.js	/^function sendFatalErrorEvent(match){$/;"	f
-sendUpdateScoreEvent.sendMatchEndEvent	sockets/matchSockets.js	/^function sendMatchEndEvent(match){$/;"	f
+sendUpdateScoreEvent	sockets/matchSockets.js	/^function sendUpdateScoreEvent(match){$/;"	f
 setKeyListener	views/assets/js/match.js	/^function setKeyListener(){$/;"	f
 socket.io	package.json	/^    "socket.io": "*"$/;"	f
 start	package.json	/^    "start": "node index.js"$/;"	f
@@ -129,3 +129,4 @@ updateBoard	views/assets/js/match.js	/^function updateBoard(data){$/;"	f
 updateScore	views/assets/js/match.js	/^function updateScore(data){$/;"	f
 url	package.json	/^    "url": "no"$/;"	f
 version	package.json	/^  "version": "0.0.0",$/;"	f
+vertices.move	controllers/matchTicker/circuitsCheck.js	/^    let vertices = [];$/;"	c

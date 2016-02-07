@@ -1,17 +1,22 @@
-var positionCalc      = require('./matchTicker/positionCalc');
-var circuitsCheck     = require('./matchTicker/circuitsCheck');
-var randomSpecials    = require('./matchTicker/randomSpecials');
-var matchSockets      = require('../sockets/matchSockets');
+"use strict";
+let positionCalc      = require('./matchTicker/positionCalc');
+let circuitsCheck     = require('./matchTicker/circuitsCheck');
+let randomSpecials    = require('./matchTicker/randomSpecials');
+let matchSockets      = require('../sockets/matchSockets');
 
 function MatchController(match){
   this.match = match;
 }
 
 MatchController.prototype.startMatch = function(){
+  let that = this;
+  let countdownDurationDecrementInterval = setInterval(countdownDurationDecrement, 1000);
+
   function runMatch(){
     that.timer(that.match.getDuration());
     that.matchTicker();
   }
+
   function countdownDurationDecrement(){
     if(!that.match.isActive()){
       clearInterval(countdownDurationDecrementInterval);
@@ -25,9 +30,7 @@ MatchController.prototype.startMatch = function(){
       }
     }
   }
-  var that = this;
-  var countdownDurationDecrementInterval = setInterval(countdownDurationDecrement, 1000);
-}
+};
 
 MatchController.prototype.timer = function(duration){
   function durationDecrement(){
@@ -42,9 +45,9 @@ MatchController.prototype.timer = function(duration){
       }
     }
   }
-  var that = this;
-  var durationDecrementInterval = setInterval(durationDecrement, 1000);
-}
+  let that = this;
+  let durationDecrementInterval = setInterval(durationDecrement, 1000);
+};
 
 MatchController.prototype.matchTicker = function(){
   function tick(){
@@ -55,16 +58,16 @@ MatchController.prototype.matchTicker = function(){
     }
     else{
       // Calculate new playerPositions - only doubleSpeed players can move every tick
-      var playerPositions;
+      let playerPositions;
       if(tickCount%2===0){
         playerPositions = positionCalc.calculateNewPlayerPositions(that.match, ['red', 'orange', 'green', 'blue']);
       }
       else{
-        var doubleSpeedColors = [];
-        var players = that.match.getPlayers();
-        for(var i = 0; i<players.length; i++){
+        let doubleSpeedColors = [];
+        let players = that.match.getPlayers();
+        for(let i = 0; i<players.length; i++){
           if(players[i].getDoubleSpeedSpecial()){
-            doubleSpeedColors.push(players[i].getColor())
+            doubleSpeedColors.push(players[i].getColor());
           }
         }
         playerPositions = positionCalc.calculateNewPlayerPositions(that.match, doubleSpeedColors);
@@ -75,15 +78,15 @@ MatchController.prototype.matchTicker = function(){
       that.match.updateBoard(playerPositions);
 
       // Check for circuits / get points
-      var playerPoints = circuitsCheck.getPlayerPoints(that.match);
+      let playerPoints = circuitsCheck.getPlayerPoints(that.match);
 
       // Update score for active players
-      var activeColors = [];
-      var players = that.match.getPlayers();
-      for(var i = 0; i<players.length; i++){
-        activeColors.push(players[i].getColor())
+      let activeColors = [];
+      let players = that.match.getPlayers();
+      for(let i = 0; i<players.length; i++){
+        activeColors.push(players[i].getColor());
       }
-      for(i=0; i<activeColors.length; i++){
+      for(let i = 0; i<activeColors.length; i++){
         try{
           that.match.getPlayerByColor(activeColors[i]).increaseScore(playerPoints[activeColors[i]]);
         }
@@ -96,10 +99,10 @@ MatchController.prototype.matchTicker = function(){
       }
 
       // Check if a player collected a special
-      var clearSpecials = [];
-      for(i=0; i<activeColors.length; i++){
+      let clearSpecials = [];
+      for(let i = 0; i<activeColors.length; i++){
         try{
-          var square = that.match.getBoard().getSquare(playerPositions[activeColors[i]]);
+          let square = that.match.getBoard().getSquare(playerPositions[activeColors[i]]);
           if(square.getDoubleSpeedSpecial()){
             that.match.getPlayerByColor(activeColors[i]).startDoubleSpeedSpecial(that.match.getBoard().getDoubleSpeedDuration());
             square.setDoubleSpeedSpecial(false);
@@ -115,21 +118,21 @@ MatchController.prototype.matchTicker = function(){
       }
 
       // Get all squares of a player who made points this tick
-      var clearSquares = [];
-      for(var color in playerPoints){
+      let clearSquares = [];
+      for(let color in playerPoints){
         if(playerPoints[color] > 0){
-          for(var i = 0; i < that.match.getBoard().getSquares().length; i++){
-            var square = that.match.getBoard().getSquares()[i];
+          for(let i = 0; i < that.match.getBoard().getSquares().length; i++){
+            let square = that.match.getBoard().getSquares()[i];
             if(square.getColor() === color){
               square.setColor('');
-              clearSquares.push(square.getId())
+              clearSquares.push(square.getId());
             }
           }
         }
       }
 
       // Get randomSpecials and update the board
-      var specials = randomSpecials.getSpecials(that.match);
+      let specials = randomSpecials.getSpecials(that.match);
       that.match.updateSpecials(specials);
 
       // Send sockets
@@ -138,9 +141,9 @@ MatchController.prototype.matchTicker = function(){
       matchSockets.sendUpdateScoreEvent(that.match);
     }
   }
-  var tickCount = 0;
-  var that = this;
-  var tickerInterval = setInterval(tick, 250);
-}
+  let tickCount = 0;
+  let that = this;
+  let tickerInterval = setInterval(tick, 250);
+};
 
 exports.MatchController = MatchController;

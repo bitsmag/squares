@@ -1,14 +1,15 @@
-var express = require('express');
-var app = express();
-var http = require('http').Server(app);
-var io = require('socket.io')(http);
-var swig  = require('swig');
+"use strict";
+let express = require('express');
+let app = express();
+let http = require('http').Server(app);
+let io = require('socket.io')(http);
+let swig  = require('swig');
 
-var createMatchSockets = require('./sockets/createMatchSockets');
-var matchSockets = require('./sockets/matchSockets');
-var matchesManager = require('./models/matchesManager');
-var match = require('./models/match');
-var player = require('./models/player');
+let createMatchSockets = require('./sockets/createMatchSockets');
+let matchSockets = require('./sockets/matchSockets');
+let matchesManager = require('./models/matchesManager');
+let match = require('./models/match');
+let player = require('./models/player');
 
 // Set swig as the template engine for html files
 app.engine('html', swig.renderFile);
@@ -23,13 +24,13 @@ app.set('port', (process.env.PORT || 3000));
   * SOCKETS
   */
 
-var createMatchSocketsConnection = io
+let createMatchSocketsConnection = io
   .of('/createMatchSockets')
   .on('connection', function (socket) {
     createMatchSockets.respond(socket);
   });
 
-var matchSocketsConnection = io
+let matchSocketsConnection = io
   .of('/matchSockets')
   .on('connection', function (socket) {
     matchSockets.respond(socket ,io);
@@ -46,20 +47,20 @@ app.get('/', function(req, res){
 
 app.get('/createMatch/:playerName', function(req, res){
   //Filter all non alphanumeric values in params
-  var playerName = req.params.playerName;
-  playerName = playerName.replace(/\W/g, '');
+  let playerName = req.params.playerName;
+  playerName = playerName.replace(/[^a-zA-Z0-9]/g, '');
   if(playerName.lenght>12){
-    playerName = string.substring(0, 12);
+    playerName = playerName.string.substring(0, 12);
   }
 
   if(playerName===''){
     res.status(500).send('Your name must contain only alphanumeric characters.');
   }
   else {
-    var newMatch = new match.Match();
-    var error = false;
+    let newMatch = new match.Match();
+    let error = false;
     // try {
-      var newPlayer = new player.Player(playerName, newMatch, true);
+      let newPlayer = new player.Player(playerName, newMatch, true);
     // }
     // catch(err){
     //   error = true;
@@ -77,18 +78,18 @@ app.get('/createMatch/:playerName', function(req, res){
 
 app.get('/match/:matchCreatorFlag/:matchId/:playerName', function(req, res){
   // Filter all non alphanumeric values in params
-  var matchCreatorFlag = req.params.matchCreatorFlag;
-  matchCreatorFlag = matchCreatorFlag.replace(/\W/g, '');
-  var matchId = req.params.matchId;
-  matchId = matchId.replace(/\W/g, '');
-  var playerName = req.params.playerName;
-  playerName = playerName.replace(/\W/g, '');
+  let matchCreatorFlag = req.params.matchCreatorFlag;
+  matchCreatorFlag = matchCreatorFlag.replace(/[^a-zA-Z0-9]/g, '');
+  let matchId = req.params.matchId;
+  matchId = matchId.replace(/[^a-zA-Z0-9]/g, '');
+  let playerName = req.params.playerName;
+  playerName = playerName.replace(/[^a-zA-Z0-9]/g, '');
   if(playerName.lenght>12){
-    playerName = string.substring(0, 12);
+    playerName = playerName.substring(0, 12);
   }
 
-  var match;
-  var error = false;
+  let match;
+  let error = false;
   try {
     match = matchesManager.manager.getMatch(matchId);
   }
@@ -120,9 +121,9 @@ app.get('/match/:matchCreatorFlag/:matchId/:playerName', function(req, res){
         res.status(500).send('Please use only alphanumeric chars in your name.');
       }
       else {
-        var error = false;
+        let error = false;
         try {
-          var newPlayer = new player.Player(playerName, match, false);
+          let newPlayer = new player.Player(playerName, match, false);
         }
         catch(err){
           error = true;
@@ -148,23 +149,6 @@ app.get('/match/:matchCreatorFlag/:matchId/:playerName', function(req, res){
     else {
       res.status(500).send('There was a unknown issue - please try again.');
     }
-  }
-});
-
-app.get('/checkMatchId/:matchId', function(req, res){
-  var matchId = req.params.matchId;
-  matchId = matchId.replace(/\W/g, '');
-
-  var error = false;
-  try {
-    match = matchesManager.manager.getMatch(matchId);
-  }
-  catch(err){
-    error = true;
-    res.status(200).send({matchStatus: 'notFound'});
-  }
-  if(!error){
-    res.status(200).send({matchStatus: 'found'});
   }
 });
 

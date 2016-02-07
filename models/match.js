@@ -1,7 +1,8 @@
-var board             = require('./board');
-var matchController   = require('../controllers/matchController');
-var matchSockets      = require('../sockets/matchSockets');
-var matchesManager    = require('./matchesManager');
+"use strict";
+let board             = require('./board');
+let matchController   = require('../controllers/matchController');
+let matchSockets      = require('../sockets/matchSockets');
+let matchesManager    = require('./matchesManager');
 
 function Match(){
   this.id = '';
@@ -25,8 +26,8 @@ Match.prototype.getPlayers = function() {
 };
 
 Match.prototype.getPlayer = function(playerName) { // ERROR: playerNotFound
-  var error = false;
-  for(var i = 0; i < this.players.length; i++){
+  let error = false;
+  for(let i = 0; i < this.players.length; i++){
     if(this.players[i].getName() === playerName){
       return this.players[i];
     }
@@ -40,8 +41,8 @@ Match.prototype.getPlayer = function(playerName) { // ERROR: playerNotFound
 };
 
 Match.prototype.getPlayerByColor = function(playerColor) { // ERROR: playerNotFound
-  var error = false;
-  for(var i = 0; i < this.players.length; i++){
+  let error = false;
+  for(let i = 0; i < this.players.length; i++){
     if(this.players[i].getColor() === playerColor){
       return this.players[i];
     }
@@ -55,11 +56,11 @@ Match.prototype.getPlayerByColor = function(playerColor) { // ERROR: playerNotFo
 };
 
 Match.prototype.getMatchCreator = function() { // ERROR: matchCreatorNotFound
-  var error = false;
+  let error = false;
   if(this.players.length===0){
     error = true;
   }
-  for(var i = 0; i < this.players.length; i++){
+  for(let i = 0; i < this.players.length; i++){
     if(this.players[i].isMatchCreator()){
       return this.players[i];
     }
@@ -93,7 +94,7 @@ Match.prototype.isActive = function() {
 };
 
 Match.prototype.addPlayer = function(player) { // ERROR: matchIsFull, nameInUse
-    var nameDuplicate = this.isNameInUse(player.getName());
+    let nameDuplicate = this.isNameInUse(player.getName());
     if(this.players.length>=4){
       throw new Error('matchIsFull');
     }
@@ -106,7 +107,7 @@ Match.prototype.addPlayer = function(player) { // ERROR: matchIsFull, nameInUse
 };
 
 Match.prototype.removePlayer = function(player) {
-    var index = this.players.indexOf(player);
+    let index = this.players.indexOf(player);
     if (index > -1) {
       this.players.splice(index, 1);
     }
@@ -129,14 +130,14 @@ Match.prototype.setActive = function(active) {
 
 Match.prototype.updatePlayers = function(playerPositions) {
   // Set position property of players
-  var activeColors = [];
-  var players = this.getPlayers();
-  for(var i = 0; i<players.length; i++){
+  let activeColors = [];
+  let players = this.getPlayers();
+  for(let i = 0; i<players.length; i++){
     activeColors.push(players[i].getColor());
   }
-  for(var i=0; i<activeColors.length; i++){
+  for(let i=0; i<activeColors.length; i++){
     try {
-      var player = this.getPlayerByColor(activeColors[i]);
+      let player = this.getPlayerByColor(activeColors[i]);
       player.setPosition(playerPositions[activeColors[i]]);
     }
     catch(err) {
@@ -149,13 +150,13 @@ Match.prototype.updatePlayers = function(playerPositions) {
 };
 
 Match.prototype.updateBoard = function(playerPositions, specials) {
-  var activeColors = [];
-  var players = this.getPlayers();
-  for(var i = 0; i<players.length; i++){
+  let activeColors = [];
+  let players = this.getPlayers();
+  for(let i = 0; i<players.length; i++){
     activeColors.push(players[i].getColor());
   }
   // Set color of playerPosition-Squares
-  for(var i=0; i<activeColors.length; i++){
+  for(let i=0; i<activeColors.length; i++){
     try {
       this.getBoard().getSquare(playerPositions[activeColors[i]]).setColor(activeColors[i]);
     }
@@ -181,8 +182,8 @@ Match.prototype.updateSpecials = function(specials) {
 };
 
 Match.prototype.isNameInUse = function(name) {
-  var nameInUse;
-  for(var i = 0; i < this.players.length; i++){
+  let nameInUse;
+  for(let i = 0; i < this.players.length; i++){
     if(this.players[i].getName() === name){
       nameInUse = true;
     }
@@ -196,7 +197,7 @@ Match.prototype.destroy = function() {
 };
 
 function createUniqueId(){
-  var timestamp,
+  let timestamp,
     matchId,
     duplicate,
     unique = false;
@@ -206,7 +207,7 @@ function createUniqueId(){
     matchId = 'x' + timestamp.substring(timestamp.length - 4, timestamp.lenght);
 
     duplicate = false;
-    for(var i=0; i<matchesManager.manager.getMatches().length; i++){
+    for(let i=0; i<matchesManager.manager.getMatches().length; i++){
       if(matchesManager.manager.getMatches()[i].getId() === matchId){
         duplicate = true;
       }
@@ -216,6 +217,6 @@ function createUniqueId(){
     }
   }
   return matchId;
-};
+}
 
 exports.Match = Match;

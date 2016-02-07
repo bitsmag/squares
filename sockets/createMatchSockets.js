@@ -1,27 +1,27 @@
-var matchesManager     = require('../models/matchesManager');
-var matchSockets       = require('../sockets/matchSockets');
+"use strict";
+let matchesManager     = require('../models/matchesManager');
+let matchSockets       = require('../sockets/matchSockets');
 
 /*
   * LISTENERS
   */
 
 function respond(socket){
-  var match;
-  var player;
-  var startBtnClicked = false;
+  let match;
+  let player;
+  let startBtnClicked = false;
 
   socket.on('connectionInfo',function(playerInfo){
     // Filter all non alphanumeric values in params
-    var matchId = playerInfo.matchId.replace(/\W/g, '');
+    let matchId = playerInfo.matchId.replace(/\W/g, '');
 
-    var error = false;
+    let error = false;
     try {
       match = matchesManager.manager.getMatch(playerInfo.matchId);
       player = match.getMatchCreator();
     }
     catch(err) {
       error = true;
-      sendFatalErrorEvent(match);
       matchSockets.sendFatalErrorEvent(match);
       match.destroy();
       console.warn(err.message + ' // createMatchSockets.on(connectionInfo)');

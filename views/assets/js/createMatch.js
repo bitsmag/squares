@@ -3,7 +3,7 @@ $('#startMatchBtn').click(function(){
   createMatchSockets.emit('startBtnClicked');
   createMatchSockets.disconnect();
   window.location.replace('/match/t/' + playerInfo.matchId + '/' + playerInfo.playerName);
-})
+});
 
 /*SOCKETS*/
 var createMatchSockets = io.connect('/createMatchSockets');
@@ -20,6 +20,6 @@ createMatchSockets.on('connect', function () {
 
   createMatchSockets.on('fatalError', function(){
     createMatchSockets.disconnect();
-    alert('There went something horribly wrong. Please try to create a new match.')
+    alert('There went something horribly wrong. Please try to create a new match.');
   });
 });
