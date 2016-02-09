@@ -15,8 +15,6 @@ table {
   width: 25%;
   text-align: center;
 }
-#board table {border-spacing: 0px;}
-#board td {border: 1px black solid;}
 #countdown, #timer{
   text-align: center;
 }
@@ -68,9 +66,12 @@ table {
   background-size: 60% 60%;
   background-position: center;
 }
-#board table{
+#board table {
   background-color: #C8C8C8;
-  box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.22);
+  border-spacing: 0px;
+}
+#board td {
+  border: 1px #4D4D4D solid;
 }
 #blueScore{
   background-color: #4fc1df;
