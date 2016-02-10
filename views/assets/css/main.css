@@ -23,7 +23,7 @@ body{
 .form-style-8{
 	font-family: 'Open Sans Condensed', arial, sans;
 	width: 320px;
-	padding: 30px;
+	padding: 30px 30px 20px 30px;
 	background: #C8C8C8;
 	margin: 50px auto;
 	box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.22);
@@ -44,9 +44,6 @@ body{
 	margin-bottom: 40px;
 }
 
-.form-style-8 form{
-	text-align: center;
-}
 .form-style-8 input[type="text"],
 .form-style-8 input[type="date"],
 .form-style-8 input[type="datetime"],
@@ -81,12 +78,13 @@ body{
 .form-style-8 input[type="submit"]{
 	background-color: rgb(21, 179, 171);
 	border: 1px solid #4D4D4D;
-	display: inline-block;
+	display: block;
 	cursor: pointer;
 	color: #C8C8C8;
 	font-family: 'Open Sans Condensed', sans-serif;
 	font-size: 14px;
 	padding: 8px 18px;
+	margin: 20px auto 0 auto;
 	text-decoration: none;
 }
 .form-style-8 input[type="button"]:hover,

@@ -9,21 +9,17 @@
 
     <div class="form-style-8">
       <h2>Create a new match.</h2>
-      <form>
-        <div id="cPlayerName_invalidCharTooltip" class="negative_tooltip">Please use alphanumeric characters only.</div>
-        <input id="cPlayerName" type="text" name="field1" autocomplete="off" placeholder="Name" maxlength="12">
-        <input id="createMatchButton" type="button" value="GO!" />
-      </form>
+      <div id="cPlayerName_invalidCharTooltip" class="negative_tooltip">Please use alphanumeric characters only.</div>
+      <input id="cPlayerName" type="text" name="field1" autocomplete="off" placeholder="Name" maxlength="12">
+      <input id="createMatchButton" type="button" value="GO!" />
     </div>
 
     <div class="form-style-8">
       <h2>Join a match.</h2>
-      <form>
-        <div id="jPlayerName_invalidCharTooltip" class="negative_tooltip">Please use alphanumeric characters only.</div>
-        <input id="jPlayerName" type="text" name="field1" autocomplete="off" placeholder="Name" maxlength="12">
-        <input id="matchId" type="text" name="field2" autocomplete="off" placeholder="Match ID" maxlength="5">
-        <input id="joinMatchButton" type="button" value="GO!" />
-      </form>
+      <div id="jPlayerName_invalidCharTooltip" class="negative_tooltip">Please use alphanumeric characters only.</div>
+      <input id="jPlayerName" type="text" name="field1" autocomplete="off" placeholder="Name" maxlength="12">
+      <input id="matchId" type="text" name="field2" autocomplete="off" placeholder="Match ID" maxlength="5">
+      <input id="joinMatchButton" type="button" value="GO!" />
     </div>
   </body>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
@@ -31,12 +27,10 @@
   function createMatch(){
     var redirect = '/createMatch/' + $('#cPlayerName').val();
     window.location.assign(redirect);
-    return false;
   }
   function joinMatch(){
     var redirect = '/match/f/' + $('#matchId').val() + '/' + $('#jPlayerName').val();
     window.location.assign(redirect);
-    return false;
   }
 
   function checkSpecialChars(selector){
@@ -52,11 +46,11 @@
 
   // CreateMatch Events
   $('#createMatchButton').click(function(){
-    return createMatch();
+    createMatch();
   });
-  $('#cPlayerName').keydown(function(event){
+  $('#cPlayerName').keyup(function(event){
     if(event.keyCode===13){
-      return createMatch();
+      createMatch();
     }
     else{
       checkSpecialChars('#cPlayerName');
@@ -65,16 +59,16 @@
 
   // JoinMatch Events
   $('#joinMatchButton').click(function(){
-    return joinMatch();
+    joinMatch();
   });
-  $('#matchId').keydown(function(event){
+  $('#matchId').keyup(function(event){
     if(event.keyCode===13){
-      return joinMatch();
+      joinMatch();
     }
   });
   $('#jPlayerName').keyup(function(event){
     if(event.keyCode===13){
-      return joinMatch();
+      joinMatch();
     }
     else{
       checkSpecialChars('#jPlayerName');
