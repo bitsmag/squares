@@ -1,0 +1,27 @@
+<html>
+<head>
+</head>
+<body>
+  <script>
+    function printPos(position) {
+      console.log(position);
+      document.write('     ///     accuracy - ');
+      document.write(position.coords.accuracy);
+      document.write('     ///     altitude - ');
+      document.write(position.coords.altitude);
+      document.write('     ///     altitudeAccuracy - ');
+      document.write(position.coords.altitudeAccuracy);
+      document.write('    ///     heading - ');
+      document.write(position.coords.heading);
+      document.write('     ///     latitude - ');
+      document.write(position.coords.latitude);
+      document.write('     ///     longitude - ');
+      document.write(position.coords.longitude);
+      document.write('     ///     speed - ');
+      document.write(position.coords.speed);
+    }
+
+    navigator.geolocation.getCurrentPosition(printPos);
+  </script>
+</body>
+</html>
