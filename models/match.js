@@ -102,6 +102,10 @@ Match.prototype.addPlayer = function(player) { // ERROR: matchIsFull, nameInUse
       throw new Error('nameInUse');
     }
     else{
+      // Set the color of the start squares on the board
+      let startSquares = this.getBoard().getStartSquares();
+      this.getBoard().getSquare(startSquares[player.getColor()]).setColor(player.getColor());
+      // Add Player
       this.players.push(player);
     }
 };
@@ -109,6 +113,10 @@ Match.prototype.addPlayer = function(player) { // ERROR: matchIsFull, nameInUse
 Match.prototype.removePlayer = function(player) {
     let index = this.players.indexOf(player);
     if (index > -1) {
+      // Remove the color of the start squares on the board
+      let startSquares = this.getBoard().getStartSquares();
+      this.getBoard().getSquare(startSquares[player.getColor()]).setColor('');
+      // Remove player
       this.players.splice(index, 1);
     }
     if(this.players.length < 1){

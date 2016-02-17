@@ -97,37 +97,18 @@ Player.prototype.startDoubleSpeedSpecial = function(duration) {
 };
 
 function getUnusedColor(match) { // ERROR: matchIsFull
-  let usedColors = {blue: false,
-                    orange: false,
-                    green: false,
-                    red: false};
-  for(let i = 0; i<match.getPlayers().length; i++){
-    switch(match.getPlayers()[i].getColor()) {
-      case 'blue':
-        usedColors.blue = true;
-        break;
-      case 'orange':
-        usedColors.orange = true;
-        break;
-      case 'green':
-        usedColors.green = true;
-        break;
-      case 'red':
-        usedColors.red = true;
-        break;
+  let unusedColors = ['blue', 'orange', 'green', 'red'];
+  let players = match.getPlayers();
+
+  for(let i = 0; i < players.length; i++){
+    let index = unusedColors.indexOf(players[i].getColor());
+    if(index > -1){
+      unusedColors.splice(index, 1);
     }
   }
-  if(!usedColors.blue){
-    return 'blue';
-  }
-  else if(!usedColors.orange){
-    return 'orange';
-  }
-  else if(!usedColors.green){
-    return 'green';
-  }
-  else if(!usedColors.red){
-    return 'red';
+
+  if(unusedColors.length > 0){
+    return unusedColors[0];
   }
   else{
     throw new Error('matchIsFull');

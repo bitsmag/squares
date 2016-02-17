@@ -1,26 +1,10 @@
-function Square(squareId, edgesTo, position, startSquares){
+function Square(squareId, edgesTo, position){
   this.id = squareId;
   this.edgesTo = edgesTo;
   this.position = position;
   this.color = '';
   this.doubleSpeedSpecial = false;
   this.dfsVisited = false;
-
-
-  switch(squareId){
-    case startSquares.blue:
-      this.color = 'blue';
-      break;
-    case startSquares.orange:
-      this.color = 'orange';
-      break;
-    case startSquares.green:
-      this.color = 'green';
-      break;
-    case startSquares.red:
-      this.color = 'red';
-      break;
-  }
 }
 
 Square.prototype.getId = function() {
