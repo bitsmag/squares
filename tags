@@ -133,7 +133,7 @@ setKeyListener	views/assets/js/match.js	/^function setKeyListener(){$/;"	f
 socket.io	package.json	/^    "socket.io": "*"$/;"	f
 start	package.json	/^    "start": "node index.js"$/;"	f
 swig	package.json	/^    "swig": "*",$/;"	f
-test	package.json	/^    "test": "..\/node_modules\/istanbul\/lib\/cli.js cover .\/node_modules\/.bin\/_mocha",$/;"	f
+test	package.json	/^    "test": ".\/node_modules\/istanbul\/lib\/cli.js cover .\/node_modules\/.bin\/_mocha",$/;"	f
 type	package.json	/^    "type": "git",$/;"	f
 updateBoard	views/assets/js/match.js	/^function updateBoard(data){$/;"	f
 updateScore	views/assets/js/match.js	/^function updateScore(data){$/;"	f

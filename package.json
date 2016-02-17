@@ -14,7 +14,7 @@
     "mocha": "*"
   },
   "scripts": {
-    "test": "../node_modules/istanbul/lib/cli.js cover ./node_modules/.bin/_mocha",
+    "test": "./node_modules/istanbul/lib/cli.js cover ./node_modules/.bin/_mocha",
     "start": "node index.js"
   },
   "repository": {
