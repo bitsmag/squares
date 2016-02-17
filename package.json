@@ -10,11 +10,11 @@
   },
   "devDependencies": {
     "chai": "*",
-    "mocha": "*",
-    "istanbul": "*"
+    "istanbul": "*",
+    "mocha": "*"
   },
   "scripts": {
-    "test": "./node_modules/mocha/bin/mocha --recursive",
+    "test": "../node_modules/istanbul/lib/cli.js cover ./node_modules/.bin/_mocha",
     "start": "node index.js"
   },
   "repository": {

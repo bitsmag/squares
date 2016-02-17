@@ -104,7 +104,7 @@ getPoints.setPrefDir	controllers/matchTicker/circuitsCheck.js	/^  function setPr
 getSpecials	controllers/matchTicker/randomSpecials.js	/^function getSpecials(match){$/;"	f
 getUnusedColor	coverage/lcov-report/models/player.js.html	/^function getUnusedColor(match) { \/\/ ERROR: matchIsFull$/;"	f
 getUnusedColor	models/player.js	/^function getUnusedColor(match) { \/\/ ERROR: matchIsFull$/;"	f
-istanbul	package.json	/^    "istanbul": "*"$/;"	f
+istanbul	package.json	/^    "istanbul": "*",$/;"	f
 joinMatch	views/index.html	/^  function joinMatch(){$/;"	f
 keywords	package.json	/^  "keywords": [$/;"	f
 license	package.json	/^  "license": "BSD-2-Clause"$/;"	f
@@ -112,7 +112,7 @@ main	package.json	/^  "main": "index.js",$/;"	f
 matchEnd	views/assets/js/match.js	/^function matchEnd(){$/;"	f
 matchesManager.Match	models/match.js	/^}$/;"	c
 matchesManager.matchesManager.Match.getId	models/match.js	/^Match.prototype.getId = function() {$/;"	m
-mocha	package.json	/^    "mocha": "*",$/;"	f
+mocha	package.json	/^    "mocha": "*"$/;"	f
 name	package.json	/^  "name": "squares",$/;"	f
 prepareMatch	views/assets/js/match.js	/^function prepareMatch(data){$/;"	f
 repository	package.json	/^  "repository": {$/;"	f
@@ -133,7 +133,7 @@ setKeyListener	views/assets/js/match.js	/^function setKeyListener(){$/;"	f
 socket.io	package.json	/^    "socket.io": "*"$/;"	f
 start	package.json	/^    "start": "node index.js"$/;"	f
 swig	package.json	/^    "swig": "*",$/;"	f
-test	package.json	/^    "test": ".\/node_modules\/mocha\/bin\/mocha --recursive",$/;"	f
+test	package.json	/^    "test": "..\/node_modules\/istanbul\/lib\/cli.js cover .\/node_modules\/.bin\/_mocha",$/;"	f
 type	package.json	/^    "type": "git",$/;"	f
 updateBoard	views/assets/js/match.js	/^function updateBoard(data){$/;"	f
 updateScore	views/assets/js/match.js	/^function updateScore(data){$/;"	f
