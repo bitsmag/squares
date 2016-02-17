@@ -1,15 +1,15 @@
 "use strict";
-let express = require('express');
-let app = express();
-let http = require('http').Server(app);
-let io = require('socket.io')(http);
-let swig  = require('swig');
+let express           = require('express');
+let app               = express();
+let http              = require('http').Server(app);
+let io                = require('socket.io')(http);
+let swig              = require('swig');
 
 let createMatchSockets = require('./sockets/createMatchSockets');
-let matchSockets = require('./sockets/matchSockets');
-let matchesManager = require('./models/matchesManager');
-let match = require('./models/match');
-let player = require('./models/player');
+let matchSockets       = require('./sockets/matchSockets');
+let matchesManager     = require('./models/matchesManager');
+let match              = require('./models/match');
+let player             = require('./models/player');
 
 // Set swig as the template engine for html files
 app.engine('html', swig.renderFile);
