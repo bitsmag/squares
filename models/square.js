@@ -24,7 +24,7 @@ Square.prototype.getColor = function() {
 };
 
 Square.prototype.getDoubleSpeedSpecial = function() {
-    return this.doubleSpeedSpecial;
+  return this.doubleSpeedSpecial;
 };
 
 Square.prototype.isDfsVisited = function() {
@@ -32,11 +32,11 @@ Square.prototype.isDfsVisited = function() {
 };
 
 Square.prototype.setColor = function(color) {
-    this.color = color;
+  this.color = color;
 };
 
 Square.prototype.setDoubleSpeedSpecial = function(doubleSpeedSpecial) {
-    this.doubleSpeedSpecial = doubleSpeedSpecial;
+  this.doubleSpeedSpecial = doubleSpeedSpecial;
 };
 
 Square.prototype.setDfsVisited = function(visited) {

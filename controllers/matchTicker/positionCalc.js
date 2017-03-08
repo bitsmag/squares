@@ -93,6 +93,13 @@ function calculateNewPlayerPositions(match, playerList){
     futurePos[loosers[i]] = currentPos[loosers[i]];
   }
 
+  // Return only the positions of the Players which has been passed as args (playerList)
+  Object.keys(futurePos).forEach(function(color) {
+    if(playerList.indexOf(color) === -1){
+      delete futurePos[color];
+    }
+  });
+
   return futurePos;
 }
 

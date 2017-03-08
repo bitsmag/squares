@@ -57,12 +57,19 @@ MatchController.prototype.matchTicker = function(){
       clearInterval(tickerInterval);
     }
     else{
-      // Calculate new playerPositions - only doubleSpeed players can move every tick
+      // Calculate new playerPositions (for the players which are relevant this tick)
       let playerPositions;
-      if(tickCount%2===0){
-        playerPositions = positionCalc.calculateNewPlayerPositions(that.match, ['red', 'orange', 'green', 'blue']);
+      if(tickCount%2!==0){
+        // Every second tick all (active) players can move
+        let activeColors = [];
+        let players = that.match.getPlayers();
+        for(let i = 0; i<players.length; i++){
+          activeColors.push(players[i].getColor());
+        }
+        playerPositions = positionCalc.calculateNewPlayerPositions(that.match, activeColors);
       }
       else{
+        // Players who collected a doubleSpeed-special can move every tick
         let doubleSpeedColors = [];
         let players = that.match.getPlayers();
         for(let i = 0; i<players.length; i++){
@@ -81,14 +88,9 @@ MatchController.prototype.matchTicker = function(){
       let playerPoints = circuitsCheck.getPlayerPoints(that.match);
 
       // Update score for active players
-      let activeColors = [];
-      let players = that.match.getPlayers();
-      for(let i = 0; i<players.length; i++){
-        activeColors.push(players[i].getColor());
-      }
-      for(let i = 0; i<activeColors.length; i++){
+      Object.keys(playerPositions).forEach(function(color) {
         try{
-          that.match.getPlayerByColor(activeColors[i]).increaseScore(playerPoints[activeColors[i]]);
+          that.match.getPlayerByColor(color).increaseScore(playerPoints[color]);
         }
         catch(err){
           matchSockets.sendFatalErrorEvent(that.match);
@@ -96,15 +98,15 @@ MatchController.prototype.matchTicker = function(){
           console.warn(err.message + ' // match.Controller.matchTicker()');
           console.trace();
         }
-      }
+      });
 
       // Check if a player collected a special
       let clearSpecials = [];
-      for(let i = 0; i<activeColors.length; i++){
+      Object.keys(playerPositions).forEach(function(color) {
         try{
-          let square = that.match.getBoard().getSquare(playerPositions[activeColors[i]]);
+          let square = that.match.getBoard().getSquare(playerPositions[color]);
           if(square.getDoubleSpeedSpecial()){
-            that.match.getPlayerByColor(activeColors[i]).startDoubleSpeedSpecial(that.match.getBoard().getDoubleSpeedDuration());
+            that.match.getPlayerByColor(color).startDoubleSpeedSpecial(that.match.getBoard().getDoubleSpeedDuration());
             square.setDoubleSpeedSpecial(false);
             clearSpecials.push(square.getId());
           }
@@ -115,7 +117,7 @@ MatchController.prototype.matchTicker = function(){
           console.warn(err.message + ' // match.Controller.matchTicker()');
           console.trace();
         }
-      }
+      });
 
       // Get all squares of a player who made points this tick
       let clearSquares = [];

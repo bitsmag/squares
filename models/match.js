@@ -138,43 +138,35 @@ Match.prototype.setActive = function(active) {
 
 Match.prototype.updatePlayers = function(playerPositions) {
   // Set position property of players
-  let activeColors = [];
-  let players = this.getPlayers();
-  for(let i = 0; i<players.length; i++){
-    activeColors.push(players[i].getColor());
-  }
-  for(let i=0; i<activeColors.length; i++){
+  let that = this;
+  Object.keys(playerPositions).forEach(function(color) {
     try {
-      let player = this.getPlayerByColor(activeColors[i]);
-      player.setPosition(playerPositions[activeColors[i]]);
+      let player = that.getPlayerByColor(color);
+      player.setPosition(playerPositions[color]);
     }
     catch(err) {
-      matchSockets.sendFatalErrorEvent(this);
-      this.destroy();
+      matchSockets.sendFatalErrorEvent(that);
+      that.destroy();
       console.warn(err.message + ' // match.updatePlayers()');
       console.trace();
     }
-  }
+  });
 };
 
 Match.prototype.updateBoard = function(playerPositions, specials) {
-  let activeColors = [];
-  let players = this.getPlayers();
-  for(let i = 0; i<players.length; i++){
-    activeColors.push(players[i].getColor());
-  }
   // Set color of playerPosition-Squares
-  for(let i=0; i<activeColors.length; i++){
+  let that = this;
+  Object.keys(playerPositions).forEach(function(color) {
     try {
-      this.getBoard().getSquare(playerPositions[activeColors[i]]).setColor(activeColors[i]);
+      that.getBoard().getSquare(playerPositions[color]).setColor(color);
     }
     catch(err) {
-      matchSockets.sendFatalErrorEvent(this);
-      this.destroy();
+      matchSockets.sendFatalErrorEvent(that);
+      that.destroy();
       console.warn(err.message + ' // match.updateBoard()');
       console.trace();
     }
-  }
+  });
 };
 
 Match.prototype.updateSpecials = function(specials) {
