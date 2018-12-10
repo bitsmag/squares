@@ -1,4 +1,4 @@
-![alt-text](https://rawgit.com/bitsmag/squares/master/views/assets/img/logo.svg "SQUARES")
+![alt-text](https://cdn.jsdelivr.net/gh/bitsmag/squares@master/views/assets/img/logo.svg "SQUARES")
 
 [![Build Status](https://travis-ci.org/bitsmag/squares.svg?branch=master)](https://travis-ci.org/bitsmag/squares)
 
