@@ -28,10 +28,11 @@ function validate(source, schema) {
     const { error, value } = schema.validate(target, { abortEarly: false, stripUnknown: true });
     if (error) {
       const details = error.details.map((d) => ({ message: d.message, path: d.path }));
-      return res.status(400).render('error.html', {
-        errorMessage: 'Invalid request parameters.',
-        errorDetails: details,
-      });
+      const e = new Error('invalidRequestParameters');
+      e.status = 400;
+      e.userMessage = 'Invalid request parameters.';
+      e.details = details;
+      return next(e);
     }
     // Sanitize any string fields in the validated payload to prevent XSS
     function sanitize(obj) {

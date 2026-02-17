@@ -48,9 +48,9 @@ module.exports = function (app) {
           matchObj.setActive(true);
           res.render('match.html', { matchId: matchId, playerName: playerName });
         } else {
-          res.render('error.html', {
-            errorMessage: 'There was a unknown issue - please try again.',
-          });
+          const e = new Error('unknown');
+          e.userMessage = 'There was an unknown issue - please try again.';
+          return next(e);
         }
       } else if (matchCreatorFlag === 'f') {
         try {
@@ -65,9 +65,9 @@ module.exports = function (app) {
           return next(err);
         }
       } else {
-        res.render('error.html', {
-          errorMessage: 'There was a unknown issue - please try again.',
-        });
+        const e = new Error('unknown');
+        e.userMessage = 'There was an unknown issue - please try again.';
+        return next(e);
       }
     }
   );

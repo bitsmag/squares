@@ -51,13 +51,9 @@ Match.prototype.getMatchCreator = function () {
   for (let i = 0; i < this.players.length; i++) {
     if (this.players[i].isMatchCreator()) {
       return this.players[i];
-    } else {
-      error = true;
-    }
+    } 
   }
-  if (error) {
-    throw new Error('matchCreatorNotFound');
-  }
+  throw new Error('matchCreatorNotFound');
 };
 
 Match.prototype.getBoard = function () {
@@ -124,25 +120,23 @@ Match.prototype.setActive = function (active) {
 
 Match.prototype.updatePlayers = function (playerPositions) {
   // Set position property of players
-  const that = this;
-  Object.keys(playerPositions).forEach(function (color) {
+  Object.keys(playerPositions).forEach((color) => {
     try {
-      const player = that.getPlayerByColor(color);
+      const player = this.getPlayerByColor(color);
       player.setPosition(playerPositions[color]);
     } catch (err) {
-      socketErrorHandler(that, err, 'match.updatePlayers()');
+      socketErrorHandler(this, err, 'match.updatePlayers()');
     }
   });
 };
 
 Match.prototype.updateBoard = function (playerPositions, _specials) {
   // Set color of playerPosition-Squares
-  const that = this;
-  Object.keys(playerPositions).forEach(function (color) {
+  Object.keys(playerPositions).forEach((color) => {
     try {
-      that.getBoard().getSquare(playerPositions[color]).setColor(color);
+      this.getBoard().getSquare(playerPositions[color]).setColor(color);
     } catch (err) {
-      socketErrorHandler(that, err, 'match.updateBoard()');
+      socketErrorHandler(this, err, 'match.updateBoard()');
     }
   });
 };

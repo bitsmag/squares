@@ -73,10 +73,10 @@ Player.prototype.increaseScore = function (points) {
 Player.prototype.startDoubleSpeedSpecial = function (_duration) {
   if (!this.doubleSpeedSpecial) {
     this.doubleSpeedSpecial = true;
-    const that = this;
-    setTimeout(function () {
-      that.doubleSpeedSpecial = false;
-    }, 5000);
+    const duration = _duration || 5000;
+    setTimeout(() => {
+      this.doubleSpeedSpecial = false;
+    }, duration);
   }
 };
 
