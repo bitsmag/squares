@@ -16,7 +16,8 @@ function respond(socket) {
     const validation = require('../middleware/validation');
     const result = validation.validateSocketPayload(validation.schemas.socketConnectionInfoCreate, playerInfo || {});
     if (!result.valid) {
-      matchSockets.sendFatalErrorEvent(match);
+      const socketErrorHandler = require('../middleware/socketErrorHandler');
+      socketErrorHandler(match, new Error('Invalid connectionInfo payload'), 'createMatchSockets.connectionInfoValidation');
       console.warn('Invalid connectionInfo payload', result.errors);
       return;
     }
