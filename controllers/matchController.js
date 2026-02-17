@@ -108,10 +108,8 @@ MatchController.prototype.matchTicker = function () {
             clearSpecials.push(playerPositionSquare.getId());
           }
         } catch (err) {
-          matchSockets.sendFatalErrorEvent(that.match);
-          that.match.destroy();
-          console.warn(err.message + ' // match.Controller.matchTicker()');
-          console.trace();
+          const socketErrorHandler = require('../middleware/socketErrorHandler');
+          socketErrorHandler(that.match, err, 'match.Controller.matchTicker()');
         }
       });
 
@@ -120,10 +118,8 @@ MatchController.prototype.matchTicker = function () {
         try {
           that.match.getPlayerByColor(color).increaseScore(playerPoints[color].length);
         } catch (err) {
-          matchSockets.sendFatalErrorEvent(that.match);
-          that.match.destroy();
-          console.warn(err.message + ' // match.Controller.matchTicker()');
-          console.trace();
+          const socketErrorHandler = require('../middleware/socketErrorHandler');
+          socketErrorHandler(that.match, err, 'match.Controller.matchTicker()');
         }
       });
 

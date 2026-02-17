@@ -64,28 +64,18 @@ app.get(
 app.get(
   '/match/:matchCreatorFlag/:matchId/:playerName',
   validation.validate('params', validation.schemas.matchRouteParams),
-  function (req, res) {
+  function (req, res, next) {
     const matchCreatorFlag = req.params.matchCreatorFlag;
     const matchId = req.params.matchId;
     const playerName = req.params.playerName;
 
     let matchObj;
-    let error = false;
     try {
       matchObj = matchesManager.manager.getMatch(matchId);
     } catch (err) {
-      error = true;
-      if (err.message === 'matchNotFound') {
-        res.render(__dirname + '/views/error.html', {
-          errorMessage: 'The match you are looking for was not found.',
-        });
-      } else {
-        res.render(__dirname + '/views/error.html', {
-          errorMessage: 'There was a unknown issue - please try again.',
-        });
-      }
+      return next(err);
     }
-    if (!error) {
+    if (!matchObj) return next(new Error('matchNotFound'));
       if (matchCreatorFlag === 't') {
         if (!matchObj.isActive() && playerName === matchObj.getMatchCreator().getName()) {
           matchObj.setActive(true);
@@ -96,32 +86,16 @@ app.get(
           });
         }
       } else if (matchCreatorFlag === 'f') {
-        let createError = false;
         try {
           const _newPlayer = new player.Player(playerName, matchObj, false);
+          return res.render(__dirname + '/views/match.html', { matchId: matchId, playerName: playerName });
         } catch (err) {
-          createError = true;
-          if (err.message === 'matchIsFull') {
-            res.render(__dirname + '/views/error.html', {
-              errorMessage: "Sorry, you're too late. The match is full already.",
-            });
-          } else if (err.message === 'matchIsActive') {
-            res.render(__dirname + '/views/error.html', {
-              errorMessage: "Sorry, you're too late. The match has already started.",
-            });
-          } else if (err.message === 'nameInUse') {
-            res.render(__dirname + '/views/error.html', {
-              errorMessage:
-                'Sorry, it seems that your name is already used by another player. Please choose a diffrent name.',
-            });
-          } else {
-            res.render(__dirname + '/views/error.html', {
-              errorMessage: 'There was a unknown issue - please try again.',
-            });
-          }
-        }
-        if (!createError) {
-          res.render(__dirname + '/views/match.html', { matchId: matchId, playerName: playerName });
+          // Attach user-friendly message for common domain errors and delegate to error handler
+          if (err && err.message === 'matchIsFull') err.userMessage = "Sorry, you're too late. The match is full already.";
+          else if (err && err.message === 'matchIsActive') err.userMessage = "Sorry, you're too late. The match has already started.";
+          else if (err && err.message === 'nameInUse')
+            err.userMessage = 'Sorry, it seems that your name is already used by another player. Please choose a diffrent name.';
+          return next(err);
         }
       } else {
         res.render(__dirname + '/views/error.html', {
@@ -129,7 +103,6 @@ app.get(
         });
       }
     }
-  }
 );
 
 // 404

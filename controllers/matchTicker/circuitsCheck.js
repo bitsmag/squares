@@ -10,10 +10,8 @@ function getPlayerPoints(match) {
       playerPositionSquare = match.getBoard().getSquare(match.getPlayers()[i].getPosition());
     } catch (err) {
       error = true;
-      matchSockets.sendFatalErrorEvent(match);
-      match.destroy();
-      console.warn(err.message + ' // circuitsCheck.checkForCircuits()');
-      console.trace();
+      const socketErrorHandler = require('../../middleware/socketErrorHandler');
+      socketErrorHandler(match, err, 'circuitsCheck.getPlayerPoints()');
     }
     if (!error) {
       const playerColor = match.getPlayers()[i].getColor();
@@ -51,10 +49,8 @@ function getPoints(theSquare, theColor, match) {
         edgeSquare = match.getBoard().getSquare(s.getEdgesTo()[i]);
       } catch (err) {
         error = true;
-        matchSockets.sendFatalErrorEvent(match);
-        match.destroy();
-        console.warn(err.message + ' // circuitsCheck.checkForCircuits()');
-        console.trace();
+        const socketErrorHandler = require('../../middleware/socketErrorHandler');
+        socketErrorHandler(match, err, 'circuitsCheck.getVertices()');
       }
       if (!error) {
         if (edgeSquare.getColor() === c && edgeSquare !== justPopped) {

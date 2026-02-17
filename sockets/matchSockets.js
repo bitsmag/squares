@@ -1,5 +1,6 @@
-'use strict';
+"use strict";
 const matchesManager = require('../models/matchesManager');
+const socketErrorHandler = require('../middleware/socketErrorHandler');
 
 /*
  * LISTENERS
@@ -27,14 +28,7 @@ function respond(socket) {
       player = match.getPlayer(playerName);
     } catch (err) {
       error = true;
-      if (typeof fatalErrorHandler === 'function') {
-        fatalErrorHandler(match, err, 'matchSockets.on(connectionInfo)');
-      } else {
-        sendFatalErrorEvent(match);
-        if (match && typeof match.destroy === 'function') match.destroy();
-        console.warn(err.message + ' // matchSockets.on(connectionInfo)');
-        console.trace();
-      }
+      socketErrorHandler(match, err, 'matchSockets.on(connectionInfo)');
     }
     if (!error) {
       player.setSocket(socket);
@@ -152,7 +146,7 @@ function sendUpdateBoardEvent(match, specials) {
         .getPlayerByColor(activeColors[i])
         .getDoubleSpeedSpecial();
     } catch (err) {
-      fatalErrorHandler(match, err, 'sendUpdateBoardEvent()');
+      socketErrorHandler(match, err, 'sendUpdateBoardEvent()');
     }
   }
 
@@ -186,7 +180,7 @@ function sendUpdateScoreEvent(match) {
     try {
       scores[activeColors[i]] = match.getPlayerByColor(activeColors[i]).getScore();
     } catch (err) {
-      fatalErrorHandler(match, err, 'sendUpdateScoreEvent()');
+      socketErrorHandler(match, err, 'sendUpdateScoreEvent()');
     }
   }
 
@@ -211,23 +205,12 @@ function sendCountdownEvent(match) {
 
 function sendFatalErrorEvent(match) {
   for (let i = 0; i < match.getPlayers().length; i++) {
-    match.getPlayers()[i].getSocket().emit('fatalError');
+    try {
+      match.getPlayers()[i].getSocket().emit('fatalError');
+    } catch (e) {
+      // ignore per-player emit errors
+    }
   }
-}
-
-function fatalErrorHandler(match, err, context) {
-  try {
-    sendFatalErrorEvent(match);
-  } catch (e) {
-    // ignore
-  }
-  try {
-    if (match && typeof match.destroy === 'function') match.destroy();
-  } catch (e) {
-    // ignore
-  }
-  console.warn((err && err.message) || String(err) + ' // matchSockets.' + (context || 'unknown'));
-  console.trace();
 }
 
 exports.respond = respond;

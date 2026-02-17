@@ -143,10 +143,8 @@ Match.prototype.updatePlayers = function (playerPositions) {
       const player = that.getPlayerByColor(color);
       player.setPosition(playerPositions[color]);
     } catch (err) {
-      matchSockets.sendFatalErrorEvent(that);
-      that.destroy();
-      console.warn(err.message + ' // match.updatePlayers()');
-      console.trace();
+      const socketErrorHandler = require('../middleware/socketErrorHandler');
+      socketErrorHandler(that, err, 'match.updatePlayers()');
     }
   });
 };
@@ -158,10 +156,8 @@ Match.prototype.updateBoard = function (playerPositions, _specials) {
     try {
       that.getBoard().getSquare(playerPositions[color]).setColor(color);
     } catch (err) {
-      matchSockets.sendFatalErrorEvent(that);
-      that.destroy();
-      console.warn(err.message + ' // match.updateBoard()');
-      console.trace();
+      const socketErrorHandler = require('../middleware/socketErrorHandler');
+      socketErrorHandler(that, err, 'match.updateBoard()');
     }
   });
 };
@@ -172,14 +168,16 @@ Match.prototype.updateSpecials = function (specials) {
     try {
       this.getBoard().getSquare(specials.doubleSpeed[0]).setDoubleSpeedSpecial(true);
     } catch (err) {
-      console.warn(err.message + ' // match.updateBoard - ' + specials.doubleSpeed[0]);
+      const socketErrorHandler = require('../middleware/socketErrorHandler');
+      socketErrorHandler(this, err, 'match.updateSpecials()');
     }
   }
   if (specials.getPoints.length) {
     try {
       this.getBoard().getSquare(specials.getPoints[0]).setGetPointsSpecial(true);
     } catch (err) {
-      console.warn(err.message + ' // match.updateBoard - ' + specials.doubleSpeed[0]);
+      const socketErrorHandler = require('../middleware/socketErrorHandler');
+      socketErrorHandler(this, err, 'match.updateSpecials()');
     }
   }
 };

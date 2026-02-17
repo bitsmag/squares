@@ -21,10 +21,8 @@ function calculateNewPlayerPositions(match, playerList) {
       player = match.getPlayerByColor(activeColors[i]);
     } catch (err) {
       error = true;
-      matchSockets.sendFatalErrorEvent(match);
-      match.destroy();
-      console.warn(err.message + ' // positionCalc.calculateNewPlayerPositions()');
-      console.trace();
+      const socketErrorHandler = require('../../middleware/socketErrorHandler');
+      socketErrorHandler(match, err, 'positionCalc.calculateNewPlayerPositions()');
     }
     if (!error) {
       currentPos[activeColors[i]] = player.getPosition();
@@ -121,10 +119,8 @@ function calculateFuturePos(currentPosition, activeDirection, board, match) {
     square = board.getSquare(currentPosition);
   } catch (err) {
     error = true;
-    matchSockets.sendFatalErrorEvent(match);
-    match.destroy();
-    console.warn(err.message + ' // positionCalc.calculateFuturePos()');
-    console.trace();
+    const socketErrorHandler = require('../../middleware/socketErrorHandler');
+    socketErrorHandler(match, err, 'positionCalc.calculateFuturePos()');
   }
   if (!error) {
     switch (activeDirection) {

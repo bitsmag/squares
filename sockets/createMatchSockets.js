@@ -29,14 +29,8 @@ function respond(socket) {
       player = match.getMatchCreator();
     } catch (err) {
       error = true;
-      if (typeof matchSockets.fatalErrorHandler === 'function') {
-        matchSockets.fatalErrorHandler(match, err, 'createMatchSockets.on(connectionInfo)');
-      } else {
-        matchSockets.sendFatalErrorEvent(match);
-        if (match && typeof match.destroy === 'function') match.destroy();
-        console.warn(err.message + ' // createMatchSockets.on(connectionInfo)');
-        console.trace();
-      }
+      const socketErrorHandler = require('../middleware/socketErrorHandler');
+      socketErrorHandler(match, err, 'createMatchSockets.on(connectionInfo)');
     }
     if (!error) {
       player.setSocket(socket);
