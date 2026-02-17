@@ -1,17 +1,19 @@
-'use strict';
+import socketErrorHandler from '../../middleware/socketErrorHandler';
+import type { Match } from '../../models/match';
+import type { Board } from '../../models/board';
 
-function calculateNewPlayerPositions(match, playerList) {
-  const activeColors = [];
+type PlayerColor = 'blue' | 'orange' | 'green' | 'red' | string;
+
+export function calculateNewPlayerPositions(match: Match, playerList: PlayerColor[]): Record<string, number> {
+  const activeColors: PlayerColor[] = [];
   const players = match.getPlayers();
   for (let i = 0; i < players.length; i++) {
     activeColors.push(players[i].getColor());
   }
 
-  // Get currentPos, futurePos & prio of active Players
-
-  const currentPos = { blue: null, orange: null, green: null, red: null };
-  const futurePos = { blue: null, orange: null, green: null, red: null };
-  const prio = { blue: false, orange: false, green: false, red: false };
+  const currentPos: Record<string, number | null> = { blue: null, orange: null, green: null, red: null };
+  const futurePos: Record<string, number | null> = { blue: null, orange: null, green: null, red: null };
+  const prio: Record<string, boolean> = { blue: false, orange: false, green: false, red: false };
 
   for (let i = 0; i < activeColors.length; i++) {
     let player;
@@ -20,10 +22,9 @@ function calculateNewPlayerPositions(match, playerList) {
       player = match.getPlayerByColor(activeColors[i]);
     } catch (err) {
       error = true;
-      const socketErrorHandler = require('../../middleware/socketErrorHandler');
       socketErrorHandler(match, err, 'positionCalc.calculateNewPlayerPositions()');
     }
-    if (!error) {
+    if (!error && player) {
       currentPos[activeColors[i]] = player.getPosition();
       futurePos[activeColors[i]] = calculateFuturePos(
         player.getPosition(),
@@ -31,7 +32,6 @@ function calculateNewPlayerPositions(match, playerList) {
         match.getBoard(),
         match
       );
-      // If the player is not in the playerList it remains at the old position
       if (playerList.indexOf(activeColors[i]) === -1) {
         futurePos[activeColors[i]] = currentPos[activeColors[i]];
       }
@@ -41,14 +41,7 @@ function calculateNewPlayerPositions(match, playerList) {
     }
   }
 
-  // Solving Conflict (1) - multiple players want to move on the same square:
-  // If there is a confict between players there are winners (those who can
-  // move on to the square they want) and loosers (those who must remain on
-  // their current position). If a player has priority on a square (still
-  // standing players) he wins. If no player has priority loosers are chosen
-  // randomly.
-
-  let loosers = [];
+  let loosers: PlayerColor[] = [];
 
   for (let i = 0; i < activeColors.length; i++) {
     for (let j = 0; j < activeColors.length; j++) {
@@ -58,7 +51,7 @@ function calculateNewPlayerPositions(match, playerList) {
         } else if (prio[activeColors[j]]) {
           loosers.push(activeColors[i]);
         } else {
-          const uniqueRandomNumbers = {};
+          const uniqueRandomNumbers: Record<string, number> = {};
           for (let k = 0; k < activeColors.length; k++) {
             uniqueRandomNumbers[activeColors[k]] = Math.random();
           }
@@ -75,9 +68,6 @@ function calculateNewPlayerPositions(match, playerList) {
     }
   }
 
-  // Solving Conflict (2) - two players want to jump 'over' each other (switch squares):
-  // Both players must remain on their current squares.
-
   for (let i = 0; i < activeColors.length; i++) {
     for (let j = 0; j < activeColors.length; j++) {
       if (
@@ -91,37 +81,34 @@ function calculateNewPlayerPositions(match, playerList) {
     }
   }
 
-  // Loosers must remain on their current squares
-
-  loosers = loosers.reduce(function (a, b) {
+  loosers = loosers.reduce(function (a: PlayerColor[], b: PlayerColor) {
     if (a.indexOf(b) < 0) a.push(b);
     return a;
-  }, []);
+  }, [] as PlayerColor[]);
   for (let i = 0; i < loosers.length; i++) {
     futurePos[loosers[i]] = currentPos[loosers[i]];
   }
 
-  // Return only the positions of the Players which has been passed as args (playerList)
   Object.keys(futurePos).forEach(function (color) {
     if (playerList.indexOf(color) === -1) {
       delete futurePos[color];
     }
   });
 
-  return futurePos;
+  // Cast to Record<string, number> after null elimination for active players
+  return futurePos as Record<string, number>;
 }
 
-function calculateFuturePos(currentPosition, activeDirection, board, match) {
+function calculateFuturePos(currentPosition: number, activeDirection: string, board: Board, match: Match): number {
   let square;
   let error = false;
   try {
     square = board.getSquare(currentPosition);
   } catch (err) {
     error = true;
-    const socketErrorHandler = require('../../middleware/socketErrorHandler');
     socketErrorHandler(match, err, 'positionCalc.calculateFuturePos()');
   }
-  if (!error) {
+  if (!error && square) {
     switch (activeDirection) {
       case 'left':
         if (square.getPosition().x > 0) {
@@ -151,6 +138,8 @@ function calculateFuturePos(currentPosition, activeDirection, board, match) {
         return currentPosition;
     }
   }
+  return currentPosition;
 }
 
-exports.calculateNewPlayerPositions = calculateNewPlayerPositions;
+// CommonJS compatibility
+module.exports = { calculateNewPlayerPositions } as any;

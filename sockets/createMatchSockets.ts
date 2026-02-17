@@ -1,20 +1,17 @@
-'use strict';
-const matchesManager = require('../models/matchesManager');
-const matchSocketService = require('../services/matchSocketService');
-const socketErrorHandler = require('../middleware/socketErrorHandler');
+import { Socket } from 'socket.io';
+import * as matchesManager from '../models/matchesManager';
+import * as matchSocketService from '../services/matchSocketService';
+import socketErrorHandler from '../middleware/socketErrorHandler';
+import validation = require('../middleware/validation');
+import type { Match } from '../models/match';
+import type { Player } from '../models/player';
 
-/*
- * LISTENERS
- */
-
-function respond(socket) {
-  let match;
-  let player;
+export function respond(socket: Socket): void {
+  let match: Match | undefined;
+  let player: Player | undefined;
   let startBtnClicked = false;
 
-  socket.on('connectionInfo', function (playerInfo) {
-    // Validate socket payload
-    const validation = require('../middleware/validation');
+  socket.on('connectionInfo', function (playerInfo: any) {
     const result = validation.validateSocketPayload(validation.schemas.socketConnectionInfoCreate, playerInfo || {});
     if (!result.valid) {
       socketErrorHandler(match, new Error('Invalid connectionInfo payload'), 'createMatchSockets.connectionInfoValidation');
@@ -22,25 +19,21 @@ function respond(socket) {
       return;
     }
 
-    const matchId = result.value.matchId;
+    const matchId = result.value.matchId as string;
 
-    let error = false;
     try {
-      match = matchesManager.manager.getMatch(matchId);
+      match = (matchesManager as any).manager.getMatch(matchId);
       player = match.getMatchCreator();
     } catch (err) {
-      error = true;
       socketErrorHandler(match, err, 'createMatchSockets.on(connectionInfo)');
+      return;
     }
-    if (!error) {
-      player.setSocket(socket);
-    }
+    if (!player) return;
+    player.setSocket(socket);
   });
 
   socket.on('disconnect', function () {
     if (match) {
-      // If matchCreator disconnects from createMatch Page
-      // without starting the match, the match is canceled
       if (!startBtnClicked) {
         matchSocketService.sendMatchCreatorDisconnectedEvent(match);
         match.removePlayer(player);
@@ -54,4 +47,4 @@ function respond(socket) {
   });
 }
 
-exports.respond = respond;
+module.exports = { respond } as any;

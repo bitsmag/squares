@@ -1,9 +1,8 @@
-"use strict";
-const Joi = require('joi');
-const xss = require('xss');
+import Joi from 'joi';
+import xss from 'xss';
 
 // Shared schemas
-const schemas = {
+export const schemas = {
   createMatchParams: Joi.object({
     playerName: Joi.string().alphanum().min(1).max(12).required(),
   }),
@@ -21,60 +20,43 @@ const schemas = {
   }),
 };
 
-function validate(source, schema) {
-  // source: 'body' | 'params' | 'query'
-  return function (req, res, next) {
+function sanitize(obj: any): any {
+  if (obj == null) return obj;
+  if (typeof obj === 'string') return xss(obj);
+  if (Array.isArray(obj)) return obj.map(sanitize);
+  if (typeof obj === 'object') {
+    const out: any = {};
+    Object.keys(obj).forEach((k) => {
+      out[k] = sanitize(obj[k]);
+    });
+    return out;
+  }
+  return obj;
+}
+
+export function validate(source: 'body' | 'params' | 'query', schema: Joi.ObjectSchema<any>) {
+  return function (req: any, _res: any, next: any) {
     const target = req[source] || {};
     const { error, value } = schema.validate(target, { abortEarly: false, stripUnknown: true });
     if (error) {
       const details = error.details.map((d) => ({ message: d.message, path: d.path }));
-      const e = new Error('invalidRequestParameters');
+      const e: any = new Error('invalidRequestParameters');
       e.status = 400;
       e.userMessage = 'Invalid request parameters.';
       e.details = details;
       return next(e);
     }
-    // Sanitize any string fields in the validated payload to prevent XSS
-    function sanitize(obj) {
-      if (obj == null) return obj;
-      if (typeof obj === 'string') return xss(obj);
-      if (Array.isArray(obj)) return obj.map(sanitize);
-      if (typeof obj === 'object') {
-        const out = {};
-        Object.keys(obj).forEach((k) => {
-          out[k] = sanitize(obj[k]);
-        });
-        return out;
-      }
-      return obj;
-    }
-
     req[source] = sanitize(value);
     return next();
   };
 }
 
-function validateSocketPayload(schema, payload) {
+export function validateSocketPayload(schema: Joi.ObjectSchema<any>, payload: any) {
   const { error, value } = schema.validate(payload, { abortEarly: false, stripUnknown: true });
   if (error) {
     return { valid: false, errors: error.details.map((d) => ({ message: d.message, path: d.path })) };
   }
-  // sanitize the validated payload before returning
-  function sanitize(obj) {
-    if (obj == null) return obj;
-    if (typeof obj === 'string') return xss(obj);
-    if (Array.isArray(obj)) return obj.map(sanitize);
-    if (typeof obj === 'object') {
-      const out = {};
-      Object.keys(obj).forEach((k) => {
-        out[k] = sanitize(obj[k]);
-      });
-      return out;
-    }
-    return obj;
-  }
-
   return { valid: true, value: sanitize(value) };
 }
 
-module.exports = { schemas, validate, validateSocketPayload };
+module.exports = { schemas, validate, validateSocketPayload } as any;

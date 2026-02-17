@@ -1,44 +1,39 @@
-'use strict';
-const path = require('path');
-const validation = require('../middleware/validation');
-const match = require('../models/match');
-const player = require('../models/player');
-const matchesManager = require('../models/matchesManager');
+import path from 'path';
+import validation = require('../middleware/validation');
+import * as match from '../models/match';
+import * as player from '../models/player';
+import * as matchesManager from '../models/matchesManager';
 
-module.exports = function (app) {
-  app.get('/', function (req, res) {
+const router = function (app: any) {
+  app.get('/', function (_req: any, res: any) {
     res.sendFile(path.join(__dirname, '..', 'views', 'index.html'));
   });
 
   app.get(
     '/createMatch/:playerName',
     validation.validate('params', validation.schemas.createMatchParams),
-    function (req, res) {
+    function (req: any, res: any) {
       const playerName = req.params.playerName;
-      const newMatch = new match.Match();
-      const error = false;
-      const _newPlayer = new player.Player(playerName, newMatch, true);
-      if (!error) {
-        // Send back HTML
-        res.render('createMatch.html', {
-          matchId: newMatch.getId(),
-          playerName: playerName,
-        });
-      }
+      const newMatch = new (match as any).Match();
+      const _newPlayer = new (player as any).Player(playerName, newMatch, true);
+      res.render('createMatch.html', {
+        matchId: newMatch.getId(),
+        playerName: playerName,
+      });
     }
   );
 
   app.get(
     '/match/:matchCreatorFlag/:matchId/:playerName',
     validation.validate('params', validation.schemas.matchRouteParams),
-    function (req, res, next) {
+    function (req: any, res: any, next: any) {
       const matchCreatorFlag = req.params.matchCreatorFlag;
       const matchId = req.params.matchId;
       const playerName = req.params.playerName;
 
       let matchObj;
       try {
-        matchObj = matchesManager.manager.getMatch(matchId);
+        matchObj = (matchesManager as any).manager.getMatch(matchId);
       } catch (err) {
         return next(err);
       }
@@ -48,16 +43,15 @@ module.exports = function (app) {
           matchObj.setActive(true);
           res.render('match.html', { matchId: matchId, playerName: playerName });
         } else {
-          const e = new Error('unknown');
+          const e: any = new Error('unknown');
           e.userMessage = 'There was an unknown issue - please try again.';
           return next(e);
         }
       } else if (matchCreatorFlag === 'f') {
         try {
-          const _newPlayer = new player.Player(playerName, matchObj, false);
+          const _newPlayer = new (player as any).Player(playerName, matchObj, false);
           return res.render('match.html', { matchId: matchId, playerName: playerName });
-        } catch (err) {
-          // Attach user-friendly message for common domain errors and delegate to error handler
+        } catch (err: any) {
           if (err && err.message === 'matchIsFull') err.userMessage = "Sorry, you're too late. The match is full already.";
           else if (err && err.message === 'matchIsActive') err.userMessage = "Sorry, you're too late. The match has already started.";
           else if (err && err.message === 'nameInUse')
@@ -65,10 +59,13 @@ module.exports = function (app) {
           return next(err);
         }
       } else {
-        const e = new Error('unknown');
+        const e: any = new Error('unknown');
         e.userMessage = 'There was an unknown issue - please try again.';
         return next(e);
       }
     }
   );
 };
+
+export default router;
+module.exports = router as any;

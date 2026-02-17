@@ -1,6 +1,5 @@
-"use strict";
 // Centralized socket error handler — emits a `fatalError` event to all players and destroys the match.
-module.exports = function fatalErrorHandler(match, err, context) {
+function fatalErrorHandler(match: any, err: any, context: string) {
   try {
     if (match && typeof match.getPlayers === 'function') {
       const players = match.getPlayers();
@@ -8,25 +7,28 @@ module.exports = function fatalErrorHandler(match, err, context) {
         try {
           const sock = players[i].getSocket();
           if (sock && typeof sock.emit === 'function') sock.emit('fatalError');
-        } catch (e) {
+        } catch (_e) {
           // ignore per-player send errors
         }
       }
     }
-  } catch (e) {
+  } catch (_e) {
     // ignore
   }
 
   try {
     if (match && typeof match.destroy === 'function') match.destroy();
-  } catch (e) {
+  } catch (_e) {
     // ignore
   }
 
   try {
     console.warn(((err && err.message) || String(err)) + ' // socketErrorHandler.' + (context || 'unknown'));
     console.trace();
-  } catch (e) {
+  } catch (_e) {
     // ignore
   }
-};
+}
+
+export default fatalErrorHandler;
+module.exports = fatalErrorHandler as any;

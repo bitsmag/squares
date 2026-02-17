@@ -1,7 +1,14 @@
-'use strict';
-const socketErrorHandler = require('../middleware/socketErrorHandler');
+import { Socket } from 'socket.io';
+import socketErrorHandler from '../middleware/socketErrorHandler';
+import type { Match } from '../models/match';
+import type { Player } from '../models/player';
 
-function sendPlayerConnectedEvent(match, player) {
+type PlayerStatus = { pos: number | null; dir: string | null; doubleSpeed: boolean | null };
+type Specials = { doubleSpeed: number[]; getPoints: number[] };
+type ClearSquare = { id: number; color: string };
+type Scores = Record<string, number | null>;
+
+export function sendPlayerConnectedEvent(match: Match, player: Player): void {
   const data = {
     playerName: player.getName(),
     playerColor: player.getColor(),
@@ -14,7 +21,7 @@ function sendPlayerConnectedEvent(match, player) {
   }
 }
 
-function sendPlayerDisconnectedEvent(match, player) {
+export function sendPlayerDisconnectedEvent(match: Match, player: Player): void {
   const data = {
     playerName: player.getName(),
     playerColor: player.getColor(),
@@ -27,15 +34,15 @@ function sendPlayerDisconnectedEvent(match, player) {
   }
 }
 
-function sendMatchCreatorDisconnectedEvent(match) {
+export function sendMatchCreatorDisconnectedEvent(match: Match): void {
   for (let i = 0; i < match.getPlayers().length; i++) {
     match.getPlayers()[i].getSocket().emit('matchCreatorDisconnected');
   }
 }
 
-function sendPrepareMatchEvent(match) {
+export function sendPrepareMatchEvent(match: Match): void {
   const board = match.getBoard();
-  const playersData = [];
+  const playersData: { playerName: string; playerColor: string }[] = [];
 
   const players = match.getPlayers();
   for (let i = 0; i < players.length; i++) {
@@ -51,14 +58,14 @@ function sendPrepareMatchEvent(match) {
   }
 }
 
-function sendUpdateBoardEvent(match, specials) {
-  const playerStatuses = {
+export function sendUpdateBoardEvent(match: Match, specials: Specials): void {
+  const playerStatuses: Record<string, PlayerStatus> = {
     blue: { pos: null, dir: null, doubleSpeed: null },
     orange: { pos: null, dir: null, doubleSpeed: null },
     green: { pos: null, dir: null, doubleSpeed: null },
     red: { pos: null, dir: null, doubleSpeed: null },
   };
-  const activeColors = [];
+  const activeColors: string[] = [];
   const players = match.getPlayers();
   for (let i = 0; i < players.length; i++) {
     activeColors.push(players[i].getColor());
@@ -66,12 +73,8 @@ function sendUpdateBoardEvent(match, specials) {
   for (let i = 0; i < activeColors.length; i++) {
     try {
       playerStatuses[activeColors[i]].pos = match.getPlayerByColor(activeColors[i]).getPosition();
-      playerStatuses[activeColors[i]].dir = match
-        .getPlayerByColor(activeColors[i])
-        .getActiveDirection();
-      playerStatuses[activeColors[i]].doubleSpeed = match
-        .getPlayerByColor(activeColors[i])
-        .getDoubleSpeedSpecial();
+      playerStatuses[activeColors[i]].dir = match.getPlayerByColor(activeColors[i]).getActiveDirection();
+      playerStatuses[activeColors[i]].doubleSpeed = match.getPlayerByColor(activeColors[i]).getDoubleSpeedSpecial();
     } catch (err) {
       socketErrorHandler(match, err, 'sendUpdateBoardEvent()');
     }
@@ -87,17 +90,17 @@ function sendUpdateBoardEvent(match, specials) {
   }
 }
 
-function sendClearSquaresEvent(match, clearSquares, clearSpecials) {
+export function sendClearSquaresEvent(match: Match, clearSquares: ClearSquare[], clearSpecials: number[]): void {
   const data = { clearSquares: clearSquares, clearSpecials: clearSpecials };
   for (let i = 0; i < match.getPlayers().length; i++) {
     match.getPlayers()[i].getSocket().emit('clearSquares', data);
   }
 }
 
-function sendUpdateScoreEvent(match) {
-  const scores = { blue: null, orange: null, green: null, red: null };
+export function sendUpdateScoreEvent(match: Match): void {
+  const scores: Scores = { blue: null, orange: null, green: null, red: null };
 
-  const activeColors = [];
+  const activeColors: string[] = [];
   const players = match.getPlayers();
   for (let i = 0; i < players.length; i++) {
     activeColors.push(players[i].getColor());
@@ -117,20 +120,20 @@ function sendUpdateScoreEvent(match) {
   }
 }
 
-function sendMatchEndEvent(match) {
+export function sendMatchEndEvent(match: Match): void {
   for (let i = 0; i < match.getPlayers().length; i++) {
     match.getPlayers()[i].getSocket().emit('matchEnd');
   }
 }
 
-function sendCountdownEvent(match) {
+export function sendCountdownEvent(match: Match): void {
   const data = { countdownDuration: match.getCountdownDuration() };
   for (let i = 0; i < match.getPlayers().length; i++) {
     match.getPlayers()[i].getSocket().emit('countdown', data);
   }
 }
 
-function sendFatalErrorEvent(match) {
+export function sendFatalErrorEvent(match: Match): void {
   for (let i = 0; i < match.getPlayers().length; i++) {
     try {
       match.getPlayers()[i].getSocket().emit('fatalError');
@@ -140,13 +143,16 @@ function sendFatalErrorEvent(match) {
   }
 }
 
-exports.sendPlayerConnectedEvent = sendPlayerConnectedEvent;
-exports.sendPlayerDisconnectedEvent = sendPlayerDisconnectedEvent;
-exports.sendMatchCreatorDisconnectedEvent = sendMatchCreatorDisconnectedEvent;
-exports.sendPrepareMatchEvent = sendPrepareMatchEvent;
-exports.sendUpdateBoardEvent = sendUpdateBoardEvent;
-exports.sendClearSquaresEvent = sendClearSquaresEvent;
-exports.sendUpdateScoreEvent = sendUpdateScoreEvent;
-exports.sendMatchEndEvent = sendMatchEndEvent;
-exports.sendCountdownEvent = sendCountdownEvent;
-exports.sendFatalErrorEvent = sendFatalErrorEvent;
+// CommonJS compatibility
+module.exports = {
+  sendPlayerConnectedEvent,
+  sendPlayerDisconnectedEvent,
+  sendMatchCreatorDisconnectedEvent,
+  sendPrepareMatchEvent,
+  sendUpdateBoardEvent,
+  sendClearSquaresEvent,
+  sendUpdateScoreEvent,
+  sendMatchEndEvent,
+  sendCountdownEvent,
+  sendFatalErrorEvent,
+} as any;
