@@ -12,8 +12,16 @@ function respond(socket) {
   let startBtnClicked = false;
 
   socket.on('connectionInfo', function (playerInfo) {
-    // Filter all non alphanumeric values in params
-    const matchId = playerInfo.matchId.replace(/\W/g, '');
+    // Validate socket payload
+    const validation = require('../middleware/validation');
+    const result = validation.validateSocketPayload(validation.schemas.socketConnectionInfoCreate, playerInfo || {});
+    if (!result.valid) {
+      matchSockets.sendFatalErrorEvent(match);
+      console.warn('Invalid connectionInfo payload', result.errors);
+      return;
+    }
+
+    const matchId = result.value.matchId;
 
     let error = false;
     try {
@@ -22,7 +30,7 @@ function respond(socket) {
     } catch (err) {
       error = true;
       matchSockets.sendFatalErrorEvent(match);
-      match.destroy();
+      if (match && typeof match.destroy === 'function') match.destroy();
       console.warn(err.message + ' // createMatchSockets.on(connectionInfo)');
       console.trace();
     }

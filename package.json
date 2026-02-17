@@ -6,7 +6,8 @@
   "dependencies": {
     "express": "*",
     "swig": "*",
-    "socket.io": "*"
+    "socket.io": "*",
+    "joi": "^17.9.2"
   },
   "devDependencies": {
     "chai": "*",

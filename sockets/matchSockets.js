@@ -10,19 +10,25 @@ function respond(socket) {
   let player;
 
   socket.on('connectionInfo', function (playerInfo) {
-    let matchId, playerName;
+    // Validate socket payload
+    const validation = require('../middleware/validation');
+    const result = validation.validateSocketPayload(validation.schemas.socketConnectionInfoMatch, playerInfo || {});
+    if (!result.valid) {
+      sendFatalErrorEvent(match);
+      console.warn('Invalid connectionInfo payload', result.errors);
+      return;
+    }
+
+    let matchId = result.value.matchId;
+    let playerName = result.value.playerName;
     let error = false;
     try {
-      // Filter all non alphanumeric values in params
-      matchId = playerInfo.matchId.replace(/\W/g, '');
-      playerName = playerInfo.playerName.replace(/\W/g, '');
-
       match = matchesManager.manager.getMatch(matchId);
       player = match.getPlayer(playerName);
     } catch (err) {
       error = true;
       sendFatalErrorEvent(match);
-      match.destroy();
+      if (match && typeof match.destroy === 'function') match.destroy();
       console.warn(err.message + ' // matchSockets.on(connectionInfo)');
       console.trace();
     }
