@@ -1,6 +1,7 @@
 'use strict';
 const matchesManager = require('../models/matchesManager');
 const matchSockets = require('../sockets/matchSockets');
+const socketErrorHandler = require('../middleware/socketErrorHandler');
 
 /*
  * LISTENERS
@@ -16,7 +17,6 @@ function respond(socket) {
     const validation = require('../middleware/validation');
     const result = validation.validateSocketPayload(validation.schemas.socketConnectionInfoCreate, playerInfo || {});
     if (!result.valid) {
-      const socketErrorHandler = require('../middleware/socketErrorHandler');
       socketErrorHandler(match, new Error('Invalid connectionInfo payload'), 'createMatchSockets.connectionInfoValidation');
       console.warn('Invalid connectionInfo payload', result.errors);
       return;
@@ -30,7 +30,6 @@ function respond(socket) {
       player = match.getMatchCreator();
     } catch (err) {
       error = true;
-      const socketErrorHandler = require('../middleware/socketErrorHandler');
       socketErrorHandler(match, err, 'createMatchSockets.on(connectionInfo)');
     }
     if (!error) {

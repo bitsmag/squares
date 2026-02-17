@@ -3,6 +3,7 @@ const positionCalc = require('./matchTicker/positionCalc');
 const circuitsCheck = require('./matchTicker/circuitsCheck');
 const randomSpecials = require('./matchTicker/randomSpecials');
 const matchSockets = require('../sockets/matchSockets');
+const socketErrorHandler = require('../middleware/socketErrorHandler');
 
 function MatchController(match) {
   this.match = match;
@@ -108,7 +109,6 @@ MatchController.prototype.matchTicker = function () {
             clearSpecials.push(playerPositionSquare.getId());
           }
         } catch (err) {
-          const socketErrorHandler = require('../middleware/socketErrorHandler');
           socketErrorHandler(that.match, err, 'match.Controller.matchTicker()');
         }
       });
@@ -118,7 +118,6 @@ MatchController.prototype.matchTicker = function () {
         try {
           that.match.getPlayerByColor(color).increaseScore(playerPoints[color].length);
         } catch (err) {
-          const socketErrorHandler = require('../middleware/socketErrorHandler');
           socketErrorHandler(that.match, err, 'match.Controller.matchTicker()');
         }
       });

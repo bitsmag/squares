@@ -3,6 +3,7 @@ const board = require('./board');
 const matchController = require('../controllers/matchController');
 const matchSockets = require('../sockets/matchSockets');
 const matchesManager = require('./matchesManager');
+const socketErrorHandler = require('../middleware/socketErrorHandler');
 
 function Match() {
   this.id = '';
@@ -143,7 +144,6 @@ Match.prototype.updatePlayers = function (playerPositions) {
       const player = that.getPlayerByColor(color);
       player.setPosition(playerPositions[color]);
     } catch (err) {
-      const socketErrorHandler = require('../middleware/socketErrorHandler');
       socketErrorHandler(that, err, 'match.updatePlayers()');
     }
   });
@@ -156,7 +156,6 @@ Match.prototype.updateBoard = function (playerPositions, _specials) {
     try {
       that.getBoard().getSquare(playerPositions[color]).setColor(color);
     } catch (err) {
-      const socketErrorHandler = require('../middleware/socketErrorHandler');
       socketErrorHandler(that, err, 'match.updateBoard()');
     }
   });
@@ -168,7 +167,6 @@ Match.prototype.updateSpecials = function (specials) {
     try {
       this.getBoard().getSquare(specials.doubleSpeed[0]).setDoubleSpeedSpecial(true);
     } catch (err) {
-      const socketErrorHandler = require('../middleware/socketErrorHandler');
       socketErrorHandler(this, err, 'match.updateSpecials()');
     }
   }
@@ -176,7 +174,6 @@ Match.prototype.updateSpecials = function (specials) {
     try {
       this.getBoard().getSquare(specials.getPoints[0]).setGetPointsSpecial(true);
     } catch (err) {
-      const socketErrorHandler = require('../middleware/socketErrorHandler');
       socketErrorHandler(this, err, 'match.updateSpecials()');
     }
   }
