@@ -1,5 +1,6 @@
 "use strict";
 const Joi = require('joi');
+const xss = require('xss');
 
 // Shared schemas
 const schemas = {
@@ -27,12 +28,27 @@ function validate(source, schema) {
     const { error, value } = schema.validate(target, { abortEarly: false, stripUnknown: true });
     if (error) {
       const details = error.details.map((d) => ({ message: d.message, path: d.path }));
-      return res.status(400).render(__dirname + '/../views/error.html', {
+      return res.status(400).render('error.html', {
         errorMessage: 'Invalid request parameters.',
         errorDetails: details,
       });
     }
-    req[source] = value;
+    // Sanitize any string fields in the validated payload to prevent XSS
+    function sanitize(obj) {
+      if (obj == null) return obj;
+      if (typeof obj === 'string') return xss(obj);
+      if (Array.isArray(obj)) return obj.map(sanitize);
+      if (typeof obj === 'object') {
+        const out = {};
+        Object.keys(obj).forEach((k) => {
+          out[k] = sanitize(obj[k]);
+        });
+        return out;
+      }
+      return obj;
+    }
+
+    req[source] = sanitize(value);
     return next();
   };
 }
@@ -42,7 +58,22 @@ function validateSocketPayload(schema, payload) {
   if (error) {
     return { valid: false, errors: error.details.map((d) => ({ message: d.message, path: d.path })) };
   }
-  return { valid: true, value: value };
+  // sanitize the validated payload before returning
+  function sanitize(obj) {
+    if (obj == null) return obj;
+    if (typeof obj === 'string') return xss(obj);
+    if (Array.isArray(obj)) return obj.map(sanitize);
+    if (typeof obj === 'object') {
+      const out = {};
+      Object.keys(obj).forEach((k) => {
+        out[k] = sanitize(obj[k]);
+      });
+      return out;
+    }
+    return obj;
+  }
+
+  return { valid: true, value: sanitize(value) };
 }
 
 module.exports = { schemas, validate, validateSocketPayload };

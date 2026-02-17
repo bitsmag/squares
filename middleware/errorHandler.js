@@ -8,7 +8,7 @@ module.exports = function (err, req, res, _next) {
   // Map some known internal error messages to user-friendly output
   if (req && req.originalUrl && req.originalUrl.startsWith('/')) {
     if (err && err.message === 'matchNotFound') {
-      return res.status(404).render(__dirname + '/../views/error.html', {
+      return res.status(404).render('error.html', {
         errorMessage: 'The match you are looking for was not found.',
       });
     }
@@ -16,7 +16,7 @@ module.exports = function (err, req, res, _next) {
 
   // For HTML pages render a generic error page
   if (req && req.accepts && req.accepts('html')) {
-    return res.status(err.status || 500).render(__dirname + '/../views/error.html', {
+    return res.status(err.status || 500).render('error.html', {
       errorMessage: err.userMessage || 'There was an unknown issue - please try again.',
     });
   }
