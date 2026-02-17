@@ -2,7 +2,7 @@
 let matchSockets      = require('../../sockets/matchSockets');
 
 function getPlayerPoints(match){
-  let playerPoints = {blue: 0, orange: 0, green: 0, red: 0};
+  let playerPoints = {blue: [], orange: [], green: [], red: []};
   for(let i = 0; i < match.getPlayers().length; i++){
     let playerPositionSquare;
     let error = false;
@@ -18,8 +18,8 @@ function getPlayerPoints(match){
     }
     if(!error){
       let playerColor = match.getPlayers()[i].getColor();
-      let points = getPoints(playerPositionSquare, playerColor, match);
-      playerPoints[playerColor] = points;
+      let squaresEarningPoints = getPoints(playerPositionSquare, playerColor, match);
+      playerPoints[playerColor] = squaresEarningPoints;
     }
   }
   return playerPoints;
@@ -30,7 +30,7 @@ function getPoints(theSquare, theColor, match){
   let stack = [];
   let justPopped; // If a square does not lead to a new way it gets popped of the stack. This let is necessary so the same square is not checked again in the following iteration.
   let prefDir = ''; // Prefered direction how the algorithm goes through the field it should only change direction if there is no other way
-  let points = 0;
+  let squaresEarningPoints = [];
 
   function getVertices(s, c){ // Returns all squares in the same color reachable from the current square (neighbors)
     let vertices = [];
@@ -100,38 +100,45 @@ function getPoints(theSquare, theColor, match){
     }
   }
 
-  function checkValidity(stack, alreadyVisitedVertex){ // Will check if a circuit is valid. returns the value of the circuit if valid, otherwise 0
-    // Check if the found circuit is valid
-    // There must be a square which is surrounded by the circuit but is not part of the circuit itself
-    let pointCount = 0;
-    // To build up a valid circuit there must be at least 8 squares
-    if(stack.length>7){
+  function checkValidity(stack, alreadyVisitedVertex){ // Will check if a circuit is valid and if so return an array of all squares which earn points, otherwise an empty array
+
+    // A valid circuit must surround a square which is not part of the circuit itself
+	
+	let points = [];
+    if(stack.length>7){ // To build up a valid circuit there must be at least 8 squares
+	
       // All squares between theSquare and the alreadyVisitedSquare are part of the circuit
-      let alreadyVisitedSquareIndex = stack.indexOf(alreadyVisitedVertex);
-      let circuitArray = stack.slice(alreadyVisitedSquareIndex, stack.length);
-      // Iterate through alle "rows" (yValues) of the board
+      let circuitArray = stack.slice(stack.indexOf(alreadyVisitedVertex), stack.length);
+	  
+      // Iterate through alle "rows" (yValues) of the board 
       for(let j = 0; j<9; j++){
-        // Collect all xValues of the squares in the ciruit which are in the same "row"
-        let xVals = [];
+		  
+        let squaresInSameRow = [];
         for(let k = 0; k<circuitArray.length; k++){
           if(circuitArray[k].getPosition().y == j){
-            xVals.push(circuitArray[k].getPosition().x);
+            squaresInSameRow.push(circuitArray[k]);
           }
         }
-        xVals.sort(function(a, b){return a-b;}); // Sort the values
-        // Iterate through all xValues in one row - if there are gaps in the sequence its a valid circuit
-        for(let k = 1; k < xVals.length; k++) {
-          let diff = xVals[k] - xVals[k-1];
+        squaresInSameRow.sort(function(a, b){return a.getPosition().x-b.getPosition().x;});
+        
+		// Iterate through all squares in one row - if there are gaps in the xValue sequence its a valid circuit
+        for(let k = 1; k < squaresInSameRow.length; k++) {
+          let diff = squaresInSameRow[k].getPosition().x - squaresInSameRow[k-1].getPosition().x;
           if(diff != 1) {
-            pointCount += diff-1; // Each square surrounded by the circuit is one point
+			for(let l = 1; l < diff; l++){ // Each square surrounded by the circuit earns points
+				points.push(match.getBoard().getSquareByCoordinates(squaresInSameRow[k].getPosition().x -l, j));
+			}
           }
         }
       }
-      if(pointCount>0){
-        pointCount += circuitArray.length; // Each square which is part of the circuit is one point
+      if(points.length>0){
+		// Each square which is part of the circuit earns points
+		for (const square of circuitArray) {
+	      points.push(square);
+		}
       }
     }
-    return pointCount;
+    return points.length > 0 ? points : [];
   }
 
   function dfs(theSquare, theColor){ // The actual algorithm (Depth First Search)
@@ -156,18 +163,18 @@ function getPoints(theSquare, theColor, match){
       // (E) Iterate through all vertices
       for(let i = 0; i < vertices.length; i++){
 
-        if(points<1){ // If there is a valid circuit recognized (there are points) the following code must not be executed (actually the loop should stop)
+        if(squaresEarningPoints.length<1){ // If there is a valid circuit recognized (there are points) the following code must not be executed (actually the loop should stop)
                       // TODO Make this loop recursive so this ugly if statement is not necessary
 
           // (E.1) The vertex is already visited and not the same as before -> circuit!
           if(vertices[i].isDfsVisited() && vertices[i] !== stack[stack.length-2]){
 
             // Check if the found circuit is valid
-            points = checkValidity(stack, vertices[i]);
+            squaresEarningPoints = checkValidity(stack, vertices[i]);
 
             // If the circuit is not valid (zero points) and there is not other vertex of theSquare to check
             // pop the square of the stack and start dfs again
-            if(points === 0 && i===vertices.length-1){
+            if(squaresEarningPoints.length === 0 && i===vertices.length-1){
               stack.pop(theSquare);
               // Keep the popped of Square and the direction we're coming from (its the preferred dirrection for the next step)
               justPopped = theSquare;
@@ -201,10 +208,9 @@ function getPoints(theSquare, theColor, match){
       }
     }
   }
-
   dfs(theSquare, theColor);
   setAllSquaresUnvisited();
-  return points;
+  return squaresEarningPoints;
 }
 
 exports.getPlayerPoints = getPlayerPoints;

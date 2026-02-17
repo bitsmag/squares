@@ -4,6 +4,7 @@ function Square(squareId, edgesTo, position){
   this.position = position;
   this.color = '';
   this.doubleSpeedSpecial = false;
+  this.getPointsSpecial = false;
   this.dfsVisited = false;
 }
 
@@ -27,6 +28,10 @@ Square.prototype.getDoubleSpeedSpecial = function() {
   return this.doubleSpeedSpecial;
 };
 
+Square.prototype.getGetPointsSpecial = function() {
+  return this.getPointsSpecial;
+};
+
 Square.prototype.isDfsVisited = function() {
   return this.dfsVisited;
 };
@@ -37,6 +42,10 @@ Square.prototype.setColor = function(color) {
 
 Square.prototype.setDoubleSpeedSpecial = function(doubleSpeedSpecial) {
   this.doubleSpeedSpecial = doubleSpeedSpecial;
+};
+
+Square.prototype.setGetPointsSpecial = function(getPointsSpecial) {
+  this.getPointsSpecial = getPointsSpecial;
 };
 
 Square.prototype.setDfsVisited = function(visited) {

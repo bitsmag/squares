@@ -86,11 +86,42 @@ MatchController.prototype.matchTicker = function(){
 
       // Check for circuits / get points
       let playerPoints = circuitsCheck.getPlayerPoints(that.match);
+	  
+	  // Check if a player collected a special
+      let clearSpecials = [];
+      Object.keys(playerPositions).forEach(function(color) {
+        try{
+          let playerPositionSquare = that.match.getBoard().getSquare(playerPositions[color]);
+		  // getPointsSpecial
+		  if(playerPositionSquare.getGetPointsSpecial()){
+			for(let i = 0; i < that.match.getBoard().getSquares().length; i++){
+              let square = that.match.getBoard().getSquares()[i];
+              if(square.getColor() === color){
+			    playerPoints[color].push(square);
+              }
+            }
+            playerPositionSquare.setGetPointsSpecial(false);
+            clearSpecials.push(playerPositionSquare.getId());
+          }
+		  // doubleSpeedSpecial
+		  if(playerPositionSquare.getDoubleSpeedSpecial()){
+            that.match.getPlayerByColor(color).startDoubleSpeedSpecial(that.match.getBoard().getDoubleSpeedDuration());
+            playerPositionSquare.setDoubleSpeedSpecial(false);
+            clearSpecials.push(playerPositionSquare.getId());
+          }
+        }
+        catch(err){
+          matchSockets.sendFatalErrorEvent(that.match);
+          that.match.destroy();
+          console.warn(err.message + ' // match.Controller.matchTicker()');
+          console.trace();
+        }
+      });
 
       // Update score for active players
       Object.keys(playerPositions).forEach(function(color) {
         try{
-          that.match.getPlayerByColor(color).increaseScore(playerPoints[color]);
+          that.match.getPlayerByColor(color).increaseScore(playerPoints[color].length);
         }
         catch(err){
           matchSockets.sendFatalErrorEvent(that.match);
@@ -100,38 +131,15 @@ MatchController.prototype.matchTicker = function(){
         }
       });
 
-      // Check if a player collected a special
-      let clearSpecials = [];
-      Object.keys(playerPositions).forEach(function(color) {
-        try{
-          let square = that.match.getBoard().getSquare(playerPositions[color]);
-          if(square.getDoubleSpeedSpecial()){
-            that.match.getPlayerByColor(color).startDoubleSpeedSpecial(that.match.getBoard().getDoubleSpeedDuration());
-            square.setDoubleSpeedSpecial(false);
-            clearSpecials.push(square.getId());
-          }
-        }
-        catch(err){
-          matchSockets.sendFatalErrorEvent(that.match);
-          that.match.destroy();
-          console.warn(err.message + ' // match.Controller.matchTicker()');
-          console.trace();
-        }
-      });
-
-      // Get all squares of a player who made points this tick
+      // Get all squares which earned points this tick
       let clearSquares = [];
-      for(let color in playerPoints){
-        if(playerPoints[color] > 0){
-          for(let i = 0; i < that.match.getBoard().getSquares().length; i++){
-            let square = that.match.getBoard().getSquares()[i];
-            if(square.getColor() === color){
-              square.setColor('');
-              clearSquares.push(square.getId());
-            }
-          }
-        }
-      }
+	  
+	  Object.keys(playerPositions).forEach(function(color) {
+        for (let i=0; i<playerPoints[color].length; i++){
+			    clearSquares.push({id: playerPoints[color][i].getId(), color: color});
+          playerPoints[color][i].setColor('');
+		    }
+	  });
 
       // Get randomSpecials and update the board
       let specials = randomSpecials.getSpecials(that.match);

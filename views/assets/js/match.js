@@ -141,6 +141,8 @@ function updateBoard(data){
   // Specials
   var elementSelector = '#square' + data.specials.doubleSpeed[0];
   $(elementSelector).addClass('doubleSpeed');
+    var elementSelector = '#square' + data.specials.getPoints[0];
+  $(elementSelector).addClass('getPoints');
 
   // Timer
   $('#timer').html(data.duration);
@@ -151,19 +153,82 @@ function clearSquares(data){
     setTimeout(
       function(){
         for(var i=0; i<data.clearSquares.length; i++){
-          var elementSelector = '#square' + data.clearSquares[i];
+          var elementSelector = '#square' + data.clearSquares[i].id;
           $(elementSelector).css( 'background-color', 'rgb(200, 200, 200)');
         }
       }, 500);
   }
 
+  function doClearSquaresAnimation() {
+    // Thanks https://codepen.io/Mamboleoo/pen/JjdXPgR
+    let amount = 6;
+    for(var i=0; i<data.clearSquares.length; i++){
+      var elementSelector = '#square' + data.clearSquares[i].id;
+      for (let j = 0; j < amount; j++) {
+        const x = $(elementSelector)[0].getBoundingClientRect().left + 25;
+        const y = $(elementSelector)[0].getBoundingClientRect().top + 25;
+        popParticle(x, y + window.scrollY, data.clearSquares[i].color);
+      }
+    }
+  }
+
+  doClearSquaresAnimation();
   clearSquaresAfterTimeout();
 
   // Clear specials
   for(var i=0; i<data.clearSpecials.length; i++){
     var elementSelector = '#square' + data.clearSpecials[i];
     $(elementSelector).removeClass('doubleSpeed');
+	$(elementSelector).removeClass('getPoints');
   }
+}
+
+function popParticle (x, y, color) {
+  const particle = document.createElement('particle');
+  document.body.appendChild(particle);
+  let width = Math.floor(Math.random() * 30 + 8);
+  let height = width;
+  let destinationX = (Math.random() - 0.5) * 300;
+  let destinationY = (Math.random() - 0.5) * 300;
+  let rotation = Math.random() * 520;
+  let delay = Math.random() * 100;
+  let particleColor = 0;
+  switch (color) {
+    case 'blue':
+    particleColor = 193;
+    break;
+    case 'orange':
+    particleColor = 42;
+    break;
+    case 'green':
+    particleColor = 155;
+    break;
+    case 'red':
+    particleColor = 334;
+    break;
+}
+
+  
+  particle.style.background = `hsl(${Math.random() * 50 + particleColor}, 70%, 60%)`;
+  particle.style.border = '1px solid white';
+  
+  particle.style.width = `${width}px`;
+  particle.style.height = `${height}px`;
+  const animation = particle.animate([
+    {
+      transform: `translate(-50%, -50%) translate(${x}px, ${y}px) rotate(0deg)`,
+      opacity: 1
+    },
+    {
+      transform: `translate(-50%, -50%) translate(${x + destinationX}px, ${y + destinationY}px) rotate(${rotation}deg)`,
+      opacity: 0
+    }
+  ], {
+    duration: Math.random() * 1000 + 1000,
+    easing: 'cubic-bezier(0, .9, .57, 1)',
+    delay: delay
+  });
+  animation.onfinish = function(e){e.srcElement.effect.target.remove()};
 }
 
 function updateScore(data){

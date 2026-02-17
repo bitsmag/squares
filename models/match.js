@@ -179,6 +179,14 @@ Match.prototype.updateSpecials = function(specials) {
       console.warn(err.message + ' // match.updateBoard - ' + specials.doubleSpeed[0]);
     }
   }
+  if(specials.getPoints.length){
+    try{
+      this.getBoard().getSquare(specials.getPoints[0]).setGetPointsSpecial(true);
+    }
+    catch(err){
+      console.warn(err.message + ' // match.updateBoard - ' + specials.doubleSpeed[0]);
+    }
+  }
 };
 
 Match.prototype.isNameInUse = function(name) {

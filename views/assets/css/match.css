@@ -66,6 +66,12 @@ table {
   background-size: 60% 60%;
   background-position: center;
 }
+.getPoints {
+  background-image: url(/img/shock.svg);
+  background-repeat:no-repeat;
+  background-size: 60% 60%;
+  background-position: center;
+}
 #board table {
   background-color: #C8C8C8;
   border-spacing: 0px;
@@ -84,4 +90,14 @@ table {
 }
 #greenScore{
   background-color: #15b3ab;
+}
+
+particle {
+  position: fixed;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  pointer-events: none;
+  background-repeat: no-repeat;
+  background-size: contain;
 }

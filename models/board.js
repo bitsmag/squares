@@ -162,4 +162,19 @@ Board.prototype.getSquare = function(id) { // ERROR: squareNotFound
   }
 };
 
+Board.prototype.getSquareByCoordinates = function(x, y) { // ERROR: squareNotFound
+  let error = false;
+  for(let i = 0; i < this.squares.length; i++){
+    if(this.squares[i].getPosition().x === x && this.squares[i].getPosition().y === y){
+      return this.squares[i];
+    }
+    else {
+      error = true;
+    }
+  }
+  if (error){
+    throw new Error('squareNotFound');
+  }
+};
+
 exports.Board = Board;
