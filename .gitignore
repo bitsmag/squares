@@ -7,3 +7,4 @@ coverage
 # Atom tags
 .tags
 tags
+node_modules/
