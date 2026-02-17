@@ -1,4 +1,4 @@
-function Square(squareId, edgesTo, position){
+function Square(squareId, edgesTo, position) {
   this.id = squareId;
   this.edgesTo = edgesTo;
   this.position = position;
@@ -8,47 +8,47 @@ function Square(squareId, edgesTo, position){
   this.dfsVisited = false;
 }
 
-Square.prototype.getId = function() {
+Square.prototype.getId = function () {
   return this.id;
 };
 
-Square.prototype.getEdgesTo = function() {
+Square.prototype.getEdgesTo = function () {
   return this.edgesTo;
 };
 
-Square.prototype.getPosition = function() {
+Square.prototype.getPosition = function () {
   return this.position;
 };
 
-Square.prototype.getColor = function() {
+Square.prototype.getColor = function () {
   return this.color;
 };
 
-Square.prototype.getDoubleSpeedSpecial = function() {
+Square.prototype.getDoubleSpeedSpecial = function () {
   return this.doubleSpeedSpecial;
 };
 
-Square.prototype.getGetPointsSpecial = function() {
+Square.prototype.getGetPointsSpecial = function () {
   return this.getPointsSpecial;
 };
 
-Square.prototype.isDfsVisited = function() {
+Square.prototype.isDfsVisited = function () {
   return this.dfsVisited;
 };
 
-Square.prototype.setColor = function(color) {
+Square.prototype.setColor = function (color) {
   this.color = color;
 };
 
-Square.prototype.setDoubleSpeedSpecial = function(doubleSpeedSpecial) {
+Square.prototype.setDoubleSpeedSpecial = function (doubleSpeedSpecial) {
   this.doubleSpeedSpecial = doubleSpeedSpecial;
 };
 
-Square.prototype.setGetPointsSpecial = function(getPointsSpecial) {
+Square.prototype.setGetPointsSpecial = function (getPointsSpecial) {
   this.getPointsSpecial = getPointsSpecial;
 };
 
-Square.prototype.setDfsVisited = function(visited) {
+Square.prototype.setDfsVisited = function (visited) {
   this.dfsVisited = visited;
 };
 exports.Square = Square;

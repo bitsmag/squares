@@ -1,42 +1,41 @@
-"use strict";
-let matchesManager     = require('../models/matchesManager');
-let matchSockets       = require('../sockets/matchSockets');
+'use strict';
+const matchesManager = require('../models/matchesManager');
+const matchSockets = require('../sockets/matchSockets');
 
 /*
-  * LISTENERS
-  */
+ * LISTENERS
+ */
 
-function respond(socket){
+function respond(socket) {
   let match;
   let player;
   let startBtnClicked = false;
 
-  socket.on('connectionInfo',function(playerInfo){
+  socket.on('connectionInfo', function (playerInfo) {
     // Filter all non alphanumeric values in params
-    let matchId = playerInfo.matchId.replace(/\W/g, '');
+    const matchId = playerInfo.matchId.replace(/\W/g, '');
 
     let error = false;
     try {
-      match = matchesManager.manager.getMatch(playerInfo.matchId);
+      match = matchesManager.manager.getMatch(matchId);
       player = match.getMatchCreator();
-    }
-    catch(err) {
+    } catch (err) {
       error = true;
       matchSockets.sendFatalErrorEvent(match);
       match.destroy();
       console.warn(err.message + ' // createMatchSockets.on(connectionInfo)');
       console.trace();
     }
-    if(!error){
+    if (!error) {
       player.setSocket(socket);
     }
   });
 
-  socket.on('disconnect',function(){
-    if(match){
+  socket.on('disconnect', function () {
+    if (match) {
       // If matchCreator disconnects from createMatch Page
       // without starting the match, the match is canceled
-      if(!startBtnClicked){
+      if (!startBtnClicked) {
         matchSockets.sendMatchCreatorDisconnectedEvent(match);
         match.removePlayer(player);
         match.destroy();
@@ -44,7 +43,7 @@ function respond(socket){
     }
   });
 
-  socket.on('startBtnClicked',function(){
+  socket.on('startBtnClicked', function () {
     startBtnClicked = true;
   });
 }

@@ -1,15 +1,15 @@
-"use strict";
-let matchesManager    = require('../models/matchesManager');
+'use strict';
+const matchesManager = require('../models/matchesManager');
 
 /*
-  * LISTENERS
-  */
+ * LISTENERS
+ */
 
-function respond(socket){
+function respond(socket) {
   let match;
   let player;
 
-  socket.on('connectionInfo',function(playerInfo){
+  socket.on('connectionInfo', function (playerInfo) {
     let matchId, playerName;
     let error = false;
     try {
@@ -19,128 +19,129 @@ function respond(socket){
 
       match = matchesManager.manager.getMatch(matchId);
       player = match.getPlayer(playerName);
-    }
-    catch(err) {
+    } catch (err) {
       error = true;
       sendFatalErrorEvent(match);
       match.destroy();
       console.warn(err.message + ' // matchSockets.on(connectionInfo)');
       console.trace();
     }
-    if(!error){
+    if (!error) {
       player.setSocket(socket);
-      if(player.isMatchCreator()){
+      if (player.isMatchCreator()) {
         sendPrepareMatchEvent(match);
         match.getController().startMatch();
-      }
-      else{
-        let data = {playerNames: []};
-        for(let i = 0; i < match.getPlayers().length; i++){
+      } else {
+        const data = { playerNames: [] };
+        for (let i = 0; i < match.getPlayers().length; i++) {
           data.playerNames.push(match.getPlayers()[i].getName());
         }
         player.getSocket().emit('connectedPlayers', data);
         sendPlayerConnectedEvent(match, player);
       }
-
     }
   });
 
-  socket.on('disconnect',function(){
-    let error = false;
-    if(match) {
+  socket.on('disconnect', function () {
+    if (match) {
       match.removePlayer(player);
       sendPlayerDisconnectedEvent(match, player);
     }
   });
 
-  socket.on('goLeft',function(){
+  socket.on('goLeft', function () {
     player.setActiveDirection('left');
   });
 
-  socket.on('goUp',function(){
+  socket.on('goUp', function () {
     player.setActiveDirection('up');
   });
 
-  socket.on('goRight',function(){
+  socket.on('goRight', function () {
     player.setActiveDirection('right');
   });
 
-  socket.on('goDown',function(){
+  socket.on('goDown', function () {
     player.setActiveDirection('down');
   });
 }
 
 /*
-  * EMITERS
-  */
+ * EMITERS
+ */
 
-function sendPlayerConnectedEvent(match, player){
-  let data = {playerName: player.getName(),
-            playerColor: player.getColor(),
-            matchId: match.getId()};
-  for(let i = 0; i < match.getPlayers().length; i++){
-    if(match.getPlayers()[i].getName()!=data.playerName){
+function sendPlayerConnectedEvent(match, player) {
+  const data = {
+    playerName: player.getName(),
+    playerColor: player.getColor(),
+    matchId: match.getId(),
+  };
+  for (let i = 0; i < match.getPlayers().length; i++) {
+    if (match.getPlayers()[i].getName() != data.playerName) {
       match.getPlayers()[i].getSocket().emit('playerConnected', data);
     }
   }
 }
 
-function sendPlayerDisconnectedEvent(match, player){
-  let data = {playerName: player.getName(),
-            playerColor: player.getColor(),
-            matchId: match.getId()};
-  for(let i = 0; i < match.getPlayers().length; i++){
-    if(match.getPlayers()[i].getName()!=data.playerName){
+function sendPlayerDisconnectedEvent(match, player) {
+  const data = {
+    playerName: player.getName(),
+    playerColor: player.getColor(),
+    matchId: match.getId(),
+  };
+  for (let i = 0; i < match.getPlayers().length; i++) {
+    if (match.getPlayers()[i].getName() != data.playerName) {
       match.getPlayers()[i].getSocket().emit('playerDisconnected', data);
     }
   }
 }
 
-function sendMatchCreatorDisconnectedEvent(match){
-  for(let i = 0; i < match.getPlayers().length; i++){
+function sendMatchCreatorDisconnectedEvent(match) {
+  for (let i = 0; i < match.getPlayers().length; i++) {
     match.getPlayers()[i].getSocket().emit('matchCreatorDisconnected');
   }
 }
 
-function sendPrepareMatchEvent(match){
-  let board = match.getBoard();
-  let playersData = [];
+function sendPrepareMatchEvent(match) {
+  const board = match.getBoard();
+  const playersData = [];
 
-  let players = match.getPlayers();
-  for(let i = 0; i < players.length; i++){
+  const players = match.getPlayers();
+  for (let i = 0; i < players.length; i++) {
     playersData[i] = {
       playerName: players[i].name,
-      playerColor: players[i].color
+      playerColor: players[i].color,
     };
   }
 
-  let data = {players: playersData,
-              board: board};
-  for(let i = 0; i < players.length; i++){
+  const data = { players: playersData, board: board };
+  for (let i = 0; i < players.length; i++) {
     players[i].getSocket().emit('prepareMatch', data);
   }
 }
 
-
-function sendUpdateBoardEvent(match, specials){
-  let playerStatuses = {
-    blue: {pos: null, dir: null, doubleSpeed: null},
-    orange: {pos: null, dir: null, doubleSpeed: null},
-    green: {pos: null, dir: null, doubleSpeed: null},
-    red: {pos: null, dir: null, doubleSpeed: null}
+function sendUpdateBoardEvent(match, specials) {
+  const playerStatuses = {
+    blue: { pos: null, dir: null, doubleSpeed: null },
+    orange: { pos: null, dir: null, doubleSpeed: null },
+    green: { pos: null, dir: null, doubleSpeed: null },
+    red: { pos: null, dir: null, doubleSpeed: null },
   };
-  let activeColors = [];
-  let players = match.getPlayers();
-  for(let i = 0; i<players.length; i++){
+  const activeColors = [];
+  const players = match.getPlayers();
+  for (let i = 0; i < players.length; i++) {
     activeColors.push(players[i].getColor());
   }
-  for(let i = 0; i<activeColors.length; i++){
+  for (let i = 0; i < activeColors.length; i++) {
     try {
       playerStatuses[activeColors[i]].pos = match.getPlayerByColor(activeColors[i]).getPosition();
-      playerStatuses[activeColors[i]].dir = match.getPlayerByColor(activeColors[i]).getActiveDirection();
-      playerStatuses[activeColors[i]].doubleSpeed = match.getPlayerByColor(activeColors[i]).getDoubleSpeedSpecial();
-    }
-    catch(err) {
+      playerStatuses[activeColors[i]].dir = match
+        .getPlayerByColor(activeColors[i])
+        .getActiveDirection();
+      playerStatuses[activeColors[i]].doubleSpeed = match
+        .getPlayerByColor(activeColors[i])
+        .getDoubleSpeedSpecial();
+    } catch (err) {
       sendFatalErrorEvent(match);
       match.destroy();
       console.warn(err.message + ' // matchSockets.sendUpdateBoardEvent()');
@@ -148,37 +149,36 @@ function sendUpdateBoardEvent(match, specials){
     }
   }
 
-  let data = {playerStatuses: playerStatuses,
-      specials: specials,
-      duration: match.getDuration()};
-  for(let i = 0; i < match.getPlayers().length; i++){
-    let thisColor = match.getPlayers()[i].getColor();
+  const data = {
+    playerStatuses: playerStatuses,
+    specials: specials,
+    duration: match.getDuration(),
+  };
+  for (let i = 0; i < match.getPlayers().length; i++) {
     match.getPlayers()[i].getSocket().emit('updateBoard', data);
   }
 }
 
-function sendClearSquaresEvent(match, clearSquares, clearSpecials){
-  let data = {clearSquares: clearSquares, clearSpecials: clearSpecials};
-  for(let i = 0; i < match.getPlayers().length; i++){
-    let thisColor = match.getPlayers()[i].getColor();
+function sendClearSquaresEvent(match, clearSquares, clearSpecials) {
+  const data = { clearSquares: clearSquares, clearSpecials: clearSpecials };
+  for (let i = 0; i < match.getPlayers().length; i++) {
     match.getPlayers()[i].getSocket().emit('clearSquares', data);
   }
 }
 
-function sendUpdateScoreEvent(match){
-  let scores = {blue: null, orange: null, green: null, red: null};
+function sendUpdateScoreEvent(match) {
+  const scores = { blue: null, orange: null, green: null, red: null };
 
-  let activeColors = [];
-  let players = match.getPlayers();
-  for(let i = 0; i<players.length; i++){
+  const activeColors = [];
+  const players = match.getPlayers();
+  for (let i = 0; i < players.length; i++) {
     activeColors.push(players[i].getColor());
   }
 
-  for(let i = 0; i<activeColors.length; i++){
+  for (let i = 0; i < activeColors.length; i++) {
     try {
       scores[activeColors[i]] = match.getPlayerByColor(activeColors[i]).getScore();
-    }
-    catch(err) {
+    } catch (err) {
       sendFatalErrorEvent(match);
       match.destroy();
       console.warn(err.message + ' // matchSockets.sendUpdateScoreEvent()');
@@ -186,29 +186,27 @@ function sendUpdateScoreEvent(match){
     }
   }
 
-  let data = {scores: scores};
-  for(let i = 0; i < match.getPlayers().length; i++){
-    let thisColor = match.getPlayers()[i].getColor();
+  const data = { scores: scores };
+  for (let i = 0; i < match.getPlayers().length; i++) {
     match.getPlayers()[i].getSocket().emit('updateScore', data);
   }
 }
 
-function sendMatchEndEvent(match){
-  for(let i = 0; i < match.getPlayers().length; i++){
-    let thisColor = match.getPlayers()[i].getColor();
+function sendMatchEndEvent(match) {
+  for (let i = 0; i < match.getPlayers().length; i++) {
     match.getPlayers()[i].getSocket().emit('matchEnd');
   }
 }
 
-function sendCountdownEvent(match){
-  let data = {countdownDuration: match.getCountdownDuration()};
-  for(let i = 0; i < match.getPlayers().length; i++){
+function sendCountdownEvent(match) {
+  const data = { countdownDuration: match.getCountdownDuration() };
+  for (let i = 0; i < match.getPlayers().length; i++) {
     match.getPlayers()[i].getSocket().emit('countdown', data);
   }
 }
 
-function sendFatalErrorEvent(match){
-  for(let i = 0; i < match.getPlayers().length; i++){
+function sendFatalErrorEvent(match) {
+  for (let i = 0; i < match.getPlayers().length; i++) {
     match.getPlayers()[i].getSocket().emit('fatalError');
   }
 }
