@@ -1,7 +1,6 @@
 'use strict';
 const board = require('./board');
 const matchController = require('../controllers/matchController');
-const matchSockets = require('../sockets/matchSockets');
 const matchesManager = require('./matchesManager');
 const socketErrorHandler = require('../middleware/socketErrorHandler');
 
@@ -27,33 +26,20 @@ Match.prototype.getPlayers = function () {
 };
 
 Match.prototype.getPlayer = function (playerName) {
-  // ERROR: playerNotFound
-  let error = false;
-  for (let i = 0; i < this.players.length; i++) {
-    if (this.players[i].getName() === playerName) {
-      return this.players[i];
-    } else {
-      error = true;
-    }
-  }
-  if (error) {
+  const foundPlayer = this.players.find(p => p.getName() === playerName);
+  if (!foundPlayer) {
     throw new Error('playerNotFound');
   }
+  return foundPlayer;
 };
 
 Match.prototype.getPlayerByColor = function (playerColor) {
   // ERROR: playerNotFound
-  let error = false;
-  for (let i = 0; i < this.players.length; i++) {
-    if (this.players[i].getColor() === playerColor) {
-      return this.players[i];
-    } else {
-      error = true;
-    }
-  }
-  if (error) {
+  const foundPlayer = this.players.find(p => p.getColor() === playerColor);
+  if (!foundPlayer) {
     throw new Error('playerNotFound');
   }
+  return foundPlayer;
 };
 
 Match.prototype.getMatchCreator = function () {
@@ -202,7 +188,7 @@ function createUniqueId() {
 
   while (!unique) {
     timestamp = Date.now().toString();
-    matchId = 'x' + timestamp.substring(timestamp.length - 4, timestamp.lenght);
+    matchId = 'x' + timestamp.substring(timestamp.length - 4, timestamp.length);
 
     duplicate = false;
     for (let i = 0; i < matchesManager.manager.getMatches().length; i++) {

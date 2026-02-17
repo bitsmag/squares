@@ -9,16 +9,11 @@ MatchesManager.prototype.getMatches = function () {
 
 MatchesManager.prototype.getMatch = function (matchId) {
   //ERROR: matchNotFound
-  let error = true;
-  for (let i = 0; i < this.matches.length; i++) {
-    if (this.matches[i].id === matchId) {
-      error = false;
-      return this.matches[i];
-    }
-  }
-  if (error) {
+  const foundMatch = this.matches.find(m => m.id === matchId);
+  if (!foundMatch) {
     throw new Error('matchNotFound');
   }
+  return foundMatch;
 };
 
 MatchesManager.prototype.addMatch = function (match) {

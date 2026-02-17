@@ -1,6 +1,6 @@
 'use strict';
 const matchesManager = require('../models/matchesManager');
-const matchSockets = require('../sockets/matchSockets');
+const matchSocketService = require('../services/matchSocketService');
 const socketErrorHandler = require('../middleware/socketErrorHandler');
 
 /*
@@ -42,7 +42,7 @@ function respond(socket) {
       // If matchCreator disconnects from createMatch Page
       // without starting the match, the match is canceled
       if (!startBtnClicked) {
-        matchSockets.sendMatchCreatorDisconnectedEvent(match);
+        matchSocketService.sendMatchCreatorDisconnectedEvent(match);
         match.removePlayer(player);
         match.destroy();
       }

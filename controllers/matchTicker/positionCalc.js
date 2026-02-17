@@ -1,5 +1,4 @@
 'use strict';
-const matchSockets = require('../../sockets/matchSockets');
 
 function calculateNewPlayerPositions(match, playerList) {
   const activeColors = [];

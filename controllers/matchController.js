@@ -2,7 +2,7 @@
 const positionCalc = require('./matchTicker/positionCalc');
 const circuitsCheck = require('./matchTicker/circuitsCheck');
 const randomSpecials = require('./matchTicker/randomSpecials');
-const matchSockets = require('../sockets/matchSockets');
+const matchSocketService = require('../services/matchSocketService');
 const socketErrorHandler = require('../middleware/socketErrorHandler');
 
 function MatchController(match) {
@@ -23,7 +23,7 @@ MatchController.prototype.startMatch = function () {
       clearInterval(countdownDurationDecrementInterval);
     } else {
       that.match.countdownDurationDecrement();
-      matchSockets.sendCountdownEvent(that.match);
+      matchSocketService.sendCountdownEvent(that.match);
       if (that.match.getCountdownDuration() === 0) {
         clearInterval(countdownDurationDecrementInterval);
         runMatch();
@@ -52,7 +52,7 @@ MatchController.prototype.matchTicker = function () {
   function tick() {
     tickCount++;
     if (!that.match.isActive()) {
-      matchSockets.sendMatchEndEvent(that.match);
+    matchSocketService.sendMatchEndEvent(that.match);
       clearInterval(tickerInterval);
     } else {
       // Calculate new playerPositions (for the players which are relevant this tick)
@@ -137,9 +137,9 @@ MatchController.prototype.matchTicker = function () {
       that.match.updateSpecials(specials);
 
       // Send sockets
-      matchSockets.sendUpdateBoardEvent(that.match, specials);
-      matchSockets.sendClearSquaresEvent(that.match, clearSquares, clearSpecials);
-      matchSockets.sendUpdateScoreEvent(that.match);
+      matchSocketService.sendUpdateBoardEvent(that.match, specials);
+      matchSocketService.sendClearSquaresEvent(that.match, clearSquares, clearSpecials);
+      matchSocketService.sendUpdateScoreEvent(that.match);
     }
   }
   let tickCount = 0;

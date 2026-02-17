@@ -1,5 +1,4 @@
 'use strict';
-const matchSockets = require('../../sockets/matchSockets');
 
 function getPlayerPoints(match) {
   const playerPoints = { blue: [], orange: [], green: [], red: [] };
