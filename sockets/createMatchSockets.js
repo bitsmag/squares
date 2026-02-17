@@ -29,10 +29,14 @@ function respond(socket) {
       player = match.getMatchCreator();
     } catch (err) {
       error = true;
-      matchSockets.sendFatalErrorEvent(match);
-      if (match && typeof match.destroy === 'function') match.destroy();
-      console.warn(err.message + ' // createMatchSockets.on(connectionInfo)');
-      console.trace();
+      if (typeof matchSockets.fatalErrorHandler === 'function') {
+        matchSockets.fatalErrorHandler(match, err, 'createMatchSockets.on(connectionInfo)');
+      } else {
+        matchSockets.sendFatalErrorEvent(match);
+        if (match && typeof match.destroy === 'function') match.destroy();
+        console.warn(err.message + ' // createMatchSockets.on(connectionInfo)');
+        console.trace();
+      }
     }
     if (!error) {
       player.setSocket(socket);

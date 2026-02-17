@@ -137,6 +137,9 @@ app.use(function (req, res, _next) {
   res.status(404).sendFile(__dirname + '/views/404.html');
 });
 
+// Centralized error handler
+app.use(require('./middleware/errorHandler'));
+
 http.listen(app.get('port'), function () {
   console.log('listening on *:' + app.get('port'));
 });
