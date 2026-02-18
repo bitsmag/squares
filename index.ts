@@ -5,10 +5,11 @@ import path from 'path';
 import nunjucks from 'nunjucks';
 import helmet from 'helmet';
 
-import * as createMatchSockets from './sockets/createMatchSockets';
-import * as matchSockets from './sockets/matchSockets';
-import router from './routes/router';
-import errorHandler from './middleware/errorHandler';
+import * as createMatchSockets from './infrastructure/sockets/createMatch/listeners/createMatchSockets';
+import * as matchSockets from './infrastructure/sockets/match/listeners/matchSockets';
+import createMatchRouter from './infrastructure/http/createMatchRouter';
+import matchRouter from './infrastructure/http/matchRouter';  
+import errorHandler from './infrastructure/middleware/errorHandler';
 
 const app = express();
 const httpServer = createServer(app);
@@ -77,7 +78,12 @@ io.of('/matchSockets').on('connection', (socket: Socket) => {
 });
 
 // Routes
-router(app);
+app.get('/', function (_req: Request, res: Response) {
+    res.sendFile(path.join(viewsPath, 'index.html'));
+});
+
+createMatchRouter(app);
+matchRouter(app);
 
 app.use((req: Request, res: Response) => {
   res.status(404).sendFile(path.join(viewsPath, '404.html'));

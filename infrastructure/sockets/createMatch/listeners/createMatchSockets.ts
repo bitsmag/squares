@@ -1,11 +1,11 @@
 import { Socket } from 'socket.io';
-import { manager } from '../models/matchesManager';
-import * as matchSocketService from '../services/matchSocketService';
-import socketErrorHandler from '../middleware/socketErrorHandler';
-import * as validation from '../middleware/validation';
-import type { SocketConnectionInfoCreate } from '../middleware/validation';
-import type { Match } from '../models/match';
-import type { Player } from '../models/player';
+import { manager } from '../../../../models/matchesManager';
+import * as matchSocketService from '../../match/emitters/matchSocketService';
+import socketErrorHandler from '../../../middleware/socketErrorHandler';
+import * as validation from '../../../middleware/validation';
+import type { SocketConnectionInfoCreate } from '../../../middleware/validation';
+import type { Match } from '../../../../models/match';
+import type { Player } from '../../../../models/player';
 
 export function respond(socket: Socket): void {
   let match: Match | undefined;

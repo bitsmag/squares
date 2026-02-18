@@ -1,15 +1,15 @@
 import { Board } from './board';
-import { MatchController } from '../controllers/matchController';
+import { MatchEngine } from '../engine/matchEngine';
 import { manager } from './matchesManager';
-import socketErrorHandler from '../middleware/socketErrorHandler';
+import socketErrorHandler from '../infrastructure/middleware/socketErrorHandler';
 import type { Player } from './player';
-import type { PlayerColor } from '../controllers/matchTicker/positionCalc';
+import type { PlayerColor } from '../engine/utilities/positionCalc';
 
 export class Match {
   id: string;
   players: Player[];
   board: Board;
-  controller: MatchController;
+  engine: MatchEngine;
   duration: number;
   countdownDuration: number;
   active: boolean;
@@ -18,7 +18,7 @@ export class Match {
     this.id = '';
     this.players = [];
     this.board = new Board();
-    this.controller = new MatchController(this);
+    this.engine = new MatchEngine(this);
     this.duration = this.board.getMatchDuration();
     this.countdownDuration = this.board.getCountdownDuration();
     this.active = false;
@@ -67,8 +67,8 @@ export class Match {
     return this.board;
   }
 
-  getController(): MatchController {
-    return this.controller;
+  getEngine(): MatchEngine {
+    return this.engine;
   }
 
   getDuration(): number {

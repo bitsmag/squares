@@ -1,6 +1,6 @@
-import socketErrorHandler from '../middleware/socketErrorHandler';
-import type { Match } from '../models/match';
-import type { Player } from '../models/player';
+import socketErrorHandler from '../../../middleware/socketErrorHandler';
+import type { Match } from '../../../../models/match';
+import type { Player } from '../../../../models/player';
 
 type PlayerStatus = { pos: number | null; dir: string | null; doubleSpeed: boolean | null };
 type Specials = { doubleSpeed: number[]; getPoints: number[] };

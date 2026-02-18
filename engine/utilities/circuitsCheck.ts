@@ -1,4 +1,4 @@
-import socketErrorHandler from '../../middleware/socketErrorHandler';
+import socketErrorHandler from '../../infrastructure/middleware/socketErrorHandler';
 
 export function getPlayerPoints(match: any): Record<string, any[]> {
   const playerPoints: Record<string, any[]> = { blue: [], orange: [], green: [], red: [] };

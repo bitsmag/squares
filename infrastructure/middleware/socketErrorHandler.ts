@@ -1,5 +1,5 @@
-import type { Match } from '../models/match';
-import type { Player } from '../models/player';
+import type { Match } from '../../models/match';
+import type { Player } from '../../models/player';
 
 // Centralized socket error handler — emits a `fatalError` event to all players and destroys the match.
 function fatalErrorHandler(match: Match | undefined, err: unknown, context: string): void {

@@ -1,17 +1,17 @@
-import * as positionCalc from './matchTicker/positionCalc';
+import * as positionCalc from './utilities/positionCalc';
 import type {
   PlayerColor,
   PlayerPositions as RawPlayerPositions,
-} from './matchTicker/positionCalc';
-import * as circuitsCheck from './matchTicker/circuitsCheck';
-import * as randomSpecials from './matchTicker/randomSpecials';
-import * as matchSocketService from '../services/matchSocketService';
-import socketErrorHandler from '../middleware/socketErrorHandler';
+} from './utilities/positionCalc';
+import * as circuitsCheck from './utilities/circuitsCheck';
+import * as randomSpecials from './utilities/randomSpecials';
+import * as matchSocketService from '../infrastructure/sockets/match/emitters/matchSocketService';
+import socketErrorHandler from '../infrastructure/middleware/socketErrorHandler';
 import type { Match } from '../models/match';
 
 type PlayerPositions = RawPlayerPositions;
 
-export class MatchController {
+export class MatchEngine {
   match: Match;
 
   constructor(match: Match) {
@@ -113,7 +113,7 @@ export class MatchController {
               clearSpecials.push(playerPositionSquare.getId());
             }
           } catch (err) {
-            socketErrorHandler(this.match, err, 'match.Controller.matchTicker()');
+            socketErrorHandler(this.match, err, 'match.Engine.matchTicker()');
           }
         });
 
@@ -121,7 +121,7 @@ export class MatchController {
           try {
             this.match.getPlayerByColor(color).increaseScore(playerPoints[color].length);
           } catch (err) {
-            socketErrorHandler(this.match, err, 'match.Controller.matchTicker()');
+            socketErrorHandler(this.match, err, 'match.Engine.matchTicker()');
           }
         });
 
@@ -146,4 +146,4 @@ export class MatchController {
 }
 
 // Keep CommonJS compatibility for existing require() usages
-module.exports = { MatchController };
+module.exports = { MatchEngine };

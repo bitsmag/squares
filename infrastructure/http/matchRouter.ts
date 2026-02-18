@@ -1,45 +1,23 @@
 import path from 'path';
-import type { Application, Request, Response, NextFunction } from 'express';
+import type { Application, NextFunction, Request, Response } from 'express';
 import * as validation from '../middleware/validation';
-import { Match } from '../models/match';
-import { Player } from '../models/player';
-import { manager } from '../models/matchesManager';
+import { manager } from '../../models/matchesManager';
+import { Player } from '../../models/player';
 
-// Always resolve views from project root so compiled dist build can find source HTML files
 const projectRoot = process.cwd();
 const viewsPath = path.join(projectRoot, 'views');
 
 type UserError = Error & { userMessage?: string };
-type CreateMatchParams = { playerName: string };
 type MatchRouteParams = { matchCreatorFlag: 't' | 'f'; matchId: string; playerName: string };
 
-const router = function (app: Application): void {
-  app.get('/', function (_req: Request, res: Response) {
-    res.sendFile(path.join(viewsPath, 'index.html'));
-  });
-
-  app.get(
-    '/createMatch/:playerName',
-    validation.validate('params', validation.schemas.createMatchParams),
-    function (req: Request<CreateMatchParams>, res: Response) {
-      const playerName = req.params.playerName;
-      const newMatch = new Match();
-      // Player constructor registers itself with the match
-      new Player(playerName, newMatch, true);
-      res.render('createMatch.html', {
-        matchId: newMatch.getId(),
-        playerName: playerName,
-      });
-    }
-  );
-
+function matchRouter(app: Application): void {
   app.get(
     '/match/:matchCreatorFlag/:matchId/:playerName',
     validation.validate('params', validation.schemas.matchRouteParams),
     function (req: Request<MatchRouteParams>, res: Response, next: NextFunction) {
       const { matchCreatorFlag, matchId, playerName } = req.params;
 
-      let matchObj: Match | undefined;
+      let matchObj;
       try {
         matchObj = manager.getMatch(matchId);
       } catch (err) {
@@ -82,6 +60,5 @@ const router = function (app: Application): void {
       return next(e);
     }
   );
-};
-
-export default router;
+}
+export default matchRouter;
