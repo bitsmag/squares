@@ -5,13 +5,17 @@ import { Match } from '../models/match';
 import { Player } from '../models/player';
 import { manager } from '../models/matchesManager';
 
+// Always resolve views from project root so compiled dist build can find source HTML files
+const projectRoot = process.cwd();
+const viewsPath = path.join(projectRoot, 'views');
+
 type UserError = Error & { userMessage?: string };
 type CreateMatchParams = { playerName: string };
 type MatchRouteParams = { matchCreatorFlag: 't' | 'f'; matchId: string; playerName: string };
 
 const router = function (app: Application): void {
   app.get('/', function (_req: Request, res: Response) {
-    res.sendFile(path.join(__dirname, '..', 'views', 'index.html'));
+    res.sendFile(path.join(viewsPath, 'index.html'));
   });
 
   app.get(
