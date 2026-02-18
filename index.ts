@@ -5,8 +5,8 @@ import path from 'path';
 import nunjucks from 'nunjucks';
 import helmet from 'helmet';
 
-import * as createMatchSockets from './infrastructure/sockets/createMatch/listeners/createMatchSockets';
-import * as matchSockets from './infrastructure/sockets/match/listeners/matchSockets';
+import * as createMatchSockets from './infrastructure/sockets/createMatchSocketListeners';
+import * as matchSockets from './infrastructure/sockets/matchSocketListeners';
 import createMatchRouter from './infrastructure/http/createMatchRouter';
 import matchRouter from './infrastructure/http/matchRouter';  
 import errorHandler from './infrastructure/middleware/errorHandler';

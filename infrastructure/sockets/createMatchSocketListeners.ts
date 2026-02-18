@@ -1,11 +1,11 @@
 import { Socket } from 'socket.io';
-import { manager } from '../../../../models/matchesManager';
-import * as matchSocketService from '../../match/emitters/matchSocketService';
-import socketErrorHandler from '../../../middleware/socketErrorHandler';
-import * as validation from '../../../middleware/validation';
-import type { SocketConnectionInfoCreate } from '../../../middleware/validation';
-import type { Match } from '../../../../models/match';
-import type { Player } from '../../../../models/player';
+import { manager } from '../../models/matchesManager';
+import * as matchSocketService from './matchSocketEmitters';
+import socketErrorHandler from '../middleware/socketErrorHandler';
+import * as validation from '../middleware/validation';
+import type { SocketConnectionInfoCreate } from '../middleware/validation';
+import type { Match } from '../../models/match';
+import type { Player } from '../../models/player';
 
 export function respond(socket: Socket): void {
   let match: Match | undefined;
@@ -21,7 +21,7 @@ export function respond(socket: Socket): void {
       socketErrorHandler(
         match,
         new Error('Invalid connectionInfo payload'),
-        'createMatchSockets.connectionInfoValidation'
+        'createMatchSocketListeners.connectionInfoValidation'
       );
       console.warn('Invalid connectionInfo payload', result.errors);
       return;
@@ -33,7 +33,7 @@ export function respond(socket: Socket): void {
       match = manager.getMatch(matchId);
       player = match.getMatchCreator();
     } catch (err) {
-      socketErrorHandler(match, err, 'createMatchSockets.on(connectionInfo)');
+      socketErrorHandler(match, err, 'createMatchSocketListeners.on(connectionInfo)');
       return;
     }
     if (!player) return;

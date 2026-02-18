@@ -5,7 +5,7 @@ import type {
 } from './utilities/positionCalc';
 import * as circuitsCheck from './utilities/circuitsCheck';
 import * as randomSpecials from './utilities/randomSpecials';
-import * as matchSocketService from '../infrastructure/sockets/match/emitters/matchSocketService';
+import * as matchSocketService from '../infrastructure/sockets/matchSocketEmitters';
 import socketErrorHandler from '../infrastructure/middleware/socketErrorHandler';
 import type { Match } from '../models/match';
 
