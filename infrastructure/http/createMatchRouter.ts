@@ -1,6 +1,6 @@
 import type { Application } from 'express';
 import * as validation from '../middleware/validation';
-import { handleCreateMatch } from '../../controllers/createMatchController';
+import { handleCreateMatch } from '../../controllers/http/createMatchController';
 
 function createMatchRouter(app: Application): void {
   app.get(

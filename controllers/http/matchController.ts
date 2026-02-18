@@ -4,7 +4,7 @@ import {
   joinGuest,
   MatchAccessError,
   startHost,
-} from '../services/matchAccessService';
+} from '../../services/matchAccessService';
 
 export type MatchRouteParams = { matchCreatorFlag: 't' | 'f'; matchId: string; playerName: string };
 

@@ -1,6 +1,6 @@
 import type { Request, Response } from 'express';
-import { Match } from '../models/match';
-import { Player } from '../models/player';
+import { Match } from '../../models/match';
+import { Player } from '../../models/player';
 
 export type CreateMatchParams = { playerName: string };
 
