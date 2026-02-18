@@ -22,4 +22,4 @@ export function getSpecials(match: any): { doubleSpeed: number[]; getPoints: num
 }
 
 // CommonJS compatibility
-module.exports = { getSpecials } as any;
+

@@ -59,4 +59,4 @@ export function validateSocketPayload(schema: Joi.ObjectSchema<any>, payload: an
   return { valid: true, value: sanitize(value) };
 }
 
-module.exports = { schemas, validate, validateSocketPayload } as any;
+export default { schemas, validate, validateSocketPayload };

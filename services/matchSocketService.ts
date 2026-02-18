@@ -144,15 +144,3 @@ export function sendFatalErrorEvent(match: Match): void {
 }
 
 // CommonJS compatibility
-module.exports = {
-  sendPlayerConnectedEvent,
-  sendPlayerDisconnectedEvent,
-  sendMatchCreatorDisconnectedEvent,
-  sendPrepareMatchEvent,
-  sendUpdateBoardEvent,
-  sendClearSquaresEvent,
-  sendUpdateScoreEvent,
-  sendMatchEndEvent,
-  sendCountdownEvent,
-  sendFatalErrorEvent,
-} as any;

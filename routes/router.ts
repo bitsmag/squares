@@ -1,8 +1,8 @@
 import path from 'path';
-import validation = require('../middleware/validation');
-import * as match from '../models/match';
-import * as player from '../models/player';
-import * as matchesManager from '../models/matchesManager';
+import * as validation from '../middleware/validation';
+import { Match } from '../models/match';
+import { Player } from '../models/player';
+import { manager } from '../models/matchesManager';
 
 const router = function (app: any) {
   app.get('/', function (_req: any, res: any) {
@@ -14,8 +14,8 @@ const router = function (app: any) {
     validation.validate('params', validation.schemas.createMatchParams),
     function (req: any, res: any) {
       const playerName = req.params.playerName;
-      const newMatch = new (match as any).Match();
-      const _newPlayer = new (player as any).Player(playerName, newMatch, true);
+      const newMatch = new Match();
+      const _newPlayer = new Player(playerName, newMatch, true);
       res.render('createMatch.html', {
         matchId: newMatch.getId(),
         playerName: playerName,
@@ -33,7 +33,7 @@ const router = function (app: any) {
 
       let matchObj;
       try {
-        matchObj = (matchesManager as any).manager.getMatch(matchId);
+        matchObj = manager.getMatch(matchId);
       } catch (err) {
         return next(err);
       }
@@ -49,7 +49,7 @@ const router = function (app: any) {
         }
       } else if (matchCreatorFlag === 'f') {
         try {
-          const _newPlayer = new (player as any).Player(playerName, matchObj, false);
+          const _newPlayer = new Player(playerName, matchObj, false);
           return res.render('match.html', { matchId: matchId, playerName: playerName });
         } catch (err: any) {
           if (err && err.message === 'matchIsFull') err.userMessage = "Sorry, you're too late. The match is full already.";
@@ -67,5 +67,5 @@ const router = function (app: any) {
   );
 };
 
+
 export default router;
-module.exports = router as any;

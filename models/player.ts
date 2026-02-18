@@ -114,5 +114,3 @@ function getUnusedColor(match: Match): string {
   }
 }
 
-// CommonJS compatibility
-module.exports = { Player } as any;

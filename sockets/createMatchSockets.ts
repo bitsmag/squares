@@ -1,8 +1,8 @@
 import { Socket } from 'socket.io';
-import * as matchesManager from '../models/matchesManager';
+import { manager } from '../models/matchesManager';
 import * as matchSocketService from '../services/matchSocketService';
 import socketErrorHandler from '../middleware/socketErrorHandler';
-import validation = require('../middleware/validation');
+import * as validation from '../middleware/validation';
 import type { Match } from '../models/match';
 import type { Player } from '../models/player';
 
@@ -22,7 +22,7 @@ export function respond(socket: Socket): void {
     const matchId = result.value.matchId as string;
 
     try {
-      match = (matchesManager as any).manager.getMatch(matchId);
+      match = manager.getMatch(matchId);
       player = match.getMatchCreator();
     } catch (err) {
       socketErrorHandler(match, err, 'createMatchSockets.on(connectionInfo)');
@@ -33,12 +33,10 @@ export function respond(socket: Socket): void {
   });
 
   socket.on('disconnect', function () {
-    if (match) {
-      if (!startBtnClicked) {
-        matchSocketService.sendMatchCreatorDisconnectedEvent(match);
-        match.removePlayer(player);
-        match.destroy();
-      }
+    if (match && player && !startBtnClicked) {
+      matchSocketService.sendMatchCreatorDisconnectedEvent(match);
+      match.removePlayer(player);
+      match.destroy();
     }
   });
 
@@ -47,4 +45,4 @@ export function respond(socket: Socket): void {
   });
 }
 
-module.exports = { respond } as any;
+

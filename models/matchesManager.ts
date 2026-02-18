@@ -31,19 +31,5 @@ export class MatchesManager {
   }
 }
 
-// Singleton
-const manager = (function () {
-  let instance: MatchesManager | undefined;
+export const manager = new MatchesManager();
 
-  function createInstance(): MatchesManager {
-    const theManager = new MatchesManager();
-    return theManager;
-  }
-  if (!instance) {
-    instance = createInstance();
-  }
-  return instance;
-})();
-
-// CommonJS compatibility
-module.exports = { manager } as any;

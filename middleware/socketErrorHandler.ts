@@ -31,4 +31,4 @@ function fatalErrorHandler(match: any, err: any, context: string) {
 }
 
 export default fatalErrorHandler;
-module.exports = fatalErrorHandler as any;
+

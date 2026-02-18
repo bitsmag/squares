@@ -1,8 +1,8 @@
 import { Socket } from 'socket.io';
-import * as matchesManager from '../models/matchesManager';
+import { manager } from '../models/matchesManager';
 import socketErrorHandler from '../middleware/socketErrorHandler';
 import * as matchSocketService from '../services/matchSocketService';
-import validation = require('../middleware/validation');
+import * as validation from '../middleware/validation';
 import type { Match } from '../models/match';
 import type { Player } from '../models/player';
 
@@ -21,7 +21,7 @@ export function respond(socket: Socket): void {
     const matchId = result.value.matchId as string;
     const playerName = result.value.playerName as string;
     try {
-      match = (matchesManager as any).manager.getMatch(matchId);
+      match = manager.getMatch(matchId);
       player = match.getPlayer(playerName);
     } catch (err) {
       socketErrorHandler(match, err, 'matchSockets.on(connectionInfo)');
@@ -68,16 +68,3 @@ export function respond(socket: Socket): void {
   });
 }
 
-module.exports = {
-  respond,
-  sendPlayerConnectedEvent: matchSocketService.sendPlayerConnectedEvent,
-  sendPlayerDisconnectedEvent: matchSocketService.sendPlayerDisconnectedEvent,
-  sendMatchCreatorDisconnectedEvent: matchSocketService.sendMatchCreatorDisconnectedEvent,
-  sendPrepareMatchEvent: matchSocketService.sendPrepareMatchEvent,
-  sendUpdateBoardEvent: matchSocketService.sendUpdateBoardEvent,
-  sendClearSquaresEvent: matchSocketService.sendClearSquaresEvent,
-  sendUpdateScoreEvent: matchSocketService.sendUpdateScoreEvent,
-  sendMatchEndEvent: matchSocketService.sendMatchEndEvent,
-  sendCountdownEvent: matchSocketService.sendCountdownEvent,
-  sendFatalErrorEvent: matchSocketService.sendFatalErrorEvent,
-} as any;

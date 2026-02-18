@@ -168,4 +168,4 @@ function getPoints(theSquare: any, theColor: string, match: any): any[] {
 }
 
 // CommonJS compatibility
-module.exports = { getPlayerPoints } as any;
+

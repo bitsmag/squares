@@ -1,11 +1,12 @@
 import * as positionCalc from './matchTicker/positionCalc';
+import type { PlayerColor, PlayerPositions as RawPlayerPositions } from './matchTicker/positionCalc';
 import * as circuitsCheck from './matchTicker/circuitsCheck';
 import * as randomSpecials from './matchTicker/randomSpecials';
 import * as matchSocketService from '../services/matchSocketService';
 import socketErrorHandler from '../middleware/socketErrorHandler';
 import type { Match } from '../models/match';
 
-type PlayerPositions = Record<string, number>;
+type PlayerPositions = RawPlayerPositions;
 
 export class MatchController {
   match: Match;
@@ -39,6 +40,8 @@ export class MatchController {
         if (this.match.getDuration() === 0) {
           clearInterval(durationDecrementInterval);
           this.match.setActive(false);
+          // Cleanup finished match so it is removed from the singleton registry
+          this.match.destroy();
         }
       }
     }, 1000);
@@ -54,32 +57,41 @@ export class MatchController {
       } else {
         let playerPositions: PlayerPositions;
         if (tickCount % 2 !== 0) {
-          const activeColors: string[] = [];
+          const activeColors: PlayerColor[] = [];
           const players = this.match.getPlayers();
           for (let i = 0; i < players.length; i++) {
-            activeColors.push(players[i].getColor());
+            activeColors.push(players[i].getColor() as PlayerColor);
           }
-          playerPositions = positionCalc.calculateNewPlayerPositions(this.match, activeColors);
+          playerPositions = positionCalc.calculateNewPlayerPositions(this.match, activeColors) as PlayerPositions;
         } else {
-          const doubleSpeedColors: string[] = [];
+          const doubleSpeedColors: PlayerColor[] = [];
           const players = this.match.getPlayers();
           for (let i = 0; i < players.length; i++) {
             if (players[i].getDoubleSpeedSpecial()) {
-              doubleSpeedColors.push(players[i].getColor());
+              doubleSpeedColors.push(players[i].getColor() as PlayerColor);
             }
           }
-          playerPositions = positionCalc.calculateNewPlayerPositions(this.match, doubleSpeedColors);
+          playerPositions = positionCalc.calculateNewPlayerPositions(this.match, doubleSpeedColors) as PlayerPositions;
         }
 
-        this.match.updatePlayers(playerPositions);
-        this.match.updateBoard(playerPositions);
+        // Only propagate positions that are resolved numbers
+        const sanitizedPositions: Record<PlayerColor, number> = {} as Record<PlayerColor, number>;
+        (Object.keys(playerPositions) as PlayerColor[]).forEach((color) => {
+          const pos = playerPositions[color];
+          if (typeof pos === 'number') {
+            sanitizedPositions[color] = pos;
+          }
+        });
+
+        this.match.updatePlayers(sanitizedPositions);
+        this.match.updateBoard(sanitizedPositions);
 
         const playerPoints: Record<string, any[]> = circuitsCheck.getPlayerPoints(this.match);
 
         const clearSpecials: any[] = [];
-        Object.keys(playerPositions).forEach((color) => {
+        (Object.keys(sanitizedPositions) as PlayerColor[]).forEach((color) => {
           try {
-            const playerPositionSquare = this.match.getBoard().getSquare(playerPositions[color]);
+            const playerPositionSquare = this.match.getBoard().getSquare(sanitizedPositions[color]);
             if (playerPositionSquare.getGetPointsSpecial()) {
               for (let i = 0; i < this.match.getBoard().getSquares().length; i++) {
                 const square = this.match.getBoard().getSquares()[i];
@@ -100,7 +112,7 @@ export class MatchController {
           }
         });
 
-        Object.keys(playerPositions).forEach((color) => {
+        (Object.keys(sanitizedPositions) as PlayerColor[]).forEach((color) => {
           try {
             this.match.getPlayerByColor(color).increaseScore(playerPoints[color].length);
           } catch (err) {
@@ -109,7 +121,7 @@ export class MatchController {
         });
 
         const clearSquares: any[] = [];
-        Object.keys(playerPositions).forEach((color) => {
+        (Object.keys(sanitizedPositions) as PlayerColor[]).forEach((color) => {
           for (let i = 0; i < playerPoints[color].length; i++) {
             clearSquares.push({ id: playerPoints[color][i].getId(), color: color });
             playerPoints[color][i].setColor('');

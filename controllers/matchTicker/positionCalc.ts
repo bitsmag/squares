@@ -2,18 +2,19 @@ import socketErrorHandler from '../../middleware/socketErrorHandler';
 import type { Match } from '../../models/match';
 import type { Board } from '../../models/board';
 
-type PlayerColor = 'blue' | 'orange' | 'green' | 'red' | string;
+export type PlayerColor = 'blue' | 'orange' | 'green' | 'red';
+export type PlayerPositions = Partial<Record<PlayerColor, number>>;
 
-export function calculateNewPlayerPositions(match: Match, playerList: PlayerColor[]): Record<string, number> {
+export function calculateNewPlayerPositions(match: Match, playerList: PlayerColor[]): PlayerPositions {
   const activeColors: PlayerColor[] = [];
   const players = match.getPlayers();
   for (let i = 0; i < players.length; i++) {
-    activeColors.push(players[i].getColor());
+    activeColors.push(players[i].getColor() as PlayerColor);
   }
 
-  const currentPos: Record<string, number | null> = { blue: null, orange: null, green: null, red: null };
-  const futurePos: Record<string, number | null> = { blue: null, orange: null, green: null, red: null };
-  const prio: Record<string, boolean> = { blue: false, orange: false, green: false, red: false };
+  const currentPos: Partial<Record<PlayerColor, number>> = {};
+  const futurePos: Partial<Record<PlayerColor, number>> = {};
+  const prio: Partial<Record<PlayerColor, boolean>> = {};
 
   for (let i = 0; i < activeColors.length; i++) {
     let player;
@@ -51,10 +52,10 @@ export function calculateNewPlayerPositions(match: Match, playerList: PlayerColo
         } else if (prio[activeColors[j]]) {
           loosers.push(activeColors[i]);
         } else {
-          const uniqueRandomNumbers: Record<string, number> = {};
-          for (let k = 0; k < activeColors.length; k++) {
-            uniqueRandomNumbers[activeColors[k]] = Math.random();
-          }
+          const uniqueRandomNumbers = activeColors.reduce<Record<PlayerColor, number>>((acc, color) => {
+            acc[color] = Math.random();
+            return acc;
+          }, {} as Record<PlayerColor, number>);
           if (
             uniqueRandomNumbers[activeColors[i]] ===
             Math.max(uniqueRandomNumbers[activeColors[i]], uniqueRandomNumbers[activeColors[j]])
@@ -81,25 +82,24 @@ export function calculateNewPlayerPositions(match: Match, playerList: PlayerColo
     }
   }
 
-  loosers = loosers.reduce(function (a: PlayerColor[], b: PlayerColor) {
+  loosers = loosers.reduce<PlayerColor[]>((a, b) => {
     if (a.indexOf(b) < 0) a.push(b);
     return a;
-  }, [] as PlayerColor[]);
+  }, []);
   for (let i = 0; i < loosers.length; i++) {
     futurePos[loosers[i]] = currentPos[loosers[i]];
   }
 
-  Object.keys(futurePos).forEach(function (color) {
+  (Object.keys(futurePos) as PlayerColor[]).forEach((color) => {
     if (playerList.indexOf(color) === -1) {
       delete futurePos[color];
     }
   });
 
-  // Cast to Record<string, number> after null elimination for active players
-  return futurePos as Record<string, number>;
+  return futurePos;
 }
 
-function calculateFuturePos(currentPosition: number, activeDirection: string, board: Board, match: Match): number {
+function calculateFuturePos(currentPosition: number, activeDirection: string | null, board: Board, match: Match): number {
   let square;
   let error = false;
   try {

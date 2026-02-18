@@ -1,10 +1,9 @@
-import * as boardModule from './board';
-import * as matchController from '../controllers/matchController';
-import * as matchesManager from './matchesManager';
+import { Board } from './board';
+import { MatchController } from '../controllers/matchController';
+import { manager } from './matchesManager';
 import socketErrorHandler from '../middleware/socketErrorHandler';
 import type { Player } from './player';
-import type { Board } from './board';
-import type { MatchController } from '../controllers/matchController';
+
 
 export class Match {
   id: string;
@@ -18,14 +17,14 @@ export class Match {
   constructor() {
     this.id = '';
     this.players = [];
-    this.board = new boardModule.Board();
-    this.controller = new (matchController as any).MatchController(this);
+    this.board = new Board();
+    this.controller = new MatchController(this);
     this.duration = this.board.getMatchDuration();
     this.countdownDuration = this.board.getCountdownDuration();
     this.active = false;
 
     this.id = createUniqueId();
-    (matchesManager as any).manager.addMatch(this);
+    manager.addMatch(this);
   }
 
   getId(): string {
@@ -171,13 +170,13 @@ export class Match {
 
   destroy(): void {
     this.setActive(false);
-    (matchesManager as any).manager.removeMatch(this);
+    manager.removeMatch(this);
   }
 }
 
 function createUniqueId(): string {
   let timestamp: string,
-    matchId: string,
+    matchId: string = '',
     duplicate: boolean,
     unique = false;
 
@@ -186,8 +185,8 @@ function createUniqueId(): string {
     matchId = 'x' + timestamp.substring(timestamp.length - 4, timestamp.length);
 
     duplicate = false;
-    for (let i = 0; i < (matchesManager as any).manager.getMatches().length; i++) {
-      if ((matchesManager as any).manager.getMatches()[i].getId() === matchId) {
+    for (let i = 0; i < manager.getMatches().length; i++) {
+      if (manager.getMatches()[i].getId() === matchId) {
         duplicate = true;
       }
     }
@@ -198,5 +197,3 @@ function createUniqueId(): string {
   return matchId;
 }
 
-// CommonJS compatibility
-module.exports = { Match } as any;
