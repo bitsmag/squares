@@ -32,4 +32,3 @@ export class MatchesManager {
 }
 
 export const manager = new MatchesManager();
-

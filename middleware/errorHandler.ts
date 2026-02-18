@@ -21,4 +21,3 @@ function errorHandler(err: any, req: any, res: any, _next: any) {
 }
 
 export default errorHandler;
-

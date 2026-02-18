@@ -3,8 +3,8 @@ var matchMod = require('../models/match');
 var playerMod = require('../models/player');
 var positionCalc = require('../controllers/matchTicker/positionCalc');
 
-describe('PositionCalc', function() {
-  it('calculates simple right move for a single player', function() {
+describe('PositionCalc', function () {
+  it('calculates simple right move for a single player', function () {
     var m = new matchMod.Match();
     // create a player (match creator)
     var p = new playerMod.Player('alice', m, true);

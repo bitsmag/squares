@@ -73,8 +73,12 @@ export function sendUpdateBoardEvent(match: Match, specials: Specials): void {
   for (let i = 0; i < activeColors.length; i++) {
     try {
       playerStatuses[activeColors[i]].pos = match.getPlayerByColor(activeColors[i]).getPosition();
-      playerStatuses[activeColors[i]].dir = match.getPlayerByColor(activeColors[i]).getActiveDirection();
-      playerStatuses[activeColors[i]].doubleSpeed = match.getPlayerByColor(activeColors[i]).getDoubleSpeedSpecial();
+      playerStatuses[activeColors[i]].dir = match
+        .getPlayerByColor(activeColors[i])
+        .getActiveDirection();
+      playerStatuses[activeColors[i]].doubleSpeed = match
+        .getPlayerByColor(activeColors[i])
+        .getDoubleSpeedSpecial();
     } catch (err) {
       socketErrorHandler(match, err, 'sendUpdateBoardEvent()');
     }
@@ -90,7 +94,11 @@ export function sendUpdateBoardEvent(match: Match, specials: Specials): void {
   }
 }
 
-export function sendClearSquaresEvent(match: Match, clearSquares: ClearSquare[], clearSpecials: number[]): void {
+export function sendClearSquaresEvent(
+  match: Match,
+  clearSquares: ClearSquare[],
+  clearSpecials: number[]
+): void {
   const data = { clearSquares: clearSquares, clearSpecials: clearSpecials };
   for (let i = 0; i < match.getPlayers().length; i++) {
     match.getPlayers()[i].getSocket().emit('clearSquares', data);

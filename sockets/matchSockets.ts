@@ -11,9 +11,16 @@ export function respond(socket: Socket): void {
   let player: Player | undefined;
 
   socket.on('connectionInfo', function (playerInfo: any) {
-    const result = validation.validateSocketPayload(validation.schemas.socketConnectionInfoMatch, playerInfo || {});
+    const result = validation.validateSocketPayload(
+      validation.schemas.socketConnectionInfoMatch,
+      playerInfo || {}
+    );
     if (!result.valid) {
-      socketErrorHandler(match, new Error('Invalid connectionInfo payload'), 'matchSockets.connectionInfoValidation');
+      socketErrorHandler(
+        match,
+        new Error('Invalid connectionInfo payload'),
+        'matchSockets.connectionInfoValidation'
+      );
       console.warn('Invalid connectionInfo payload', result.errors);
       return;
     }
@@ -67,4 +74,3 @@ export function respond(socket: Socket): void {
     if (player) player.setActiveDirection('down');
   });
 }
-

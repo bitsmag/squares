@@ -23,7 +23,9 @@ function fatalErrorHandler(match: any, err: any, context: string) {
   }
 
   try {
-    console.warn(((err && err.message) || String(err)) + ' // socketErrorHandler.' + (context || 'unknown'));
+    console.warn(
+      ((err && err.message) || String(err)) + ' // socketErrorHandler.' + (context || 'unknown')
+    );
     console.trace();
   } catch (_e) {
     // ignore
@@ -31,4 +33,3 @@ function fatalErrorHandler(match: any, err: any, context: string) {
 }
 
 export default fatalErrorHandler;
-

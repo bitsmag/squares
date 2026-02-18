@@ -4,15 +4,13 @@
     "module": "CommonJS",
     "outDir": "dist",
     "rootDir": ".",
-    "strict": false,
-    "noImplicitAny": true,
+    "strict": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
-    "allowJs": true,
     "resolveJsonModule": true,
     "types": ["node"]
   },
-  "include": ["**/*.ts", "**/*.js"],
-  "exclude": ["node_modules", "dist", "coverage"]
+  "include": ["**/*.ts"],
+  "exclude": ["node_modules", "dist", "coverage", "views/assets/js", "test"]
 }

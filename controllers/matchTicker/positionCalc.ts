@@ -5,7 +5,10 @@ import type { Board } from '../../models/board';
 export type PlayerColor = 'blue' | 'orange' | 'green' | 'red';
 export type PlayerPositions = Partial<Record<PlayerColor, number>>;
 
-export function calculateNewPlayerPositions(match: Match, playerList: PlayerColor[]): PlayerPositions {
+export function calculateNewPlayerPositions(
+  match: Match,
+  playerList: PlayerColor[]
+): PlayerPositions {
   const activeColors: PlayerColor[] = [];
   const players = match.getPlayers();
   for (let i = 0; i < players.length; i++) {
@@ -52,10 +55,13 @@ export function calculateNewPlayerPositions(match: Match, playerList: PlayerColo
         } else if (prio[activeColors[j]]) {
           loosers.push(activeColors[i]);
         } else {
-          const uniqueRandomNumbers = activeColors.reduce<Record<PlayerColor, number>>((acc, color) => {
-            acc[color] = Math.random();
-            return acc;
-          }, {} as Record<PlayerColor, number>);
+          const uniqueRandomNumbers = activeColors.reduce<Record<PlayerColor, number>>(
+            (acc, color) => {
+              acc[color] = Math.random();
+              return acc;
+            },
+            {} as Record<PlayerColor, number>
+          );
           if (
             uniqueRandomNumbers[activeColors[i]] ===
             Math.max(uniqueRandomNumbers[activeColors[i]], uniqueRandomNumbers[activeColors[j]])
@@ -99,7 +105,12 @@ export function calculateNewPlayerPositions(match: Match, playerList: PlayerColo
   return futurePos;
 }
 
-function calculateFuturePos(currentPosition: number, activeDirection: string | null, board: Board, match: Match): number {
+function calculateFuturePos(
+  currentPosition: number,
+  activeDirection: string | null,
+  board: Board,
+  match: Match
+): number {
   let square;
   let error = false;
   try {

@@ -1,5 +1,8 @@
 import * as positionCalc from './matchTicker/positionCalc';
-import type { PlayerColor, PlayerPositions as RawPlayerPositions } from './matchTicker/positionCalc';
+import type {
+  PlayerColor,
+  PlayerPositions as RawPlayerPositions,
+} from './matchTicker/positionCalc';
 import * as circuitsCheck from './matchTicker/circuitsCheck';
 import * as randomSpecials from './matchTicker/randomSpecials';
 import * as matchSocketService from '../services/matchSocketService';
@@ -62,7 +65,10 @@ export class MatchController {
           for (let i = 0; i < players.length; i++) {
             activeColors.push(players[i].getColor() as PlayerColor);
           }
-          playerPositions = positionCalc.calculateNewPlayerPositions(this.match, activeColors) as PlayerPositions;
+          playerPositions = positionCalc.calculateNewPlayerPositions(
+            this.match,
+            activeColors
+          ) as PlayerPositions;
         } else {
           const doubleSpeedColors: PlayerColor[] = [];
           const players = this.match.getPlayers();
@@ -71,7 +77,10 @@ export class MatchController {
               doubleSpeedColors.push(players[i].getColor() as PlayerColor);
             }
           }
-          playerPositions = positionCalc.calculateNewPlayerPositions(this.match, doubleSpeedColors) as PlayerPositions;
+          playerPositions = positionCalc.calculateNewPlayerPositions(
+            this.match,
+            doubleSpeedColors
+          ) as PlayerPositions;
         }
 
         // Only propagate positions that are resolved numbers
@@ -103,7 +112,9 @@ export class MatchController {
               clearSpecials.push(playerPositionSquare.getId());
             }
             if (playerPositionSquare.getDoubleSpeedSpecial()) {
-              this.match.getPlayerByColor(color).startDoubleSpeedSpecial(this.match.getBoard().getDoubleSpeedDuration());
+              this.match
+                .getPlayerByColor(color)
+                .startDoubleSpeedSpecial(this.match.getBoard().getDoubleSpeedDuration());
               playerPositionSquare.setDoubleSpeedSpecial(false);
               clearSpecials.push(playerPositionSquare.getId());
             }

@@ -54,7 +54,10 @@ export function validate(source: 'body' | 'params' | 'query', schema: Joi.Object
 export function validateSocketPayload(schema: Joi.ObjectSchema<any>, payload: any) {
   const { error, value } = schema.validate(payload, { abortEarly: false, stripUnknown: true });
   if (error) {
-    return { valid: false, errors: error.details.map((d) => ({ message: d.message, path: d.path })) };
+    return {
+      valid: false,
+      errors: error.details.map((d) => ({ message: d.message, path: d.path })),
+    };
   }
   return { valid: true, value: sanitize(value) };
 }

@@ -23,9 +23,10 @@ app.set('views', viewsPath);
 app.set('view engine', 'html');
 nunjucks.configure(viewsPath, { autoescape: true, express: app, noCache: true });
 
-// Security headers: disable HSTS (for local development) and set explicit CSP
+// Security: headers - disable HSTS (for local development) and set explicit CSP
 app.use(helmet({ hsts: false }));
-// Remove Strict-Transport-Security if present (safety in case of older middleware)
+
+// Security: Remove Strict-Transport-Security if present (safety in case of older middleware)
 app.use((req: Request, res: Response, next: NextFunction) => {
   try {
     res.removeHeader('Strict-Transport-Security');
@@ -34,7 +35,8 @@ app.use((req: Request, res: Response, next: NextFunction) => {
   }
   next();
 });
-// Configure an explicit Content Security Policy (no upgrade-insecure-requests)
+
+// Security: Configure an explicit Content Security Policy (no upgrade-insecure-requests)
 app.use(
   helmet.contentSecurityPolicy({
     useDefaults: false,
@@ -59,16 +61,13 @@ app.use(express.urlencoded({ extended: true, limit: '10kb' }));
 
 // Set path for static files
 app.use(express.static(path.join(viewsPath, 'assets')));
-// Serve local copy of jquery from node_modules to avoid external HTTPS requests
 app.use('/js', express.static(path.join(projectRoot, 'node_modules', 'jquery', 'dist')));
 
-// Set Port (heroku-style)
+// Set Port
 const port = Number(process.env.PORT) || 3000;
 app.set('port', port);
 
-/*
- * SOCKETS
- */
+// Sockets
 io.of('/createMatchSockets').on('connection', (socket: Socket) => {
   createMatchSockets.respond(socket);
 });
@@ -77,19 +76,16 @@ io.of('/matchSockets').on('connection', (socket: Socket) => {
   matchSockets.respond(socket);
 });
 
-/*
- * ROUTES
- */
+// Routes
 router(app);
 
-// 404
 app.use((req: Request, res: Response) => {
   res.status(404).sendFile(path.join(viewsPath, '404.html'));
 });
 
-// Centralized error handler
 app.use(errorHandler);
 
+// Start server
 httpServer.listen(app.get('port'), () => {
   console.log('listening on *:' + app.get('port'));
 });

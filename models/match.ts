@@ -4,7 +4,6 @@ import { manager } from './matchesManager';
 import socketErrorHandler from '../middleware/socketErrorHandler';
 import type { Player } from './player';
 
-
 export class Match {
   id: string;
   players: Player[];
@@ -196,4 +195,3 @@ function createUniqueId(): string {
   }
   return matchId;
 }
-

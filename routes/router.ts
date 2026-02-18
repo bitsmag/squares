@@ -52,10 +52,13 @@ const router = function (app: any) {
           const _newPlayer = new Player(playerName, matchObj, false);
           return res.render('match.html', { matchId: matchId, playerName: playerName });
         } catch (err: any) {
-          if (err && err.message === 'matchIsFull') err.userMessage = "Sorry, you're too late. The match is full already.";
-          else if (err && err.message === 'matchIsActive') err.userMessage = "Sorry, you're too late. The match has already started.";
+          if (err && err.message === 'matchIsFull')
+            err.userMessage = "Sorry, you're too late. The match is full already.";
+          else if (err && err.message === 'matchIsActive')
+            err.userMessage = "Sorry, you're too late. The match has already started.";
           else if (err && err.message === 'nameInUse')
-            err.userMessage = 'Sorry, it seems that your name is already used by another player. Please choose a diffrent name.';
+            err.userMessage =
+              'Sorry, it seems that your name is already used by another player. Please choose a diffrent name.';
           return next(err);
         }
       } else {
@@ -66,6 +69,5 @@ const router = function (app: any) {
     }
   );
 };
-
 
 export default router;

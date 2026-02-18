@@ -89,7 +89,10 @@ function getPoints(theSquare: any, theColor: string, match: any): any[] {
   function checkValidity(stackInner: any[], alreadyVisitedVertex: any): any[] {
     const points: any[] = [];
     if (stackInner.length > 7) {
-      const circuitArray = stackInner.slice(stackInner.indexOf(alreadyVisitedVertex), stackInner.length);
+      const circuitArray = stackInner.slice(
+        stackInner.indexOf(alreadyVisitedVertex),
+        stackInner.length
+      );
 
       for (let j = 0; j < 9; j++) {
         const squaresInSameRow: any[] = [];
@@ -168,4 +171,3 @@ function getPoints(theSquare: any, theColor: string, match: any): any[] {
 }
 
 // CommonJS compatibility
-

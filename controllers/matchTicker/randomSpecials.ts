@@ -4,8 +4,12 @@ export function getSpecials(match: any): { doubleSpeed: number[]; getPoints: num
   let randomDoubleSpeedSquare = 0;
   let randomGetPointsSquare = 0;
   while (randomDoubleSpeedSquare === randomGetPointsSquare) {
-    randomDoubleSpeedSquare = Math.floor(Math.random() * match.getBoard().getSquares().length - 1 + 1);
-    randomGetPointsSquare = Math.floor(Math.random() * match.getBoard().getSquares().length - 1 + 1);
+    randomDoubleSpeedSquare = Math.floor(
+      Math.random() * match.getBoard().getSquares().length - 1 + 1
+    );
+    randomGetPointsSquare = Math.floor(
+      Math.random() * match.getBoard().getSquares().length - 1 + 1
+    );
   }
 
   const doubleSpeedChance = Math.random();
@@ -22,4 +26,3 @@ export function getSpecials(match: any): { doubleSpeed: number[]; getPoints: num
 }
 
 // CommonJS compatibility
-

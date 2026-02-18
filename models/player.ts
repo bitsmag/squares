@@ -113,4 +113,3 @@ function getUnusedColor(match: Match): string {
     throw new Error('matchIsFull');
   }
 }
-
