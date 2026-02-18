@@ -63,4 +63,4 @@ export class Square {
 }
 
 // CommonJS compatibility
-module.exports = { Square } as any;
+module.exports = { Square };

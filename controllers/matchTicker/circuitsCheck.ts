@@ -1,18 +1,25 @@
 import socketErrorHandler from '../../middleware/socketErrorHandler';
+import type { Match } from '../../models/match';
+import type { Square } from '../../models/square';
+import type { PlayerColor } from './positionCalc';
 
-export function getPlayerPoints(match: any): Record<string, any[]> {
-  const playerPoints: Record<string, any[]> = { blue: [], orange: [], green: [], red: [] };
-  for (let i = 0; i < match.getPlayers().length; i++) {
-    let playerPositionSquare;
-    let error = false;
+export function getPlayerPoints(match: Match): Record<PlayerColor, Square[]> {
+  const playerPoints: Record<PlayerColor, Square[]> = {
+    blue: [],
+    orange: [],
+    green: [],
+    red: [],
+  };
+  const players = match.getPlayers();
+  for (let i = 0; i < players.length; i++) {
+    let playerPositionSquare: Square | undefined;
     try {
-      playerPositionSquare = match.getBoard().getSquare(match.getPlayers()[i].getPosition());
+      playerPositionSquare = match.getBoard().getSquare(players[i].getPosition());
     } catch (err) {
-      error = true;
       socketErrorHandler(match, err, 'circuitsCheck.getPlayerPoints()');
     }
-    if (!error && playerPositionSquare) {
-      const playerColor = match.getPlayers()[i].getColor();
+    if (playerPositionSquare) {
+      const playerColor = players[i].getColor() as PlayerColor;
       const squaresEarningPoints = getPoints(playerPositionSquare, playerColor, match);
       playerPoints[playerColor] = squaresEarningPoints;
     }
@@ -20,36 +27,33 @@ export function getPlayerPoints(match: any): Record<string, any[]> {
   return playerPoints;
 }
 
-function getPoints(theSquare: any, theColor: string, match: any): any[] {
-  const stack: any[] = [];
-  let justPopped: any;
+function getPoints(theSquare: Square, theColor: PlayerColor, match: Match): Square[] {
+  const stack: Square[] = [];
+  let justPopped: Square | null = null;
   let prefDir = '';
-  let squaresEarningPoints: any[] = [];
+  let squaresEarningPoints: Square[] = [];
 
-  function getVertices(s: any, c: string): any[] {
-    const vertices: any[] = [];
-    (vertices as any).move = function (old_index: number, new_index: number) {
-      if (new_index >= this.length) {
-        let k = new_index - this.length;
-        while (k-- + 1) {
-          this.push(undefined);
-        }
+  function moveVertex(vertices: Square[], oldIndex: number, newIndex: number): void {
+    const list = vertices;
+    if (newIndex >= list.length) {
+      let k = newIndex - list.length;
+      while (k-- + 1) {
+        list.push(list[list.length - 1]);
       }
-      this.splice(new_index, 0, this.splice(old_index, 1)[0]);
-    };
+    }
+    list.splice(newIndex, 0, list.splice(oldIndex, 1)[0]);
+  }
+
+  function getVertices(s: Square, c: PlayerColor): Square[] {
+    const vertices: Square[] = [];
     for (let i = 0; i < s.getEdgesTo().length; i++) {
-      let edgeSquare;
-      let error = false;
       try {
-        edgeSquare = match.getBoard().getSquare(s.getEdgesTo()[i]);
-      } catch (err) {
-        error = true;
-        socketErrorHandler(match, err, 'circuitsCheck.getVertices()');
-      }
-      if (!error && edgeSquare) {
+        const edgeSquare = match.getBoard().getSquare(s.getEdgesTo()[i]);
         if (edgeSquare.getColor() === c && edgeSquare !== justPopped) {
           vertices.push(edgeSquare);
         }
+      } catch (err) {
+        socketErrorHandler(match, err, 'circuitsCheck.getVertices()');
       }
     }
 
@@ -60,19 +64,20 @@ function getPoints(theSquare: any, theColor: string, match: any): any[] {
         (s.getPosition().y > vertices[i].getPosition().y && prefDir === 'down') ||
         (s.getPosition().y < vertices[i].getPosition().y && prefDir === 'up')
       ) {
-        (vertices as any).move(i, 0);
+        moveVertex(vertices, i, 0);
       }
     }
     return vertices;
   }
 
   function setAllSquaresUnvisited() {
-    for (let i = 0; i < match.getBoard().getSquares().length; i++) {
-      match.getBoard().getSquares()[i].setDfsVisited(false);
+    const squares = match.getBoard().getSquares();
+    for (let i = 0; i < squares.length; i++) {
+      squares[i].setDfsVisited(false);
     }
   }
 
-  function setPrefDir(theSquareInner: any, nextSquare: any) {
+  function setPrefDir(theSquareInner: Square, nextSquare: Square): void {
     if (stack.length > 0) {
       if (theSquareInner.getPosition().x < nextSquare.getPosition().x) {
         prefDir = 'right';
@@ -86,8 +91,8 @@ function getPoints(theSquare: any, theColor: string, match: any): any[] {
     }
   }
 
-  function checkValidity(stackInner: any[], alreadyVisitedVertex: any): any[] {
-    const points: any[] = [];
+  function checkValidity(stackInner: Square[], alreadyVisitedVertex: Square): Square[] {
+    const points: Square[] = [];
     if (stackInner.length > 7) {
       const circuitArray = stackInner.slice(
         stackInner.indexOf(alreadyVisitedVertex),
@@ -95,20 +100,18 @@ function getPoints(theSquare: any, theColor: string, match: any): any[] {
       );
 
       for (let j = 0; j < 9; j++) {
-        const squaresInSameRow: any[] = [];
+        const squaresInSameRow: Square[] = [];
         for (let k = 0; k < circuitArray.length; k++) {
-          if (circuitArray[k].getPosition().y == j) {
+          if (circuitArray[k].getPosition().y === j) {
             squaresInSameRow.push(circuitArray[k]);
           }
         }
-        squaresInSameRow.sort(function (a: any, b: any) {
-          return a.getPosition().x - b.getPosition().x;
-        });
+        squaresInSameRow.sort((a, b) => a.getPosition().x - b.getPosition().x);
 
         for (let k = 1; k < squaresInSameRow.length; k++) {
           const diff =
             squaresInSameRow[k].getPosition().x - squaresInSameRow[k - 1].getPosition().x;
-          if (diff != 1) {
+          if (diff !== 1) {
             for (let l = 1; l < diff; l++) {
               points.push(
                 match.getBoard().getSquareByCoordinates(squaresInSameRow[k].getPosition().x - l, j)
@@ -126,17 +129,14 @@ function getPoints(theSquare: any, theColor: string, match: any): any[] {
     return points.length > 0 ? points : [];
   }
 
-  function dfs(theSquareInner: any, theColorInner: string) {
+  function dfs(theSquareInner: Square | null, theColorInner: PlayerColor) {
     if (theSquareInner || stack.length > 0) {
-      if (theSquareInner) {
-        stack.push(theSquareInner);
-      } else {
-        theSquareInner = stack[stack.length - 1];
-      }
+      const current = theSquareInner ?? stack[stack.length - 1];
+      stack.push(current);
 
-      theSquareInner.setDfsVisited(true);
+      current.setDfsVisited(true);
 
-      const vertices = getVertices(theSquareInner, theColorInner);
+      const vertices = getVertices(current, theColorInner);
 
       for (let i = 0; i < vertices.length; i++) {
         if (squaresEarningPoints.length < 1) {
@@ -145,20 +145,20 @@ function getPoints(theSquare: any, theColor: string, match: any): any[] {
 
             if (squaresEarningPoints.length === 0 && i === vertices.length - 1) {
               stack.pop();
-              justPopped = theSquareInner;
-              setPrefDir(theSquareInner, stack[stack.length - 1]);
-              dfs(null as any, theColorInner);
+              justPopped = current;
+              setPrefDir(current, stack[stack.length - 1]);
+              dfs(null, theColorInner);
             }
           } else if (vertices[i].isDfsVisited() && vertices[i] === stack[stack.length - 2]) {
             if (i === vertices.length - 1) {
               stack.pop();
-              justPopped = theSquareInner;
-              setPrefDir(theSquareInner, stack[stack.length - 1]);
-              dfs(null as any, theColorInner);
+              justPopped = current;
+              setPrefDir(current, stack[stack.length - 1]);
+              dfs(null, theColorInner);
             }
           } else if (!vertices[i].isDfsVisited()) {
             justPopped = null;
-            setPrefDir(theSquareInner, vertices[i]);
+            setPrefDir(current, vertices[i]);
             dfs(vertices[i], theColorInner);
           }
         }

@@ -218,7 +218,7 @@ export class Board {
     );
   }
 
-  getSquares(): any[] {
+  getSquares(): Square[] {
     return this.squares;
   }
 
@@ -246,34 +246,18 @@ export class Board {
     return this.doubleSpeedDuration;
   }
 
-  getSquare(id: number): any {
-    let error = false;
-    for (let i = 0; i < this.squares.length; i++) {
-      if (this.squares[i].getId() === id) {
-        return this.squares[i];
-      } else {
-        error = true;
-      }
-    }
-    if (error) {
-      throw new Error('squareNotFound');
-    }
+  getSquare(id: number): Square {
+    const found = this.squares.find((sq) => sq.getId() === id);
+    if (!found) throw new Error('squareNotFound');
+    return found;
   }
 
-  getSquareByCoordinates(x: number, y: number): any {
-    let error = false;
-    for (let i = 0; i < this.squares.length; i++) {
-      if (this.squares[i].getPosition().x === x && this.squares[i].getPosition().y === y) {
-        return this.squares[i];
-      } else {
-        error = true;
-      }
-    }
-    if (error) {
-      throw new Error('squareNotFound');
-    }
+  getSquareByCoordinates(x: number, y: number): Square {
+    const found = this.squares.find((sq) => sq.getPosition().x === x && sq.getPosition().y === y);
+    if (!found) throw new Error('squareNotFound');
+    return found;
   }
 }
 
 // CommonJS compatibility
-module.exports = { Board } as any;
+module.exports = { Board };

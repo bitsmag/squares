@@ -27,14 +27,14 @@ export class MatchController {
         matchSocketService.sendCountdownEvent(this.match);
         if (this.match.getCountdownDuration() === 0) {
           clearInterval(countdownDurationDecrementInterval);
-          this.timer(this.match.getDuration());
+          this.timer();
           this.matchTicker();
         }
       }
     }, 1000);
   }
 
-  timer(_duration: number): void {
+  timer(): void {
     const durationDecrementInterval = setInterval(() => {
       if (!this.match.isActive()) {
         clearInterval(durationDecrementInterval);
@@ -65,10 +65,7 @@ export class MatchController {
           for (let i = 0; i < players.length; i++) {
             activeColors.push(players[i].getColor() as PlayerColor);
           }
-          playerPositions = positionCalc.calculateNewPlayerPositions(
-            this.match,
-            activeColors
-          ) as PlayerPositions;
+          playerPositions = positionCalc.calculateNewPlayerPositions(this.match, activeColors);
         } else {
           const doubleSpeedColors: PlayerColor[] = [];
           const players = this.match.getPlayers();
@@ -77,10 +74,7 @@ export class MatchController {
               doubleSpeedColors.push(players[i].getColor() as PlayerColor);
             }
           }
-          playerPositions = positionCalc.calculateNewPlayerPositions(
-            this.match,
-            doubleSpeedColors
-          ) as PlayerPositions;
+          playerPositions = positionCalc.calculateNewPlayerPositions(this.match, doubleSpeedColors);
         }
 
         // Only propagate positions that are resolved numbers
@@ -95,9 +89,9 @@ export class MatchController {
         this.match.updatePlayers(sanitizedPositions);
         this.match.updateBoard(sanitizedPositions);
 
-        const playerPoints: Record<string, any[]> = circuitsCheck.getPlayerPoints(this.match);
+        const playerPoints = circuitsCheck.getPlayerPoints(this.match);
 
-        const clearSpecials: any[] = [];
+        const clearSpecials: number[] = [];
         (Object.keys(sanitizedPositions) as PlayerColor[]).forEach((color) => {
           try {
             const playerPositionSquare = this.match.getBoard().getSquare(sanitizedPositions[color]);
@@ -131,7 +125,7 @@ export class MatchController {
           }
         });
 
-        const clearSquares: any[] = [];
+        const clearSquares: { id: number; color: PlayerColor }[] = [];
         (Object.keys(sanitizedPositions) as PlayerColor[]).forEach((color) => {
           for (let i = 0; i < playerPoints[color].length; i++) {
             clearSquares.push({ id: playerPoints[color][i].getId(), color: color });
@@ -152,4 +146,4 @@ export class MatchController {
 }
 
 // Keep CommonJS compatibility for existing require() usages
-module.exports = { MatchController } as any;
+module.exports = { MatchController };

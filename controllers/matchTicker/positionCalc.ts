@@ -1,6 +1,7 @@
 import socketErrorHandler from '../../middleware/socketErrorHandler';
 import type { Match } from '../../models/match';
 import type { Board } from '../../models/board';
+import type { Square } from '../../models/square';
 
 export type PlayerColor = 'blue' | 'orange' | 'green' | 'red';
 export type PlayerPositions = Partial<Record<PlayerColor, number>>;
@@ -111,7 +112,7 @@ function calculateFuturePos(
   board: Board,
   match: Match
 ): number {
-  let square;
+  let square: Square | undefined;
   let error = false;
   try {
     square = board.getSquare(currentPosition);
@@ -153,4 +154,4 @@ function calculateFuturePos(
 }
 
 // CommonJS compatibility
-module.exports = { calculateNewPlayerPositions } as any;
+module.exports = { calculateNewPlayerPositions };

@@ -1,0 +1,5 @@
+dist/
+coverage/
+.nyc_output/
+test/**/*.js
+views/assets/js/

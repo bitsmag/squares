@@ -1,4 +1,3 @@
-import { Socket } from 'socket.io';
 import socketErrorHandler from '../middleware/socketErrorHandler';
 import type { Match } from '../models/match';
 import type { Player } from '../models/player';
@@ -15,8 +14,10 @@ export function sendPlayerConnectedEvent(match: Match, player: Player): void {
     matchId: match.getId(),
   };
   for (let i = 0; i < match.getPlayers().length; i++) {
-    if (match.getPlayers()[i].getName() != data.playerName) {
-      match.getPlayers()[i].getSocket().emit('playerConnected', data);
+    const player = match.getPlayers()[i];
+    const socket = player?.getSocket();
+    if (player && player.getName() !== data.playerName && socket) {
+      socket.emit('playerConnected', data);
     }
   }
 }
@@ -28,15 +29,20 @@ export function sendPlayerDisconnectedEvent(match: Match, player: Player): void 
     matchId: match.getId(),
   };
   for (let i = 0; i < match.getPlayers().length; i++) {
-    if (match.getPlayers()[i].getName() != data.playerName) {
-      match.getPlayers()[i].getSocket().emit('playerDisconnected', data);
+    const player = match.getPlayers()[i];
+    const socket = player?.getSocket();
+    if (player && player.getName() !== data.playerName && socket) {
+      socket.emit('playerDisconnected', data);
     }
   }
 }
 
 export function sendMatchCreatorDisconnectedEvent(match: Match): void {
   for (let i = 0; i < match.getPlayers().length; i++) {
-    match.getPlayers()[i].getSocket().emit('matchCreatorDisconnected');
+    const socket = match.getPlayers()[i].getSocket();
+    if (socket) {
+      socket.emit('matchCreatorDisconnected');
+    }
   }
 }
 
@@ -54,7 +60,10 @@ export function sendPrepareMatchEvent(match: Match): void {
 
   const data = { players: playersData, board: board };
   for (let i = 0; i < players.length; i++) {
-    players[i].getSocket().emit('prepareMatch', data);
+    const socket = match.getPlayers()[i].getSocket();
+    if (socket) {
+      socket.emit('prepareMatch', data);
+    }
   }
 }
 
@@ -90,7 +99,11 @@ export function sendUpdateBoardEvent(match: Match, specials: Specials): void {
     duration: match.getDuration(),
   };
   for (let i = 0; i < match.getPlayers().length; i++) {
-    match.getPlayers()[i].getSocket().emit('updateBoard', data);
+    const player = match.getPlayers()[i];
+    const socket = player?.getSocket();
+    if (socket) {
+      socket.emit('updateBoard', data);
+    }
   }
 }
 
@@ -101,7 +114,11 @@ export function sendClearSquaresEvent(
 ): void {
   const data = { clearSquares: clearSquares, clearSpecials: clearSpecials };
   for (let i = 0; i < match.getPlayers().length; i++) {
-    match.getPlayers()[i].getSocket().emit('clearSquares', data);
+    const player = match.getPlayers()[i];
+    const socket = player?.getSocket();
+    if (socket) {
+      socket.emit('clearSquares', data);
+    }
   }
 }
 
@@ -124,27 +141,43 @@ export function sendUpdateScoreEvent(match: Match): void {
 
   const data = { scores: scores };
   for (let i = 0; i < match.getPlayers().length; i++) {
-    match.getPlayers()[i].getSocket().emit('updateScore', data);
+    const player = match.getPlayers()[i];
+    const socket = player?.getSocket();
+    if (socket) {
+      socket.emit('updateScore', data);
+    }
   }
 }
 
 export function sendMatchEndEvent(match: Match): void {
   for (let i = 0; i < match.getPlayers().length; i++) {
-    match.getPlayers()[i].getSocket().emit('matchEnd');
+    const player = match.getPlayers()[i];
+    const socket = player?.getSocket();
+    if (socket) {
+      socket.emit('matchEnd');
+    }
   }
 }
 
 export function sendCountdownEvent(match: Match): void {
   const data = { countdownDuration: match.getCountdownDuration() };
   for (let i = 0; i < match.getPlayers().length; i++) {
-    match.getPlayers()[i].getSocket().emit('countdown', data);
+    const player = match.getPlayers()[i];
+    const socket = player?.getSocket();
+    if (socket) {
+      socket.emit('countdown', data);
+    }
   }
 }
 
 export function sendFatalErrorEvent(match: Match): void {
   for (let i = 0; i < match.getPlayers().length; i++) {
     try {
-      match.getPlayers()[i].getSocket().emit('fatalError');
+      const player = match.getPlayers()[i];
+      const socket = player?.getSocket();
+      if (socket) {
+        socket.emit('fatalError');
+      }
     } catch (e) {
       // ignore per-player emit errors
     }

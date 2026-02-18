@@ -1,65 +1,105 @@
 import Joi from 'joi';
 import xss from 'xss';
+import type { Request, Response, NextFunction } from 'express';
+
+export type CreateMatchParams = { playerName: string };
+export type MatchRouteParams = {
+  matchCreatorFlag: 't' | 'f';
+  matchId: string;
+  playerName: string;
+};
+export type SocketConnectionInfoCreate = { matchId: string };
+export type SocketConnectionInfoMatch = { matchId: string; playerName: string };
 
 // Shared schemas
 export const schemas = {
-  createMatchParams: Joi.object({
+  createMatchParams: Joi.object<CreateMatchParams>({
     playerName: Joi.string().alphanum().min(1).max(12).required(),
   }),
-  matchRouteParams: Joi.object({
+  matchRouteParams: Joi.object<MatchRouteParams>({
     matchCreatorFlag: Joi.string().valid('t', 'f').required(),
     matchId: Joi.string().alphanum().min(1).required(),
     playerName: Joi.string().alphanum().min(1).max(12).required(),
   }),
-  socketConnectionInfoCreate: Joi.object({
+  socketConnectionInfoCreate: Joi.object<SocketConnectionInfoCreate>({
     matchId: Joi.string().alphanum().min(1).required(),
   }),
-  socketConnectionInfoMatch: Joi.object({
+  socketConnectionInfoMatch: Joi.object<SocketConnectionInfoMatch>({
     matchId: Joi.string().alphanum().min(1).required(),
     playerName: Joi.string().alphanum().min(1).max(12).required(),
   }),
 };
 
-function sanitize(obj: any): any {
-  if (obj == null) return obj;
-  if (typeof obj === 'string') return xss(obj);
-  if (Array.isArray(obj)) return obj.map(sanitize);
-  if (typeof obj === 'object') {
-    const out: any = {};
-    Object.keys(obj).forEach((k) => {
-      out[k] = sanitize(obj[k]);
+function sanitizeValue(value: unknown): unknown {
+  if (value == null) return value;
+  if (typeof value === 'string') return xss(value);
+  if (Array.isArray(value)) return value.map((item) => sanitizeValue(item));
+  if (typeof value === 'object') {
+    const out: Record<string, unknown> = {};
+    Object.keys(value as Record<string, unknown>).forEach((k) => {
+      out[k] = sanitizeValue((value as Record<string, unknown>)[k]);
     });
     return out;
   }
-  return obj;
+  return value;
 }
 
-export function validate(source: 'body' | 'params' | 'query', schema: Joi.ObjectSchema<any>) {
-  return function (req: any, _res: any, next: any) {
-    const target = req[source] || {};
-    const { error, value } = schema.validate(target, { abortEarly: false, stripUnknown: true });
-    if (error) {
-      const details = error.details.map((d) => ({ message: d.message, path: d.path }));
-      const e: any = new Error('invalidRequestParameters');
-      e.status = 400;
-      e.userMessage = 'Invalid request parameters.';
-      e.details = details;
-      return next(e);
+function sanitize<T>(obj: T): T {
+  return sanitizeValue(obj) as T;
+}
+
+type RequestSource = 'body' | 'params' | 'query';
+
+type ValidationErrorDetails = { message: string; path: (string | number)[] };
+type ValidationResult<T> =
+  | { valid: true; value: T }
+  | { valid: false; errors: ValidationErrorDetails[] };
+
+export function validate<T>(source: RequestSource, schema: Joi.ObjectSchema<T>) {
+  return function (req: Request, _res: Response, next: NextFunction) {
+    const target = (req as Record<RequestSource, unknown>)[source] ?? {};
+    const validationResult: Joi.ValidationResult<T> = schema.validate(target, {
+      abortEarly: false,
+      stripUnknown: true,
+    });
+    if (validationResult.error) {
+      const details = validationResult.error.details.map((d) => ({
+        message: d.message,
+        path: d.path,
+      }));
+      const validationError = new Error('invalidRequestParameters') as Error & {
+        status: number;
+        userMessage: string;
+        details: ValidationErrorDetails[];
+      };
+      validationError.status = 400;
+      validationError.userMessage = 'Invalid request parameters.';
+      validationError.details = details;
+      return next(validationError);
     }
-    req[source] = sanitize(value);
+
+    const value: T = validationResult.value;
+    (req as Record<RequestSource, unknown>)[source] = sanitize<T>(value);
     return next();
   };
 }
 
-export function validateSocketPayload(schema: Joi.ObjectSchema<any>, payload: any) {
-  const { error, value } = schema.validate(payload, { abortEarly: false, stripUnknown: true });
-  if (error) {
+export function validateSocketPayload<T>(
+  schema: Joi.ObjectSchema<T>,
+  payload: unknown
+): ValidationResult<T> {
+  const validationResult: Joi.ValidationResult<T> = schema.validate(payload, {
+    abortEarly: false,
+    stripUnknown: true,
+  });
+  if (validationResult.error) {
     return {
       valid: false,
-      errors: error.details.map((d) => ({ message: d.message, path: d.path })),
+      errors: validationResult.error.details.map((d) => ({ message: d.message, path: d.path })),
     };
   }
-  return { valid: true, value: sanitize(value) };
+  const value: T = validationResult.value;
+  return { valid: true, value: sanitize<T>(value) };
 }
 
 export default { schemas, validate, validateSocketPayload };

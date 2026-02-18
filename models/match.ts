@@ -3,6 +3,7 @@ import { MatchController } from '../controllers/matchController';
 import { manager } from './matchesManager';
 import socketErrorHandler from '../middleware/socketErrorHandler';
 import type { Player } from './player';
+import type { PlayerColor } from '../controllers/matchTicker/positionCalc';
 
 export class Match {
   id: string;
@@ -119,8 +120,8 @@ export class Match {
     this.active = active;
   }
 
-  updatePlayers(playerPositions: any): void {
-    Object.keys(playerPositions).forEach((color) => {
+  updatePlayers(playerPositions: Record<PlayerColor, number>): void {
+    (Object.keys(playerPositions) as PlayerColor[]).forEach((color) => {
       try {
         const player = this.getPlayerByColor(color);
         player.setPosition(playerPositions[color]);
@@ -130,8 +131,8 @@ export class Match {
     });
   }
 
-  updateBoard(playerPositions: any, _specials?: any): void {
-    Object.keys(playerPositions).forEach((color) => {
+  updateBoard(playerPositions: Record<PlayerColor, number>): void {
+    (Object.keys(playerPositions) as PlayerColor[]).forEach((color) => {
       try {
         this.getBoard().getSquare(playerPositions[color]).setColor(color);
       } catch (err) {
@@ -140,7 +141,7 @@ export class Match {
     });
   }
 
-  updateSpecials(specials: any): void {
+  updateSpecials(specials: { doubleSpeed: number[]; getPoints: number[] }): void {
     if (specials.doubleSpeed.length) {
       try {
         this.getBoard().getSquare(specials.doubleSpeed[0]).setDoubleSpeedSpecial(true);

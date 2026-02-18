@@ -3,6 +3,7 @@ import { manager } from '../models/matchesManager';
 import socketErrorHandler from '../middleware/socketErrorHandler';
 import * as matchSocketService from '../services/matchSocketService';
 import * as validation from '../middleware/validation';
+import type { SocketConnectionInfoMatch } from '../middleware/validation';
 import type { Match } from '../models/match';
 import type { Player } from '../models/player';
 
@@ -10,8 +11,8 @@ export function respond(socket: Socket): void {
   let match: Match | undefined;
   let player: Player | undefined;
 
-  socket.on('connectionInfo', function (playerInfo: any) {
-    const result = validation.validateSocketPayload(
+  socket.on('connectionInfo', function (playerInfo: unknown) {
+    const result = validation.validateSocketPayload<SocketConnectionInfoMatch>(
       validation.schemas.socketConnectionInfoMatch,
       playerInfo || {}
     );
@@ -25,8 +26,8 @@ export function respond(socket: Socket): void {
       return;
     }
 
-    const matchId = result.value.matchId as string;
-    const playerName = result.value.playerName as string;
+    const matchId = result.value.matchId;
+    const playerName = result.value.playerName;
     try {
       match = manager.getMatch(matchId);
       player = match.getPlayer(playerName);
@@ -46,7 +47,8 @@ export function respond(socket: Socket): void {
       for (let i = 0; i < match.getPlayers().length; i++) {
         data.playerNames.push(match.getPlayers()[i].getName());
       }
-      player.getSocket().emit('connectedPlayers', data);
+      const sock = player.getSocket();
+      if (sock) sock.emit('connectedPlayers', data);
       matchSocketService.sendPlayerConnectedEvent(match, player);
     }
   });

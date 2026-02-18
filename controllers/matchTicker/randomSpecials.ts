@@ -1,15 +1,16 @@
-export function getSpecials(match: any): { doubleSpeed: number[]; getPoints: number[] } {
+import type { Match } from '../../models/match';
+
+export function getSpecials(match: Match): { doubleSpeed: number[]; getPoints: number[] } {
   const specials = { doubleSpeed: [] as number[], getPoints: [] as number[] };
+
+  const maxIndex = match.getBoard().getSquares().length;
+  if (maxIndex === 0) return specials;
 
   let randomDoubleSpeedSquare = 0;
   let randomGetPointsSquare = 0;
   while (randomDoubleSpeedSquare === randomGetPointsSquare) {
-    randomDoubleSpeedSquare = Math.floor(
-      Math.random() * match.getBoard().getSquares().length - 1 + 1
-    );
-    randomGetPointsSquare = Math.floor(
-      Math.random() * match.getBoard().getSquares().length - 1 + 1
-    );
+    randomDoubleSpeedSquare = Math.floor(Math.random() * maxIndex);
+    randomGetPointsSquare = Math.floor(Math.random() * maxIndex);
   }
 
   const doubleSpeedChance = Math.random();

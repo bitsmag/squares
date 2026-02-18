@@ -1,3 +1,4 @@
+import type { Socket } from 'socket.io';
 import type { Match } from './match';
 
 export class Player {
@@ -8,7 +9,7 @@ export class Player {
   score: number;
   doubleSpeedSpecial: boolean;
   matchCreator: boolean;
-  socket: any;
+  socket: Socket | null;
 
   constructor(name: string, match: Match, matchCreator: boolean) {
     this.name = name;
@@ -58,7 +59,7 @@ export class Player {
     return this.matchCreator;
   }
 
-  getSocket(): any {
+  getSocket(): Socket | null {
     return this.socket;
   }
 
@@ -68,7 +69,7 @@ export class Player {
     }
   }
 
-  setSocket(socket: any): void {
+  setSocket(socket: Socket | null): void {
     this.socket = socket;
   }
 
