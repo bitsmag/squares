@@ -1,0 +1,14 @@
+{
+  "extends": [],
+  "all": true,
+  "reporter": ["text", "lcov"],
+  "exclude": [
+    "dist/**",
+    "coverage/**",
+    "test/**",
+    "views/**"
+  ],
+  "extension": [".ts", ".js"],
+  "require": ["ts-node/register"],
+  "cache": false
+}

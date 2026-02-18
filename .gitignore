@@ -2,7 +2,9 @@
 .DS_Store
 
 # Istanbul test coverage
-coverage
+coverage/
+.nyc_output/
+dist/
 
 # Atom tags
 .tags
