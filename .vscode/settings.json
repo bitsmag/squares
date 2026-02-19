@@ -1,0 +1,12 @@
+{
+  "files.exclude": {
+    "**/node_modules": true,
+    "**/dist": true,
+    "**/.nyc_output": true,
+    "**/coverage": true,
+    "**/.*": true,
+    "**/package-lock.json": true,
+    "**/README.md": true,
+    "**/tsconfig.json": true,
+  }
+}

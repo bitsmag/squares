@@ -1,0 +1,113 @@
+
+
+
+.player-table {
+  margin-top: 20px;
+  border-collapse: collapse;
+  width: 100%;
+  table-layout: fixed; /* important */
+}
+
+.player-table td {
+  border: none;
+  height: 50px;
+  vertical-align: middle;
+}
+
+.player-table tr:not(:last-child) td {
+  border-bottom: 1px solid #797979;
+}
+
+/* First column only */
+.player-table td:first-child {
+  width: 35px;
+  max-width: 35px;
+  padding: 0;
+}
+
+.player-table td:nth-child(2) {
+  font-size: 18px;
+  padding-left: 15px;
+}
+
+.player-table td:last-child {
+  width: 70px;
+  max-width: 70px;
+  padding-right: 15px;
+}
+
+
+/* Optional: prevent extra spacing */
+.square {
+  border: 1px solid #000;
+  width: 25px;
+  height: 25px;
+  margin: auto;
+}
+
+.blue {
+  background-color: #4fc1df;
+}
+
+.orange {
+    background-color: #fab823;
+}
+
+.green {
+  background-color: #15b3ab;
+}
+
+.red {
+  background-color: #e5337f;
+}
+
+.preserve-lines {
+  white-space: pre-line;
+}
+
+.status {
+  display: inline-block;
+  padding: 2px 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border-radius: 12px;
+  color: white;
+  vertical-align: middle;
+}
+
+.status.connected {
+  background-color: #28a745; /* green */
+}
+
+.status.disconnected {
+  background-color: #dc3545; /* red */
+}
+
+.alert-soft-red {
+  margin: 20px 0;
+  padding: 14px 18px;
+  border-radius: 8px;
+
+  background-color: #fdecea;
+  border: 1px solid #f5c2c7;
+  color: #842029;
+
+  font-size: 0.95rem;
+}
+
+/* Center the link */
+.alert-link {
+  margin-top: 10px;
+  text-align: center;
+}
+
+/* Black link */
+.alert-link a {
+  color: black;
+  font-weight: 600;
+  text-decoration: underline;
+}
+
+.alert-soft-red a:hover {
+  text-decoration: none;
+}

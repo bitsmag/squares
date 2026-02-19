@@ -15,11 +15,11 @@ export function handleGetMatch(
 ): void {
   const { matchCreatorFlag, matchId, playerName } = req.params;
   try {
-    const result =
+    /*const result =
       matchCreatorFlag === 't'
         ? startHost(matchId, playerName)
-        : joinGuest(matchId, playerName);
-    res.render('match.html', { matchId: result.matchId, playerName: result.playerName });
+        : joinGuest(matchId, playerName);*/
+    res.render('match.html', { matchId: matchId, playerName: playerName });
   } catch (err) {
     if (err instanceof MatchAccessError) {
       const userMessage = getUserMessage(err.code);

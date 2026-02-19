@@ -25,11 +25,11 @@
   <script src="/js/jquery.min.js"></script>
   <script>
   function createMatch(){
-    var redirect = '/createMatch/' + $('#cPlayerName').val();
+    var redirect = '/createMatch/' + $('#cPlayerName').val(); 
     window.location.assign(redirect);
   }
   function joinMatch(){
-    var redirect = '/match/f/' + $('#matchId').val() + '/' + $('#jPlayerName').val();
+    var redirect = '/createMatch' + '/' + $('#jPlayerName').val() + '/' + $('#matchId').val();
     window.location.assign(redirect);
   }
 

@@ -54,7 +54,8 @@ export function startHost(_matchId: string, _playerName: string): MatchAccessRes
       throw new MatchAccessError('hostMismatch');
     }
 
-    match.setActive(true);
+    match.setActive(true); //Tis should be done in registerConnection when the host connects with socket, 
+    
     return { matchId: _matchId, playerName: _playerName };
   } catch (err) {
     if (err instanceof MatchAccessError) {

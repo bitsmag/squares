@@ -3,18 +3,24 @@ import xss from 'xss';
 import type { Request, Response, NextFunction } from 'express';
 
 export type CreateMatchParams = { playerName: string };
+export type CreateMatchLobbyGuestParams = { playerName: string; matchId: string };
 export type MatchRouteParams = {
   matchCreatorFlag: 't' | 'f';
   matchId: string;
   playerName: string;
 };
-export type SocketConnectionInfoCreate = { matchId: string };
+export type SocketConnectionInfoCreate = { matchId: string; playerName: string, isHost: boolean };
 export type SocketConnectionInfoMatch = { matchId: string; playerName: string };
+export type MatchStartInitiationParams = { matchId: string };
 
 // Shared schemas
 export const schemas = {
   createMatchParams: Joi.object<CreateMatchParams>({
     playerName: Joi.string().alphanum().min(1).max(12).required(),
+  }),
+  createMatchLobbyGuestParams: Joi.object<CreateMatchLobbyGuestParams>({
+    playerName: Joi.string().alphanum().min(1).max(12).required(),
+    matchId: Joi.string().alphanum().min(1).required()
   }),
   matchRouteParams: Joi.object<MatchRouteParams>({
     matchCreatorFlag: Joi.string().valid('t', 'f').required(),
@@ -23,10 +29,15 @@ export const schemas = {
   }),
   socketConnectionInfoCreate: Joi.object<SocketConnectionInfoCreate>({
     matchId: Joi.string().alphanum().min(1).required(),
+    playerName: Joi.string().alphanum().min(1).max(12).required(),
+    isHost: Joi.boolean().required(),
   }),
   socketConnectionInfoMatch: Joi.object<SocketConnectionInfoMatch>({
     matchId: Joi.string().alphanum().min(1).required(),
     playerName: Joi.string().alphanum().min(1).max(12).required(),
+  }),
+    matchStartInitiationParams: Joi.object<MatchStartInitiationParams>({
+    matchId: Joi.string().alphanum().min(1).required()
   }),
 };
 

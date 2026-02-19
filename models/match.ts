@@ -13,6 +13,7 @@ export class Match {
   duration: number;
   countdownDuration: number;
   active: boolean;
+  startInitiated: boolean;
 
   constructor() {
     this.id = '';
@@ -22,6 +23,7 @@ export class Match {
     this.duration = this.board.getMatchDuration();
     this.countdownDuration = this.board.getCountdownDuration();
     this.active = false;
+    this.startInitiated = false;
 
     this.id = createUniqueId();
     manager.addMatch(this);
@@ -83,6 +85,10 @@ export class Match {
     return this.active;
   }
 
+  isStartInitiated(): boolean {
+    return this.startInitiated;
+  }
+
   addPlayer(player: Player): void {
     const nameDuplicate = this.isNameInUse(player.getName());
     if (this.players.length >= 4) {
@@ -118,6 +124,10 @@ export class Match {
 
   setActive(active: boolean): void {
     this.active = active;
+  }
+
+  setStartInitiated(startInitiated: boolean): void {
+    this.startInitiated = startInitiated;
   }
 
   updatePlayers(playerPositions: Record<PlayerColor, number>): void {

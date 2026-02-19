@@ -6,17 +6,45 @@
   <body>
     <img id ="logo" src="/img/logo.svg"/>
     <div class="form-style-8">
-      <h2>Your match is ready!</h2>
-      <p>Invite up to three friends to play with you.</p>
-      <p>Your match ID is: <b>{{ matchId }}</b></p>
+      <h2>Lobby of Match {{appData.matchId}}</h2>
+      <p id="lobbyMessage" class="preserve-lines">{{appData.lobbyMessage}}</p>
+
+      <div id="cancelMessage"></div>
+
+        <table id="playerTable" class="player-table">
+        <tr>
+          <td><div class="square blue"></div></td>
+          <td id="bluePlayerName"><span style="font-size:small; font-weight: lighter">Waiting for player...</span></td>
+          <td id="bluePlayerStatus"></td>
+        </tr>
+        <tr>
+          <td><div class="square orange"></div></td>
+          <td id="orangePlayerName"><span style="font-size:small; font-weight: lighter">Waiting for player...</span></td>
+          <td id="orangePlayerStatus"></td>
+        </tr>
+        <tr>
+          <td><div class="square green"></div></td>
+          <td id="greenPlayerName"><span style="font-size:small; font-weight: lighter">Waiting for player...</span></td>
+          <td id="greenPlayerStatus"></td>
+        </tr>
+        <tr>
+          <td><div class="square red"></div></td>
+          <td id="redPlayerName"><span style="font-size:small; font-weight: lighter">Waiting for player...</span></td>
+          <td id="redPlayerStatus"></td>
+        </tr>
+      </table>
+
+      {% if appData.isHost %}
       <form>
-        <input id="startMatchBtn" type="button" value="Start match!"/>
+        <input id="initiateMatchStartBtn" type="button" value="Start match!"/>
       </form>
+      {% endif %}
+            
     </div>
   </body>
+  <link rel="stylesheet" href="/css/createMatch.css">
   <script>
-  var playerInfo = {matchId: '{{matchId}}',
-    playerName: '{{playerName}}'};
+  window.APP_DATA = {{ appData | dump | safe }};
   </script>
   <script src="/js/jquery.min.js"></script>
   <script src="/socket.io/socket.io.js"></script>

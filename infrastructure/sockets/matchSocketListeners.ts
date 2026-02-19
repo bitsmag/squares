@@ -2,14 +2,15 @@ import { Socket } from 'socket.io';
 import { MatchSocketController } from '../../controllers/sockets/matchSocketController';
 
 export function respond(socket: Socket): void {
-  const controller = new MatchSocketController(socket);
+  
+  const controller = new MatchSocketController();
 
   socket.on('connectionInfo', function (playerInfo: unknown) {
-    controller.handleConnectionInfo(playerInfo);
+    controller.handleConnectionInfo(playerInfo, socket);
   });
 
   socket.on('disconnect', function () {
-    controller.handleDisconnect();
+    controller.handleDisconnect(socket);
   });
 
   socket.on('goLeft', function () {

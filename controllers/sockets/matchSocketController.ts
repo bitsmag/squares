@@ -5,15 +5,13 @@ import type { Socket } from 'socket.io';
 import { MatchSocketSessionService } from '../../services/matchSocketSessionService';
 
 export class MatchSocketController {
-  private socket: Socket;
   private sessionService: MatchSocketSessionService;
 
-  constructor(socket: Socket) {
-    this.socket = socket;
+  constructor() {
     this.sessionService = new MatchSocketSessionService();
   }
 
-  handleConnectionInfo(playerInfo: unknown): void {
+  handleConnectionInfo(playerInfo: unknown, socket: Socket): void {
     const result = validation.validateSocketPayload<SocketConnectionInfoMatch>(
       validation.schemas.socketConnectionInfoMatch,
       playerInfo || {}
@@ -29,11 +27,11 @@ export class MatchSocketController {
     }
 
     const { matchId, playerName } = result.value;
-    this.sessionService.registerConnection(matchId, playerName, this.socket);
+    this.sessionService.registerConnection(matchId, playerName, socket);
   }
 
-  handleDisconnect(): void {
-    this.sessionService.handleDisconnect();
+  handleDisconnect(socket: Socket): void {
+    this.sessionService.handleDisconnect(socket);
   }
 
   handleDirection(direction: 'left' | 'up' | 'right' | 'down'): void {
