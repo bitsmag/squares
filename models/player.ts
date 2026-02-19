@@ -1,24 +1,27 @@
 import type { Socket } from 'socket.io';
+import { randomUUID } from 'crypto';
 import type { Match } from './match';
 
 export class Player {
+  id: string;
   name: string;
   color: string;
   position: number;
   activeDirection: string | null;
   score: number;
   doubleSpeedSpecial: boolean;
-  matchCreator: boolean;
+  host: boolean;
   socket: Socket | null;
 
-  constructor(name: string, match: Match, matchCreator: boolean) {
+  constructor(name: string, match: Match, host: boolean) {
+    this.id = randomUUID();
     this.name = name;
     this.color = '';
     this.position = 0;
     this.activeDirection = null;
     this.score = 0;
     this.doubleSpeedSpecial = false;
-    this.matchCreator = matchCreator;
+    this.host = host;
     this.socket = null;
 
     if (!match.isActive()) {
@@ -33,6 +36,10 @@ export class Player {
 
   getName(): string {
     return this.name;
+  }
+
+  getId(): string {
+    return this.id;
   }
 
   getColor(): string {
@@ -55,8 +62,8 @@ export class Player {
     return this.doubleSpeedSpecial;
   }
 
-  isMatchCreator(): boolean {
-    return this.matchCreator;
+  isHost(): boolean {
+    return this.host;
   }
 
   getSocket(): Socket | null {
@@ -91,7 +98,6 @@ export class Player {
     }
   }
 
-  // helper to retrieve a safe default when migrating from JS where board provided it
   private getDefaultDoubleSpeedDuration(): number {
     return 5000;
   }

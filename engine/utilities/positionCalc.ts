@@ -27,7 +27,7 @@ export function calculateNewPlayerPositions(
       player = match.getPlayerByColor(activeColors[i]);
     } catch (err) {
       error = true;
-      socketErrorHandler(match, err, 'positionCalc.calculateNewPlayerPositions()');
+      socketErrorHandler(match, err);
     }
     if (!error && player) {
       currentPos[activeColors[i]] = player.getPosition();
@@ -118,7 +118,7 @@ function calculateFuturePos(
     square = board.getSquare(currentPosition);
   } catch (err) {
     error = true;
-    socketErrorHandler(match, err, 'positionCalc.calculateFuturePos()');
+    socketErrorHandler(match, err);
   }
   if (!error && square) {
     switch (activeDirection) {

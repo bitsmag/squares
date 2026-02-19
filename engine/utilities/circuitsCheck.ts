@@ -9,7 +9,7 @@ export function getPlayerPoints(match: any): Record<string, any[]> {
       playerPositionSquare = match.getBoard().getSquare(match.getPlayers()[i].getPosition());
     } catch (err) {
       error = true;
-      socketErrorHandler(match, err, 'circuitsCheck.getPlayerPoints()');
+      socketErrorHandler(match, err);
     }
     if (!error && playerPositionSquare) {
       const playerColor = match.getPlayers()[i].getColor();
@@ -44,7 +44,7 @@ function getPoints(theSquare: any, theColor: string, match: any): any[] {
         edgeSquare = match.getBoard().getSquare(s.getEdgesTo()[i]);
       } catch (err) {
         error = true;
-        socketErrorHandler(match, err, 'circuitsCheck.getVertices()');
+        socketErrorHandler(match, err);
       }
       if (!error && edgeSquare) {
         if (edgeSquare.getColor() === c && edgeSquare !== justPopped) {

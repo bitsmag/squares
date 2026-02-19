@@ -1,5 +1,5 @@
-import { socketSessionRegistry } from './socketSessionRegistry';
-import * as matchSocketEmitters from '../infrastructure/sockets/matchSocketEmitters';
+import { matchPresenceService } from './matchPresenceService';
+import * as matchSocketEmitters from '../infrastructure/sockets/matchEmitters';
 import type { Match } from '../models/match';
 
 export class MatchStartCoordinator {
@@ -15,7 +15,6 @@ export class MatchStartCoordinator {
       // when timer expires, start with whoever is currently connected
       try {
         matchSocketEmitters.sendPrepareMatchEvent(match);
-        match.setActive(true);
         match.getEngine().startMatch();
       } catch (err) {
         // ignore here; errors handled elsewhere
@@ -31,14 +30,14 @@ export class MatchStartCoordinator {
     const matchId = match.getId();
     if (!this.timers.has(matchId)) return;
     const expected = match.getPlayers().length;
-    if (socketSessionRegistry.areAllPlayersConnected(matchId, expected, '/matchSockets')) {
+    if (matchPresenceService.areAllPlayersReady(matchId, expected)) {
       // cancel timer and start immediately
       const t = this.timers.get(matchId);
       if (t) clearTimeout(t);
       this.timers.delete(matchId);
       try {
         matchSocketEmitters.sendPrepareMatchEvent(match);
-        match.setActive(true);
+        match.getEngine().startMatch();
       } catch (err) {
         // ignore here
       }

@@ -3,13 +3,12 @@ import { Match } from '../../models/match';
 import { manager } from '../../models/matchesManager';
 import { Player } from '../../models/player';
 
-export type CreateMatchParams = { playerName: string};
-export type CreateMatchGuestParams = { playerName: string, matchId: string };
+export type CreateMatchLobbyParams = { playerName: string};
+export type CreateMatchLobbyGuestParams = { playerName: string, matchId: string };
 
-export function handleCreateMatch(req: Request<CreateMatchParams>, res: Response): void {
+export function handleCreateMatchLobbyHost(req: Request<CreateMatchLobbyParams>, res: Response): void {
   const playerName = req.params.playerName;
   const newMatch = new Match();
-  // Player constructor registers itself with the match
   new Player(playerName, newMatch, true);
   res.render('createMatch.html', {
   appData: {
@@ -21,10 +20,9 @@ export function handleCreateMatch(req: Request<CreateMatchParams>, res: Response
   });
 }
 
-export function handleCreateMatchGuest(req: Request<CreateMatchGuestParams>, res: Response): void {
+export function handleCreateMatchLobbyGuest(req: Request<CreateMatchLobbyGuestParams>, res: Response): void {
   const playerName = req.params.playerName;
   let match = manager.getMatch(req.params.matchId);
-  // Player constructor registers itself with the match
   new Player(playerName, match, false);
   res.render("createMatch.html", {
   appData: {

@@ -3,33 +3,7 @@ const playerPositions = { blue: null, orange: null, green: null, red: null };
 const matchSockets = io.connect('/matchSockets');
 
 matchSockets.on('connect', function () {
-  matchSockets.emit('connectionInfo', playerInfo);
-
-  matchSockets.on('connectedPlayers', function (data) {
-    for (let i = 0; i < data.playerNames.length; i++) {
-      $('#connectionList').append($('<li>').text(data.playerNames[i] + ' connected to the match'));
-    }
-  });
-
-  matchSockets.on('playerConnected', function (_connectedPlayer) {
-    $('#connectionList').append(
-      $('<li>').text(_connectedPlayer.playerName + ' connected to the match')
-    );
-  });
-
-  matchSockets.on('playerDisconnected', function (_disconnectedPlayer) {
-    $('#connectionList').append(
-      $('<li>').text(_disconnectedPlayer.playerName + ' disconnected from the match')
-    );
-  });
-
-  matchSockets.on('matchCreatorDisconnected', function () {
-    $('#connectionList').append(
-      $('<li class="warning">The host disconnected from this match. The match was canceled!</li>')
-    );
-    $('#connectionList').append($('<br>'));
-    $('#connectionList').append($('<a href="/">Start a new match now!</a>'));
-  });
+  matchSockets.emit('registerPlayerMatch', playerInfo);
 
   matchSockets.on('prepareMatch', prepareMatch);
   matchSockets.on('updateBoard', updateBoard);

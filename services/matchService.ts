@@ -11,37 +11,46 @@ import type { Socket } from 'socket.io';
 export class MatchService {
   private match: Match | undefined;
   private player: Player | undefined;
-  
 
-  registerConnection(matchId: string, playerName: string, socket: Socket): void {
+  handleRegisterPlayerAndStartMatch(matchId: string, playerName: string, socket: Socket): void {
+    
+    // Register Player
+    let match: Match | undefined = undefined;
+    let player: Player | undefined = undefined;
     try {
-      this.match = manager.getMatch(matchId);
-      this.player = this.match.getPlayer(playerName);
+      match = manager.getMatch(matchId);
+      player = match.getPlayer(playerName);
     } catch (err) {
-      socketErrorHandler(this.match, err);
+      socketErrorHandler(match, err);
       return;
     }
-
-    if (!this.player || !this.match) return;
-
-    this.player.setSocket(socket);
+    if (!player || !match) return;
+    player.setSocket(socket);
+    this.match = match;
+    this.player = player;
     // register session globally (store both name and id)
-    sessionStore.register(socket, '/matchSockets', matchId, playerName, this.player.getId());
+    sessionStore.register(socket, '/matchSockets', matchId, playerName, player.getId());
 
-      const expected = this.match.getPlayers().length;
-      if (matchPresenceService.areAllPlayersReady(matchId, expected)) {
-        matchStartCoordinator.cancelCountdown(matchId);
-        matchSocketEmitters.sendPrepareMatchEvent(this.match);
-        this.match.setActive(true);
-        this.match.getEngine().startMatch();
-      } else {
-        // start a short countdown; coordinator will start when ready or timeout
-        matchStartCoordinator.startCountdown(this.match);
-      }
+    // Start Match
+    const expected = match.getPlayers().length;
+    if (matchPresenceService.areAllPlayersReady(matchId, expected)) {
+      matchStartCoordinator.cancelCountdown(matchId);
+      matchSocketEmitters.sendPrepareMatchEvent(match);
+       match.setActive(true);
+       match.getEngine().startMatch();
+     } else {
+       matchStartCoordinator.startCountdown(match);
+     }
     
   }
 
-  handleDisconnect(socket: Socket): void {
+  setDirection(direction: 'left' | 'up' | 'right' | 'down'): void {
+    if (this.player) {
+      this.player.setActiveDirection(direction);
+    }
+  }
+
+  handleDisconnectMatch(socket: Socket): void {
     // unregister session
     const session = sessionStore.unregister(socket);
     if (!session || !session.matchId || !session.playerName) return;
@@ -50,15 +59,8 @@ export class MatchService {
       const match = manager.getMatch(session.matchId);
       const player = match.getPlayer(session.playerName);
       match.removePlayer(player);
-      //matchSocketEmitters.sendPlayerDisconnectedEvent(match, player);
     } catch (err) {
       socketErrorHandler(undefined as unknown as Match, err);
-    }
-  }
-
-  setDirection(direction: 'left' | 'up' | 'right' | 'down'): void {
-    if (this.player) {
-      this.player.setActiveDirection(direction);
     }
   }
 }

@@ -5,9 +5,9 @@ import path from 'path';
 import nunjucks from 'nunjucks';
 import helmet from 'helmet';
 
-import * as createMatchSockets from './infrastructure/sockets/createMatchSocketListeners';
-import * as matchSockets from './infrastructure/sockets/matchSocketListeners';
-import createMatchRouter from './infrastructure/http/createMatchRouter';
+import * as createMatchSockets from './infrastructure/sockets/createMatchLobbyListeners';
+import * as matchSockets from './infrastructure/sockets/matchListeners';
+import createMatchLobbyRouter from './infrastructure/http/createMatchLobbyRouter';
 import matchRouter from './infrastructure/http/matchRouter';  
 import errorHandler from './infrastructure/middleware/errorHandler';
 
@@ -82,7 +82,7 @@ app.get('/', function (_req: Request, res: Response) {
     res.sendFile(path.join(viewsPath, 'index.html'));
 });
 
-createMatchRouter(app);
+createMatchLobbyRouter(app);
 matchRouter(app);
 
 app.use((req: Request, res: Response) => {

@@ -1,12 +1,14 @@
 import type { Socket } from 'socket.io';
 
-type Session = { namespace: string; matchId?: string; playerName?: string };
+type Session = { namespace: string; matchId?: string; playerName?: string; playerId?: string };
 
-export class SocketSessionRegistry {
+export class SessionStore {
   private sessions = new Map<string, Session>();
+  private playerToSocket = new Map<string, string>();
 
-  register(socket: Socket, namespace: string, matchId?: string, playerName?: string): void {
-    this.sessions.set(socket.id, { namespace, matchId, playerName });
+  register(socket: Socket, namespace: string, matchId?: string, playerName?: string, playerId?: string): void {
+    this.sessions.set(socket.id, { namespace, matchId, playerName, playerId });
+    if (playerId) this.playerToSocket.set(playerId, socket.id);
   }
 
   lookup(socketOrId: Socket | string): Session | undefined {
@@ -17,8 +19,13 @@ export class SocketSessionRegistry {
   unregister(socketOrId: Socket | string): Session | undefined {
     const id = typeof socketOrId === 'string' ? socketOrId : socketOrId.id;
     const s = this.sessions.get(id);
+    if (s && s.playerId) this.playerToSocket.delete(s.playerId);
     this.sessions.delete(id);
     return s;
+  }
+
+  getSocketIdForPlayer(playerId: string): string | undefined {
+    return this.playerToSocket.get(playerId);
   }
 
   getConnectedPlayers(matchId: string, namespace = '/matchSockets'): string[] {
@@ -37,4 +44,4 @@ export class SocketSessionRegistry {
   }
 }
 
-export const socketSessionRegistry = new SocketSessionRegistry();
+export const sessionStore = new SessionStore();

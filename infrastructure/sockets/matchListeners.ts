@@ -5,12 +5,12 @@ export function respond(socket: Socket): void {
   
   const controller = new MatchSocketController();
 
-  socket.on('connectionInfo', function (playerInfo: unknown) {
-    controller.handleConnectionInfo(playerInfo, socket);
+  socket.on('registerPlayerMatch', function (playerInfo: unknown) {
+    controller.handleRegisterPlayerAndStartMatch(playerInfo, socket);
   });
 
   socket.on('disconnect', function () {
-    controller.handleDisconnect(socket);
+    controller.handleDisconnectMatch(socket);
   });
 
   socket.on('goLeft', function () {

@@ -1,31 +1,8 @@
 import type { NextFunction, Request, Response } from 'express';
-import {
-  getUserMessage,
-  joinGuest,
-  MatchAccessError,
-  startHost,
-} from '../../services/matchAccessService';
 
-export type MatchRouteParams = { matchCreatorFlag: 't' | 'f'; matchId: string; playerName: string };
+export type GetMatchParams = { matchCreatorFlag: 't' | 'f'; matchId: string; playerName: string };
 
-export function handleGetMatch(
-  req: Request<MatchRouteParams>,
-  res: Response,
-  next: NextFunction
-): void {
-  const { matchCreatorFlag, matchId, playerName } = req.params;
-  try {
-    /*const result =
-      matchCreatorFlag === 't'
-        ? startHost(matchId, playerName)
-        : joinGuest(matchId, playerName);*/
-    res.render('match.html', { matchId: matchId, playerName: playerName });
-  } catch (err) {
-    if (err instanceof MatchAccessError) {
-      const userMessage = getUserMessage(err.code);
-      const userError = Object.assign(new Error(err.code), { userMessage });
-      return next(userError);
-    }
-    return next(err);
-  }
+export function handleGetMatch(req: Request<GetMatchParams>, res: Response, next: NextFunction): void {
+  const { matchId, playerName } = req.params;
+  res.render('match.html', { matchId: matchId, playerName: playerName });
 }

@@ -40,7 +40,7 @@ export class Match {
   getPlayer(playerName: string): Player {
     const foundPlayer = this.players.find((p) => p.getName() === playerName);
     if (!foundPlayer) {
-      throw new Error('playerNotFound');
+      throw new Error('playerNotFound in match.getPlayer');
     }
     return foundPlayer;
   }
@@ -48,21 +48,21 @@ export class Match {
   getPlayerByColor(playerColor: string): Player {
     const foundPlayer = this.players.find((p) => p.getColor() === playerColor);
     if (!foundPlayer) {
-      throw new Error('playerNotFound');
+      throw new Error('playerNotFound in match.getPlayerByColor');
     }
     return foundPlayer;
   }
 
   getMatchCreator(): Player {
     if (this.players.length === 0) {
-      throw new Error('matchCreatorNotFound');
+      throw new Error('matchCreatorNotFound in match.getMatchCreator');
     }
     for (let i = 0; i < this.players.length; i++) {
-      if (this.players[i].isMatchCreator()) {
+      if (this.players[i].isHost()) {
         return this.players[i];
       }
     }
-    throw new Error('matchCreatorNotFound');
+    throw new Error('matchCreatorNotFound in match.getMatchCreator');
   }
 
   getBoard(): Board {
@@ -136,7 +136,7 @@ export class Match {
         const player = this.getPlayerByColor(color);
         player.setPosition(playerPositions[color]);
       } catch (err) {
-        socketErrorHandler(this, err, 'match.updatePlayers()');
+        socketErrorHandler(this, err);
       }
     });
   }
@@ -146,7 +146,7 @@ export class Match {
       try {
         this.getBoard().getSquare(playerPositions[color]).setColor(color);
       } catch (err) {
-        socketErrorHandler(this, err, 'match.updateBoard()');
+        socketErrorHandler(this, err);
       }
     });
   }
@@ -156,14 +156,14 @@ export class Match {
       try {
         this.getBoard().getSquare(specials.doubleSpeed[0]).setDoubleSpeedSpecial(true);
       } catch (err) {
-        socketErrorHandler(this, err, 'match.updateSpecials()');
+        socketErrorHandler(this, err);
       }
     }
     if (specials.getPoints.length) {
       try {
         this.getBoard().getSquare(specials.getPoints[0]).setGetPointsSpecial(true);
       } catch (err) {
-        socketErrorHandler(this, err, 'match.updateSpecials()');
+        socketErrorHandler(this, err);
       }
     }
   }

@@ -14,7 +14,7 @@ export class MatchesManager {
   getMatch(matchId: string): Match {
     const foundMatch = this.matches.find((m) => m.id === matchId);
     if (!foundMatch) {
-      throw new Error('matchNotFound');
+      throw new Error('matchNotFound in matchesManager.getMatch');
     }
     return foundMatch;
   }

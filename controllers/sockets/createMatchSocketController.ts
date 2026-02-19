@@ -1,61 +1,29 @@
 import * as validation from '../../infrastructure/middleware/validation';
-import type { SocketConnectionInfoCreate, MatchStartInitiationParams } from '../../infrastructure/middleware/validation';
+import type { RegisterPlayerLobbyParams, MatchStartInitiationParams } from '../../infrastructure/middleware/validation';
 import type { Socket } from 'socket.io';
 import { CreateMatchLobbyService } from '../../services/createMatchLobbyService';
 import socketErrorHandler from '../../infrastructure/middleware/socketErrorHandler';
 
-export class CreateMatchSocketController {
+export class CreateMatchLobbySocketController {
 
-  private lobbyService: CreateMatchLobbyService;
-  private startBtnClicked = false;
+  private createMatchLobbyService: CreateMatchLobbyService;
 
   constructor() {
-    this.lobbyService = new CreateMatchLobbyService();
+    this.createMatchLobbyService = new CreateMatchLobbyService();
   }
 
-  handleConnectionInfo(playerInfo: unknown, socket: Socket): void {
-    const playerInfoResult = validation.validateSocketPayload<SocketConnectionInfoCreate>(
-      validation.schemas.socketConnectionInfoCreate,
+  registerPlayerLobby(playerInfo: unknown, socket: Socket): void {
+    const playerInfoResult = validation.validateSocketPayload<RegisterPlayerLobbyParams>(
+      validation.schemas.registerPlayerLobbyParams,
       playerInfo || {}
     );
     if (!playerInfoResult.valid) {
-      socketErrorHandler(
-        undefined,
-        new Error('Invalid connectionInfo payload'),
-        'createMatchSocketController.handleConnectionInfo'
-      );
-      console.warn('Invalid connectionInfo payload', playerInfoResult.errors);
+      socketErrorHandler(undefined, new Error('Invalid registerPlayerLobby payload in CreateMatchLobbySocketController.registerPlayerLobby'));
       return;
     }
-
-    const matchId = playerInfoResult.value.matchId;
-    this.lobbyService.registerHost(matchId, socket);
-  }
-
-  handleConnectionInfoGuest(playerInfo: unknown, socket: Socket): void {
-    const playerInfoResult = validation.validateSocketPayload<SocketConnectionInfoCreate>(
-      validation.schemas.socketConnectionInfoCreate,
-      playerInfo || {}
-    );
-    if (!playerInfoResult.valid) {
-      socketErrorHandler(
-        undefined,
-        new Error('Invalid connectionInfoGuest payload'),
-        'createMatchSocketController.handleConnectionInfoGuest'
-      );
-      console.warn('Invalid connectionInfoGuest payload', playerInfoResult.errors);
-      return;
-    }
-
     const matchId = playerInfoResult.value.matchId;
     const playerName = playerInfoResult.value.playerName;
-    this.lobbyService.registerGuest(matchId, playerName, socket);
-  }
-
-  handleDisconnect(socket: Socket): void {
-    if (!this.startBtnClicked) {
-      this.lobbyService.handleEarlyDisconnect(socket);
-    }
+    this.createMatchLobbyService.handlerRegisterPlayer(matchId, playerName, socket);
   }
 
   handleMatchStartInitiation(matchId: unknown): void {
@@ -64,14 +32,15 @@ export class CreateMatchSocketController {
       matchId || {}
     );
     if (!matchIdResult.valid) {
-      socketErrorHandler(
-        undefined,
-        new Error('Invalid matchStartInitiation payload'),
-        'createMatchSocketController.handleMatchStartInitiation'
+      socketErrorHandler(undefined, new Error('Invalid matchStartInitiation payload in CreateMatchLobbySocketController.handleMatchStartInitiation')
       );
-      console.warn('Invalid matchStartInitiation payload', matchIdResult.errors);
       return;
     }
-    this.lobbyService.handleMatchStartInitiation(matchIdResult.value.matchId);
+    this.createMatchLobbyService.handleMatchStartInitiation(matchIdResult.value.matchId);
   }
+
+  handleDisconnectLobby(socket: Socket): void {
+      this.createMatchLobbyService.handleDisconnectLobby(socket);
+  }
+
 }

@@ -9,8 +9,8 @@ export type MatchRouteParams = {
   matchId: string;
   playerName: string;
 };
-export type SocketConnectionInfoCreate = { matchId: string; playerName: string, isHost: boolean };
-export type SocketConnectionInfoMatch = { matchId: string; playerName: string };
+export type RegisterPlayerLobbyParams = { matchId: string; playerName: string, isHost: boolean };
+export type RegisterPlayerMatchParams = { matchId: string; playerName: string };
 export type MatchStartInitiationParams = { matchId: string };
 
 // Shared schemas
@@ -27,12 +27,12 @@ export const schemas = {
     matchId: Joi.string().alphanum().min(1).required(),
     playerName: Joi.string().alphanum().min(1).max(12).required(),
   }),
-  socketConnectionInfoCreate: Joi.object<SocketConnectionInfoCreate>({
+  registerPlayerLobbyParams: Joi.object<RegisterPlayerLobbyParams>({
     matchId: Joi.string().alphanum().min(1).required(),
     playerName: Joi.string().alphanum().min(1).max(12).required(),
     isHost: Joi.boolean().required(),
   }),
-  socketConnectionInfoMatch: Joi.object<SocketConnectionInfoMatch>({
+  registerPlayerMatchParams: Joi.object<RegisterPlayerMatchParams>({
     matchId: Joi.string().alphanum().min(1).required(),
     playerName: Joi.string().alphanum().min(1).max(12).required(),
   }),

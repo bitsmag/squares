@@ -5,7 +5,7 @@ import type {
 } from './utilities/positionCalc';
 import * as circuitsCheck from './utilities/circuitsCheck';
 import * as randomSpecials from './utilities/randomSpecials';
-import * as matchSocketService from '../infrastructure/sockets/matchSocketEmitters';
+import * as matchSocketService from '../infrastructure/sockets/matchEmitters';
 import socketErrorHandler from '../infrastructure/middleware/socketErrorHandler';
 import type { Match } from '../models/match';
 
@@ -113,7 +113,7 @@ export class MatchEngine {
               clearSpecials.push(playerPositionSquare.getId());
             }
           } catch (err) {
-            socketErrorHandler(this.match, err, 'match.Engine.matchTicker()');
+            socketErrorHandler(this.match, err);
           }
         });
 
@@ -121,7 +121,7 @@ export class MatchEngine {
           try {
             this.match.getPlayerByColor(color).increaseScore(playerPoints[color].length);
           } catch (err) {
-            socketErrorHandler(this.match, err, 'match.Engine.matchTicker()');
+            socketErrorHandler(this.match, err);
           }
         });
 

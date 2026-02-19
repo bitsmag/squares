@@ -1,40 +1,34 @@
 import socketErrorHandler from '../../infrastructure/middleware/socketErrorHandler';
 import * as validation from '../../infrastructure/middleware/validation';
-import type { SocketConnectionInfoMatch } from '../../infrastructure/middleware/validation';
+import type { RegisterPlayerMatchParams } from '../../infrastructure/middleware/validation';
 import type { Socket } from 'socket.io';
-import { MatchSocketSessionService } from '../../services/matchSocketSessionService';
+import { MatchService } from '../../services/matchService';
 
 export class MatchSocketController {
-  private sessionService: MatchSocketSessionService;
+  private matchService: MatchService;
 
   constructor() {
-    this.sessionService = new MatchSocketSessionService();
+    this.matchService = new MatchService();
   }
 
-  handleConnectionInfo(playerInfo: unknown, socket: Socket): void {
-    const result = validation.validateSocketPayload<SocketConnectionInfoMatch>(
-      validation.schemas.socketConnectionInfoMatch,
+  handleRegisterPlayerAndStartMatch(playerInfo: unknown, socket: Socket): void {
+    const result = validation.validateSocketPayload<RegisterPlayerMatchParams>(
+      validation.schemas.registerPlayerMatchParams,
       playerInfo || {}
     );
     if (!result.valid) {
-      socketErrorHandler(
-        undefined,
-        new Error('Invalid connectionInfo payload'),
-        'MatchSocketController.handleConnectionInfo'
-      );
-      console.warn('Invalid connectionInfo payload', result.errors);
+      socketErrorHandler(undefined, new Error('Invalid registerPlayerMatch payload'));
       return;
     }
-
     const { matchId, playerName } = result.value;
-    this.sessionService.registerConnection(matchId, playerName, socket);
+    this.matchService.handleRegisterPlayerAndStartMatch(matchId, playerName, socket);
   }
 
-  handleDisconnect(socket: Socket): void {
-    this.sessionService.handleDisconnect(socket);
+  handleDisconnectMatch(socket: Socket): void {
+    this.matchService.handleDisconnectMatch(socket);
   }
 
   handleDirection(direction: 'left' | 'up' | 'right' | 'down'): void {
-    this.sessionService.setDirection(direction);
+    this.matchService.setDirection(direction);
   }
 }

@@ -2,7 +2,7 @@ import type { Match } from '../../models/match';
 import type { Player } from '../../models/player';
 
 // Centralized socket error handler — emits a `fatalError` event to all players and destroys the match.
-function fatalErrorHandler(match: Match | undefined, err: unknown, context: string): void {
+function fatalErrorHandler(match: Match | undefined, err: unknown): void {
   try {
     const players: Player[] | undefined = match?.getPlayers();
     if (players) {
@@ -28,8 +28,7 @@ function fatalErrorHandler(match: Match | undefined, err: unknown, context: stri
   try {
     const message =
       err instanceof Error && typeof err.message === 'string' ? err.message : String(err);
-    console.warn(message + ' // socketErrorHandler.' + (context || 'unknown'));
-    console.trace();
+    console.warn(message);
   } catch (_e) {
     // ignore
   }

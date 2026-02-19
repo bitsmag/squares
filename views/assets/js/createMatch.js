@@ -12,11 +12,8 @@ $('#initiateMatchStartBtn').click(function () {
 
 const createMatchSockets = io.connect('/createMatchSockets');
 createMatchSockets.on('connect', function () {
-  if (isHost) {
-    createMatchSockets.emit('connectionInfo', { matchId, playerName, isHost });
-  } else {
-    createMatchSockets.emit('connectionInfoGuest', { matchId, playerName, isHost });
-  }
+    createMatchSockets.emit('registerPlayerLobby', { matchId, playerName, isHost });
+
 
   createMatchSockets.on('playerConnected', function (connectedPlayers) {
 
@@ -58,7 +55,7 @@ createMatchSockets.on('connect', function () {
     };
   });
 
-  createMatchSockets.on('matchCreatorDisconnected', function () {
+  createMatchSockets.on('hostDisconnected', function () {
     $('#lobbyMessage').remove();
     $('#playerTable').remove();
     $('#cancelMessage').html('<div class="alert-soft-red"><strong>The lobby has been closed by the host.</strong></div><div class="alert-link"><a href="/">Start a new match now!</a></div>');

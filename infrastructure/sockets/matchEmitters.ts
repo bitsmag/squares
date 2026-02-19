@@ -7,44 +7,6 @@ type Specials = { doubleSpeed: number[]; getPoints: number[] };
 type ClearSquare = { id: number; color: string };
 type Scores = Record<string, number | null>;
 
-export function sendPlayerConnectedEvent(match: Match, player: Player): void {
-  const data = {
-    playerName: player.getName(),
-    playerColor: player.getColor(),
-    matchId: match.getId(),
-  };
-  for (let i = 0; i < match.getPlayers().length; i++) {
-    const player = match.getPlayers()[i];
-    const socket = player?.getSocket();
-    if (player && player.getName() !== data.playerName && socket) {
-      socket.emit('playerConnected', data);
-    }
-  }
-}
-
-export function sendPlayerDisconnectedEvent(match: Match, player: Player): void {
-  const data = {
-    playerName: player.getName(),
-    playerColor: player.getColor(),
-    matchId: match.getId(),
-  };
-  for (let i = 0; i < match.getPlayers().length; i++) {
-    const player = match.getPlayers()[i];
-    const socket = player?.getSocket();
-    if (player && player.getName() !== data.playerName && socket) {
-      socket.emit('playerDisconnected', data);
-    }
-  }
-}
-
-export function sendMatchCreatorDisconnectedEvent(match: Match): void {
-  for (let i = 0; i < match.getPlayers().length; i++) {
-    const socket = match.getPlayers()[i].getSocket();
-    if (socket) {
-      socket.emit('matchCreatorDisconnected');
-    }
-  }
-}
 
 export function sendPrepareMatchEvent(match: Match): void {
   const board = match.getBoard();
@@ -89,7 +51,7 @@ export function sendUpdateBoardEvent(match: Match, specials: Specials): void {
         .getPlayerByColor(activeColors[i])
         .getDoubleSpeedSpecial();
     } catch (err) {
-      socketErrorHandler(match, err, 'sendUpdateBoardEvent()');
+      socketErrorHandler(match, err);
     }
   }
 
@@ -135,7 +97,7 @@ export function sendUpdateScoreEvent(match: Match): void {
     try {
       scores[activeColors[i]] = match.getPlayerByColor(activeColors[i]).getScore();
     } catch (err) {
-      socketErrorHandler(match, err, 'sendUpdateScoreEvent()');
+      socketErrorHandler(match, err);
     }
   }
 

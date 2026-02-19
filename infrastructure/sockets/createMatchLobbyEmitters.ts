@@ -43,11 +43,11 @@ export function sendPlayerDisconnectedEvent(match: Match, player: Player): void 
   }
 }
 
-export function sendMatchCreatorDisconnectedEvent(match: Match): void {
+export function sendHostDisconnectedEvent(match: Match): void {
   for (let i = 0; i < match.getPlayers().length; i++) {
     const socket = match.getPlayers()[i].getSocket();
     if (socket) {
-      socket.emit('matchCreatorDisconnected');
+      socket.emit('hostDisconnected');
     }
   }
 }
