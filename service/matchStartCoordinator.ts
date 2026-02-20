@@ -1,5 +1,5 @@
 import * as matchSocketEmitters from '../transport/match/socket/matchEmitters';
-import type { Match } from '../models/match';
+import type { Match } from '../domain/models/match';
 
 export class MatchStartCoordinator {
   private timers = new Map<string, NodeJS.Timeout>();

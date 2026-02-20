@@ -4,7 +4,7 @@ import type { RegisterPlayerMatchParams } from '../../util/validation';
 import type { Socket } from 'socket.io';
 import { matchService } from '../../../service/matchService';
 import { sessionStore } from '../../util/socket/sessionStore';
-import { manager } from '../../../models/matchesManager';
+import { manager } from '../../../domain/models/matchesManager';
 
 export class MatchSocketController {
   private matchService = matchService;

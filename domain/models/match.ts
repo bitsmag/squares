@@ -1,7 +1,7 @@
 import { Board } from './board';
 import { MatchEngine } from '../engine/matchEngine';
-import * as matchEmitters from '../transport/match/socket/matchEmitters';
-import socketErrorHandler from '../transport/util/socket/socketErrorHandler';
+import * as matchEmitters from '../../transport/match/socket/matchEmitters';
+import socketErrorHandler from '../../transport/util/socket/socketErrorHandler';
 import { manager } from './matchesManager';
 import type { Player } from './player';
 import type { PlayerColor } from '../engine/utilities/positionCalc';

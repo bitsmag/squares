@@ -1,9 +1,9 @@
-import { manager } from '../models/matchesManager';
+import { manager } from '../domain/models/matchesManager';
 import * as matchSocketEmitters from '../transport/match/socket/matchEmitters';
 import { matchPresenceService } from './matchPresenceService';
 import { matchStartCoordinator } from './matchStartCoordinator';
-import type { Match } from '../models/match';
-import type { Player } from '../models/player';
+import type { Match } from '../domain/models/match';
+import type { Player } from '../domain/models/player';
 
 export class MatchService {
   handleRegisterPlayerAndStartMatch(matchId: string, playerName: string): void {

@@ -1,7 +1,5 @@
 import socketErrorHandler from '../../util/socket/socketErrorHandler';
-import type { Match } from '../../../models/match';
-import type { Player } from '../../../models/player';
-import { sessionStore } from '../../util/socket/sessionStore';
+import type { Match } from '../../../domain/models/match';
 import { broadcastToMatch } from '../../util/socket/transport';
 
 type PlayerStatus = { pos: number | null; dir: string | null; doubleSpeed: boolean | null };

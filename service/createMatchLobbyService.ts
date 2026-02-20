@@ -1,4 +1,4 @@
-import { manager } from '../models/matchesManager';
+import { manager } from '../domain/models/matchesManager';
 
 export type DisconnectionSource =
   | { type: 'HOST_LEFT' }

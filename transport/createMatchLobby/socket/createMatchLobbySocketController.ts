@@ -6,7 +6,7 @@ import type {
 import type { Socket } from 'socket.io';
 import { createMatchLobbyService } from '../../../service/createMatchLobbyService';
 import { sessionStore } from '../../util/socket/sessionStore';
-import { manager } from '../../../models/matchesManager';
+import { manager } from '../../../domain/models/matchesManager';
 import socketErrorHandler from '../../util/socket/socketErrorHandler';
 import * as createMatchLobbyEmitters from './createMatchLobbyEmitters';
 

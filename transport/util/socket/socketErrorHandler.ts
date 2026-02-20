@@ -1,5 +1,4 @@
-import type { Match } from '../../../models/match';
-import type { Player } from '../../../models/player';
+import type { Match } from '../../../domain/models/match';
 import { sessionStore } from './sessionStore';
 import { broadcastToMatch } from './transport';
 
