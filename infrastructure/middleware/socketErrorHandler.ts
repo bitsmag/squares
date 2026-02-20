@@ -1,16 +1,12 @@
 import type { Match } from '../../models/match';
 import type { Player } from '../../models/player';
 import { sessionStore } from '.././../controllers/sockets/sessionStore';
-import { getIo } from '../sockets/io';
+import { broadcastToMatch } from '../transport';
 
 // Centralized socket error handler — emits a `fatalError` event to all players and destroys the match.
 function fatalErrorHandler(match: Match | undefined, err: unknown): void {
-  const io = getIo();
   try {
-    sessionStore.getSocketIdsForMatch(match?.getId() ?? '').forEach((socketId) => {
-      const socket = io.sockets.sockets.get(socketId);
-      if (socket) socket.emit('fatalError');
-    });
+    broadcastToMatch(match?.getId() ?? '', '/matchSockets', 'fatalError');
   } catch (_e) {
     // ignore
   }
