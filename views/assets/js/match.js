@@ -245,7 +245,7 @@ function matchEnd() {
   $('#scores > td').each(function () {
     scores[scores.length] = $('.score', this).html();
   });
-  const sorted = scores.sort();
+  const sorted = scores.sort((a, b) => Number(a) - Number(b));
 
   let place;
   $('#scores > td').each(function () {
