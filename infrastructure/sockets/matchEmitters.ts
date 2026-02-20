@@ -13,6 +13,12 @@ export function sendPrepareMatchEvent(match: Match): void {
   const board = match.getBoard();
   const playersData: { playerName: string; playerColor: string }[] = [];
   const data = { players: playersData, board: board };
+  for (let i = 0; i < match.getPlayers().length; i++) {
+    data.players[i] = {
+      playerName: match.getPlayers()[i].getName(),
+      playerColor: match.getPlayers()[i].getColor(),
+    };
+  }
 
   broadcastToMatch(match.getId(), '/matchSockets', 'prepareMatch', data);
 }
