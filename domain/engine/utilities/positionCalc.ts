@@ -152,6 +152,3 @@ function calculateFuturePos(
   }
   return currentPosition;
 }
-
-// CommonJS compatibility
-module.exports = { calculateNewPlayerPositions };

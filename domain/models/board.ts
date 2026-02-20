@@ -73,6 +73,3 @@ export class Board {
     return found;
   }
 }
-
-// CommonJS compatibility
-module.exports = { Board };

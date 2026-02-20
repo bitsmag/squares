@@ -61,6 +61,3 @@ export class Square {
     this.dfsVisited = visited;
   }
 }
-
-// CommonJS compatibility
-module.exports = { Square };

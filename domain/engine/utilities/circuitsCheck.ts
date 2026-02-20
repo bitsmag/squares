@@ -170,4 +170,3 @@ function getPoints(theSquare: any, theColor: string, match: any): any[] {
   return squaresEarningPoints;
 }
 
-// CommonJS compatibility

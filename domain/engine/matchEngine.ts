@@ -154,6 +154,3 @@ export class MatchEngine {
     const tickerInterval = setInterval(tick, 250);
   }
 }
-
-// Keep CommonJS compatibility for existing require() usages
-module.exports = { MatchEngine };

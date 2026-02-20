@@ -47,4 +47,3 @@ export function sendFatalErrorEvent(match: Match): void {
   broadcastToMatch(match.getId(), '/createMatchSockets', 'fatalError');
 }
 
-// CommonJS compatibility
