@@ -1,10 +1,10 @@
-import socketErrorHandler from '../../infrastructure/middleware/socketErrorHandler';
-import * as validation from '../../infrastructure/middleware/validation';
-import type { RegisterPlayerMatchParams } from '../../infrastructure/middleware/validation';
+import socketErrorHandler from '../../util/socket/socketErrorHandler';
+import * as validation from '../../util/validation';
+import type { RegisterPlayerMatchParams } from '../../util/validation';
 import type { Socket } from 'socket.io';
-import { matchService } from '../../services/matchService';
-import { sessionStore } from './sessionStore';
-import { manager } from '../../models/matchesManager';
+import { matchService } from '../../../services/matchService';
+import { sessionStore } from '../../util/socket/sessionStore';
+import { manager } from '../../../models/matchesManager';
 
 export class MatchSocketController {
   private matchService = matchService;

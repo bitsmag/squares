@@ -1,5 +1,5 @@
 import { Socket } from 'socket.io';
-import { matchSocketController } from '../../controllers/sockets/matchSocketController';
+import { matchSocketController } from './matchSocketController';
 
 export function respond(socket: Socket): void {
   const controller = matchSocketController;

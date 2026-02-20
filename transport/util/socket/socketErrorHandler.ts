@@ -1,7 +1,7 @@
-import type { Match } from '../../models/match';
-import type { Player } from '../../models/player';
-import { sessionStore } from '.././../controllers/sockets/sessionStore';
-import { broadcastToMatch } from '../transport';
+import type { Match } from '../../../models/match';
+import type { Player } from '../../../models/player';
+import { sessionStore } from './sessionStore';
+import { broadcastToMatch } from './transport';
 
 // Centralized socket error handler — emits a `fatalError` event to all players and destroys the match.
 function fatalErrorHandler(match: Match | undefined, err: unknown): void {

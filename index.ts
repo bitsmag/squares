@@ -4,13 +4,13 @@ import { Server as SocketIOServer, Socket } from 'socket.io';
 import path from 'path';
 import nunjucks from 'nunjucks';
 import helmet from 'helmet';
-import { initTransport } from './infrastructure/transport';
+import { initTransport } from './transport/util/socket/transport';
 
-import * as createMatchSockets from './infrastructure/sockets/createMatchLobbyListeners';
-import * as matchSockets from './infrastructure/sockets/matchListeners';
-import createMatchLobbyRouter from './infrastructure/http/createMatchLobbyRouter';
-import matchRouter from './infrastructure/http/matchRouter';
-import errorHandler from './infrastructure/middleware/errorHandler';
+import * as createMatchSockets from './transport/createMatchLobby/socket/createMatchLobbyListeners';
+import * as matchSockets from './transport/match/socket/matchListeners';
+import createMatchLobbyRouter from './transport/createMatchLobby/http/createMatchLobbyRouter';
+import matchRouter from './transport/match/http/matchRouter';
+import errorHandler from './transport/util/http/errorHandler';
 
 const app = express();
 const httpServer = createServer(app);

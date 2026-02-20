@@ -1,4 +1,4 @@
-import * as matchSocketEmitters from '../infrastructure/sockets/matchEmitters';
+import * as matchSocketEmitters from '../transport/match/socket/matchEmitters';
 import type { Match } from '../models/match';
 
 export class MatchStartCoordinator {

@@ -1,7 +1,7 @@
 import type { Request, Response } from 'express';
-import { Match } from '../../models/match';
-import { manager } from '../../models/matchesManager';
-import { Player } from '../../models/player';
+import { Match } from '../../../models/match';
+import { manager } from '../../../models/matchesManager';
+import { Player } from '../../../models/player';
 
 export type CreateMatchLobbyParams = { playerName: string };
 export type CreateMatchLobbyGuestParams = { playerName: string; matchId: string };

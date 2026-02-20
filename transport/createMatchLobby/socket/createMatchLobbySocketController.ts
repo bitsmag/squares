@@ -1,14 +1,14 @@
-import * as validation from '../../infrastructure/middleware/validation';
+import * as validation from '../../util/validation';
 import type {
   RegisterPlayerLobbyParams,
   MatchStartInitiationParams,
-} from '../../infrastructure/middleware/validation';
+} from '../../util/validation';
 import type { Socket } from 'socket.io';
-import { createMatchLobbyService } from '../../services/createMatchLobbyService';
-import { sessionStore } from './sessionStore';
-import { manager } from '../../models/matchesManager';
-import socketErrorHandler from '../../infrastructure/middleware/socketErrorHandler';
-import * as createMatchLobbyEmitters from '../../infrastructure/sockets/createMatchLobbyEmitters';
+import { createMatchLobbyService } from '../../../services/createMatchLobbyService';
+import { sessionStore } from '../../util/socket/sessionStore';
+import { manager } from '../../../models/matchesManager';
+import socketErrorHandler from '../../util/socket/socketErrorHandler';
+import * as createMatchLobbyEmitters from './createMatchLobbyEmitters';
 
 export class CreateMatchLobbySocketController {
   private createMatchLobbyService = createMatchLobbyService;

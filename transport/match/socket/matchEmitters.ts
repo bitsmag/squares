@@ -1,8 +1,8 @@
-import socketErrorHandler from '../middleware/socketErrorHandler';
-import type { Match } from '../../models/match';
-import type { Player } from '../../models/player';
-import { sessionStore } from '../../controllers/sockets/sessionStore';
-import { broadcastToMatch } from '../transport';
+import socketErrorHandler from '../../util/socket/socketErrorHandler';
+import type { Match } from '../../../models/match';
+import type { Player } from '../../../models/player';
+import { sessionStore } from '../../util/socket/sessionStore';
+import { broadcastToMatch } from '../../util/socket/transport';
 
 type PlayerStatus = { pos: number | null; dir: string | null; doubleSpeed: boolean | null };
 type Specials = { doubleSpeed: number[]; getPoints: number[] };

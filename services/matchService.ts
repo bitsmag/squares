@@ -1,6 +1,6 @@
 import { manager } from '../models/matchesManager';
-import * as matchSocketEmitters from '../infrastructure/sockets/matchEmitters';
-import { sessionStore } from '../controllers/sockets/sessionStore';
+import * as matchSocketEmitters from '../transport/match/socket/matchEmitters';
+import { sessionStore } from '../transport/util/socket/sessionStore';
 import { matchStartCoordinator } from './matchStartCoordinator';
 import type { Match } from '../models/match';
 import type { Player } from '../models/player';

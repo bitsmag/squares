@@ -1,11 +1,12 @@
 import type { Application } from 'express';
-import * as validation from '../middleware/validation';
+import * as validation from '../../util/validation';
 import {
   handleCreateMatchLobbyHost,
   handleCreateMatchLobbyGuest,
-} from '../../controllers/http/createMatchLobbyController';
+} from './createMatchLobbyController';
 
 function createMatchLobbyRouter(app: Application): void {
+  
   app.get(
     '/createMatchLobby/:playerName',
     validation.validate('params', validation.schemas.createMatchParams),

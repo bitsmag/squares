@@ -1,5 +1,5 @@
 import { Socket } from 'socket.io';
-import { createMatchLobbySocketController } from '../../controllers/sockets/createMatchSocketController';
+import { createMatchLobbySocketController } from './createMatchLobbySocketController';
 
 export function respond(socket: Socket): void {
   const controller = createMatchLobbySocketController;

@@ -1,4 +1,4 @@
-import socketErrorHandler from '../../infrastructure/middleware/socketErrorHandler';
+import socketErrorHandler from '../../transport/util/socket/socketErrorHandler';
 import type { Match } from '../../models/match';
 import type { Board } from '../../models/board';
 import type { Square } from '../../models/square';
