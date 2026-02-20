@@ -11,6 +11,6 @@ export function handleGetMatch(
     const { matchId, playerName } = req.params;
     res.render('match.html', { matchId: matchId, playerName: playerName });
   } catch (err) {
-    console.error('Error in handleGetMatch', err);
+    next(err);
   }
 }

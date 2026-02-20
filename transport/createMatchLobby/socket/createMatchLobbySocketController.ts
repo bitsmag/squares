@@ -62,7 +62,9 @@ export class CreateMatchLobbySocketController {
       createMatchLobbyEmitters.sendMatchStartInitiationEvent(
         manager.getMatch(matchIdResult.value.matchId)
       );
-    } catch (err) {}
+    } catch (err) {
+      console.error('Error in handleMatchStartInitiation', err);
+    }
   }
 
   handleDisconnectLobby(socket: Socket): void {

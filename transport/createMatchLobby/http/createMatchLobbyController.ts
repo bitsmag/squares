@@ -1,4 +1,4 @@
-import type { Request, Response } from 'express';
+import type { NextFunction, Request, Response } from 'express';
 import { Match } from '../../../domain/models/match';
 import { manager } from '../../../domain/models/matchesManager';
 import { Player } from '../../../domain/models/player';
@@ -8,7 +8,8 @@ export type CreateMatchLobbyGuestParams = { playerName: string; matchId: string 
 
 export function handleCreateMatchLobbyHost(
   req: Request<CreateMatchLobbyParams>,
-  res: Response
+  res: Response,
+  next: NextFunction
 ): void {
   try {
     const playerName = req.params.playerName;
@@ -26,13 +27,14 @@ export function handleCreateMatchLobbyHost(
       },
     });
   } catch (err) {
-    console.error('Error in handleCreateMatchLobbyHost', err);
+    next(err);
   }
 }
 
 export function handleCreateMatchLobbyGuest(
   req: Request<CreateMatchLobbyGuestParams>,
-  res: Response
+  res: Response,
+  next: NextFunction
 ): void {
   try {
     const playerName = req.params.playerName;
@@ -47,6 +49,6 @@ export function handleCreateMatchLobbyGuest(
       },
     });
   } catch (err) {
-    console.error('Error in handleCreateMatchLobbyGuest', err);
+    next(err);
   }
 }
