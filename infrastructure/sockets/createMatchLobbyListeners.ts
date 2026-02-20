@@ -1,9 +1,8 @@
 import { Socket } from 'socket.io';
-import { CreateMatchLobbySocketController } from '../../controllers/sockets/createMatchSocketController';
+import { createMatchLobbySocketController } from '../../controllers/sockets/createMatchSocketController';
 
 export function respond(socket: Socket): void {
-
-  const controller = new CreateMatchLobbySocketController();
+  const controller = createMatchLobbySocketController;
 
   socket.on('registerPlayerLobby', function (playerInfo: unknown) {
     controller.registerPlayerLobby(playerInfo, socket);

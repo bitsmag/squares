@@ -1,7 +1,6 @@
 import { Board } from './board';
 import { MatchEngine } from '../engine/matchEngine';
 import { manager } from './matchesManager';
-import socketErrorHandler from '../infrastructure/middleware/socketErrorHandler';
 import type { Player } from './player';
 import type { PlayerColor } from '../engine/utilities/positionCalc';
 
@@ -41,6 +40,14 @@ export class Match {
     const foundPlayer = this.players.find((p) => p.getName() === playerName);
     if (!foundPlayer) {
       throw new Error('playerNotFound in match.getPlayer');
+    }
+    return foundPlayer;
+  }
+
+  getPlayerById(playerId: string): Player {
+    const foundPlayer = this.players.find((p) => p.getId() === playerId);
+    if (!foundPlayer) {
+      throw new Error('playerNotFound in match.getPlayerById');
     }
     return foundPlayer;
   }
@@ -132,39 +139,23 @@ export class Match {
 
   updatePlayers(playerPositions: Record<PlayerColor, number>): void {
     (Object.keys(playerPositions) as PlayerColor[]).forEach((color) => {
-      try {
-        const player = this.getPlayerByColor(color);
-        player.setPosition(playerPositions[color]);
-      } catch (err) {
-        socketErrorHandler(this, err);
-      }
+      const player = this.getPlayerByColor(color);
+      player.setPosition(playerPositions[color]);
     });
   }
 
   updateBoard(playerPositions: Record<PlayerColor, number>): void {
     (Object.keys(playerPositions) as PlayerColor[]).forEach((color) => {
-      try {
-        this.getBoard().getSquare(playerPositions[color]).setColor(color);
-      } catch (err) {
-        socketErrorHandler(this, err);
-      }
+      this.getBoard().getSquare(playerPositions[color]).setColor(color);
     });
   }
 
   updateSpecials(specials: { doubleSpeed: number[]; getPoints: number[] }): void {
     if (specials.doubleSpeed.length) {
-      try {
-        this.getBoard().getSquare(specials.doubleSpeed[0]).setDoubleSpeedSpecial(true);
-      } catch (err) {
-        socketErrorHandler(this, err);
-      }
+      this.getBoard().getSquare(specials.doubleSpeed[0]).setDoubleSpeedSpecial(true);
     }
     if (specials.getPoints.length) {
-      try {
-        this.getBoard().getSquare(specials.getPoints[0]).setGetPointsSpecial(true);
-      } catch (err) {
-        socketErrorHandler(this, err);
-      }
+      this.getBoard().getSquare(specials.getPoints[0]).setGetPointsSpecial(true);
     }
   }
 

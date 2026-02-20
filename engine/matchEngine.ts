@@ -1,8 +1,5 @@
 import * as positionCalc from './utilities/positionCalc';
-import type {
-  PlayerColor,
-  PlayerPositions as RawPlayerPositions,
-} from './utilities/positionCalc';
+import type { PlayerColor, PlayerPositions as RawPlayerPositions } from './utilities/positionCalc';
 import * as circuitsCheck from './utilities/circuitsCheck';
 import * as randomSpecials from './utilities/randomSpecials';
 import * as matchSocketService from '../infrastructure/sockets/matchEmitters';

@@ -1,32 +1,34 @@
 import socketErrorHandler from '../middleware/socketErrorHandler';
 import type { Match } from '../../models/match';
 import type { Player } from '../../models/player';
+import { sessionStore } from '../../controllers/sockets/sessionStore';
+import { getIo } from './io';
 
 type PlayerStatus = { pos: number | null; dir: string | null; doubleSpeed: boolean | null };
 type Specials = { doubleSpeed: number[]; getPoints: number[] };
 type ClearSquare = { id: number; color: string };
 type Scores = Record<string, number | null>;
 
-
 export function sendPrepareMatchEvent(match: Match): void {
   const board = match.getBoard();
   const playersData: { playerName: string; playerColor: string }[] = [];
-
-  const players = match.getPlayers();
-  for (let i = 0; i < players.length; i++) {
-    playersData[i] = {
-      playerName: players[i].name,
-      playerColor: players[i].color,
-    };
-  }
-
   const data = { players: playersData, board: board };
-  for (let i = 0; i < players.length; i++) {
-    const socket = match.getPlayers()[i].getSocket();
+
+  const namespace = '/matchSockets';
+  sessionStore.getSocketIdsForMatch(match.getId()).forEach((socketId) => {
+    const io = getIo();
+    const socket = io.of(namespace).sockets.get(socketId);
     if (socket) {
       socket.emit('prepareMatch', data);
+    } else {
+      console.warn(
+        'emit prepareMatch: socket not found for id',
+        socketId,
+        'in namespace',
+        namespace
+      );
     }
-  }
+  });
 }
 
 export function sendUpdateBoardEvent(match: Match, specials: Specials): void {
@@ -54,19 +56,27 @@ export function sendUpdateBoardEvent(match: Match, specials: Specials): void {
       socketErrorHandler(match, err);
     }
   }
-
   const data = {
     playerStatuses: playerStatuses,
     specials: specials,
     duration: match.getDuration(),
   };
-  for (let i = 0; i < match.getPlayers().length; i++) {
-    const player = match.getPlayers()[i];
-    const socket = player?.getSocket();
+
+  const namespace = '/matchSockets';
+  sessionStore.getSocketIdsForMatch(match.getId()).forEach((socketId) => {
+    const io = getIo();
+    const socket = io.of(namespace).sockets.get(socketId);
     if (socket) {
       socket.emit('updateBoard', data);
+    } else {
+      console.warn(
+        'emit updateBoard: socket not found for id',
+        socketId,
+        'in namespace',
+        namespace
+      );
     }
-  }
+  });
 }
 
 export function sendClearSquaresEvent(
@@ -75,13 +85,22 @@ export function sendClearSquaresEvent(
   clearSpecials: number[]
 ): void {
   const data = { clearSquares: clearSquares, clearSpecials: clearSpecials };
-  for (let i = 0; i < match.getPlayers().length; i++) {
-    const player = match.getPlayers()[i];
-    const socket = player?.getSocket();
+
+  const namespace = '/matchSockets';
+  sessionStore.getSocketIdsForMatch(match.getId()).forEach((socketId) => {
+    const io = getIo();
+    const socket = io.of(namespace).sockets.get(socketId);
     if (socket) {
       socket.emit('clearSquares', data);
+    } else {
+      console.warn(
+        'emit clearSquares: socket not found for id',
+        socketId,
+        'in namespace',
+        namespace
+      );
     }
-  }
+  });
 }
 
 export function sendUpdateScoreEvent(match: Match): void {
@@ -102,48 +121,61 @@ export function sendUpdateScoreEvent(match: Match): void {
   }
 
   const data = { scores: scores };
-  for (let i = 0; i < match.getPlayers().length; i++) {
-    const player = match.getPlayers()[i];
-    const socket = player?.getSocket();
+
+  const namespace = '/matchSockets';
+  sessionStore.getSocketIdsForMatch(match.getId()).forEach((socketId) => {
+    const io = getIo();
+    const socket = io.of(namespace).sockets.get(socketId);
     if (socket) {
       socket.emit('updateScore', data);
+    } else {
+      console.warn(
+        'emit updateScore: socket not found for id',
+        socketId,
+        'in namespace',
+        namespace
+      );
     }
-  }
+  });
 }
 
 export function sendMatchEndEvent(match: Match): void {
-  for (let i = 0; i < match.getPlayers().length; i++) {
-    const player = match.getPlayers()[i];
-    const socket = player?.getSocket();
+  const namespace = '/matchSockets';
+  sessionStore.getSocketIdsForMatch(match.getId()).forEach((socketId) => {
+    const io = getIo();
+    const socket = io.of(namespace).sockets.get(socketId);
     if (socket) {
       socket.emit('matchEnd');
+    } else {
+      console.warn('emit matchEnd: socket not found for id', socketId, 'in namespace', namespace);
     }
-  }
+  });
 }
 
 export function sendCountdownEvent(match: Match): void {
   const data = { countdownDuration: match.getCountdownDuration() };
-  for (let i = 0; i < match.getPlayers().length; i++) {
-    const player = match.getPlayers()[i];
-    const socket = player?.getSocket();
+
+  const namespace = '/matchSockets';
+  sessionStore.getSocketIdsForMatch(match.getId()).forEach((socketId) => {
+    const io = getIo();
+    const socket = io.of(namespace).sockets.get(socketId);
     if (socket) {
       socket.emit('countdown', data);
+    } else {
+      console.warn('emit countdown: socket not found for id', socketId, 'in namespace', namespace);
     }
-  }
+  });
 }
 
 export function sendFatalErrorEvent(match: Match): void {
-  for (let i = 0; i < match.getPlayers().length; i++) {
-    try {
-      const player = match.getPlayers()[i];
-      const socket = player?.getSocket();
-      if (socket) {
-        socket.emit('fatalError');
-      }
-    } catch (e) {
-      // ignore per-player emit errors
+  const namespace = '/matchSockets';
+  sessionStore.getSocketIdsForMatch(match.getId()).forEach((socketId) => {
+    const io = getIo();
+    const socket = io.of(namespace).sockets.get(socketId);
+    if (socket) {
+      socket.emit('fatalError');
+    } else {
+      console.warn('emit fatalError: socket not found for id', socketId, 'in namespace', namespace);
     }
-  }
+  });
 }
-
-// CommonJS compatibility

@@ -1,4 +1,3 @@
-import type { Socket } from 'socket.io';
 import { randomUUID } from 'crypto';
 import type { Match } from './match';
 
@@ -11,7 +10,6 @@ export class Player {
   score: number;
   doubleSpeedSpecial: boolean;
   host: boolean;
-  socket: Socket | null;
 
   constructor(name: string, match: Match, host: boolean) {
     this.id = randomUUID();
@@ -22,7 +20,6 @@ export class Player {
     this.score = 0;
     this.doubleSpeedSpecial = false;
     this.host = host;
-    this.socket = null;
 
     if (!match.isActive()) {
       const unusedColor = getUnusedColor(match);
@@ -66,18 +63,10 @@ export class Player {
     return this.host;
   }
 
-  getSocket(): Socket | null {
-    return this.socket;
-  }
-
   setActiveDirection(dir: string): void {
     if (dir === 'left' || dir === 'right' || dir === 'up' || dir === 'down') {
       this.activeDirection = dir;
     }
-  }
-
-  setSocket(socket: Socket | null): void {
-    this.socket = socket;
   }
 
   setPosition(pos: number): void {

@@ -9,7 +9,7 @@ export type MatchRouteParams = {
   matchId: string;
   playerName: string;
 };
-export type RegisterPlayerLobbyParams = { matchId: string; playerName: string, isHost: boolean };
+export type RegisterPlayerLobbyParams = { matchId: string; playerName: string; isHost: boolean };
 export type RegisterPlayerMatchParams = { matchId: string; playerName: string };
 export type MatchStartInitiationParams = { matchId: string };
 
@@ -20,7 +20,7 @@ export const schemas = {
   }),
   createMatchLobbyGuestParams: Joi.object<CreateMatchLobbyGuestParams>({
     playerName: Joi.string().alphanum().min(1).max(12).required(),
-    matchId: Joi.string().alphanum().min(1).required()
+    matchId: Joi.string().alphanum().min(1).required(),
   }),
   matchRouteParams: Joi.object<MatchRouteParams>({
     matchCreatorFlag: Joi.string().valid('t', 'f').required(),
@@ -36,8 +36,8 @@ export const schemas = {
     matchId: Joi.string().alphanum().min(1).required(),
     playerName: Joi.string().alphanum().min(1).max(12).required(),
   }),
-    matchStartInitiationParams: Joi.object<MatchStartInitiationParams>({
-    matchId: Joi.string().alphanum().min(1).required()
+  matchStartInitiationParams: Joi.object<MatchStartInitiationParams>({
+    matchId: Joi.string().alphanum().min(1).required(),
   }),
 };
 

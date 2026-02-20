@@ -1,62 +1,34 @@
 import { manager } from '../models/matchesManager';
-import * as createMatchLobbyEmitters from '../infrastructure/sockets/createMatchLobbyEmitters';
-import { sessionStore } from '../infrastructure/sockets/sessionStore';
-import socketErrorHandler from '../infrastructure/middleware/socketErrorHandler';
-import type { Match } from '../models/match';
-import type { Player } from '../models/player';
-import type { Socket } from 'socket.io';
+
+export type DisconnectionSource =
+  | { type: 'HOST_LEFT' }
+  | { type: 'GUEST_LEFT' }
+  | { type: 'LOBBY_CLOSED' };
 
 export class CreateMatchLobbyService {
-
-  handlerRegisterPlayer(matchId: string, playerName: string, socket: Socket): void {
-    let match: Match | undefined = undefined;
-    let player: Player | undefined = undefined;
-    try {
-      match = manager.getMatch(matchId);
-      player = match.getPlayer(playerName); 
-    } catch (err) {
-      socketErrorHandler(match, err);
-      return;
-    }
-    if (!player) return;
-    player.setSocket(socket);
-    // register session globally (store both name and id)
-    sessionStore.register(socket, '/createMatchSockets', matchId, playerName, player.getId());
-    createMatchLobbyEmitters.sendPlayerConnectedEvent(match, player);
+  handleMatchStartInitiation(matchId: string): void {
+    const match = manager.getMatch(matchId);
+    match.setStartInitiated(true);
   }
 
-  handleMatchStartInitiation(matchId: string): void {
-    try {
-      const match = manager.getMatch(matchId);
-      match.setStartInitiated(true);
-      createMatchLobbyEmitters.sendMatchStartInitiationEvent(match);
-    } catch (err) {
-      socketErrorHandler(undefined as unknown as Match, err);
-    }
-}
-
-  handleDisconnectLobby(socket: Socket): void {
-    // unregister session and get session info
-    const session = sessionStore.unregister(socket);
-    if (!session || !session.matchId || !session.playerName) return;
-
-    try {
-      const match = manager.getMatch(session.matchId);
-      if (match.isStartInitiated()) return; // when match start is initiated players get redirected to match and new socket connection gets established, not to worry...
-      
-      const player = match.getPlayer(session.playerName);
+  handleDisconnectLobby(matchId: string, playerName: string): DisconnectionSource {
+    const match = manager.getMatch(matchId);
+    if (match.isStartInitiated()) {
+      // when match start is initiated players get redirected to match and a new connection gets established, not to worry...
+      return { type: 'LOBBY_CLOSED' };
+    } else {
+      // if disconnect was not due to match start, we need to handle it
+      const player = match.getPlayer(playerName);
       if (player.isHost()) {
-        createMatchLobbyEmitters.sendHostDisconnectedEvent(match);
         match.removePlayer(player);
         match.destroy();
+        return { type: 'HOST_LEFT' };
       } else {
         match.removePlayer(player);
-        createMatchLobbyEmitters.sendPlayerDisconnectedEvent(match, player);
+        return { type: 'GUEST_LEFT' };
       }
-    } catch (err) {
-      socketErrorHandler(undefined as unknown as Match, err);
     }
   }
-
-
 }
+
+export const createMatchLobbyService = new CreateMatchLobbyService();

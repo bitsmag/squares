@@ -6,7 +6,13 @@ export class SessionStore {
   private sessions = new Map<string, Session>();
   private playerToSocket = new Map<string, string>();
 
-  register(socket: Socket, namespace: string, matchId?: string, playerName?: string, playerId?: string): void {
+  register(
+    socket: Socket,
+    namespace: string,
+    matchId?: string,
+    playerName?: string,
+    playerId?: string
+  ): void {
     this.sessions.set(socket.id, { namespace, matchId, playerName, playerId });
     if (playerId) this.playerToSocket.set(playerId, socket.id);
   }
@@ -28,6 +34,16 @@ export class SessionStore {
     return this.playerToSocket.get(playerId);
   }
 
+  getPlayerIdForSocket(socketId: string): string | undefined {
+    const session = this.sessions.get(socketId);
+    return session?.playerId;
+  }
+
+  getMatchIdForSocket(socketId: string): string | undefined {
+    const session = this.sessions.get(socketId);
+    return session?.matchId;
+  }
+
   getConnectedPlayers(matchId: string, namespace = '/matchSockets'): string[] {
     const out: string[] = [];
     for (const [, s] of this.sessions) {
@@ -38,9 +54,14 @@ export class SessionStore {
     return out;
   }
 
-  areAllPlayersConnected(matchId: string, expectedCount: number, namespace = '/matchSockets'): boolean {
-    const connected = this.getConnectedPlayers(matchId, namespace).length;
-    return connected >= expectedCount;
+  getSocketIdsForMatch(matchId: string, namespace = '/matchSockets'): string[] {
+    const out: string[] = [];
+    for (const [socketId, s] of this.sessions) {
+      if (s.namespace === namespace && s.matchId === matchId) {
+        out.push(socketId);
+      }
+    }
+    return out;
   }
 }
 

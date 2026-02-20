@@ -1,46 +1,94 @@
 import * as validation from '../../infrastructure/middleware/validation';
-import type { RegisterPlayerLobbyParams, MatchStartInitiationParams } from '../../infrastructure/middleware/validation';
+import type {
+  RegisterPlayerLobbyParams,
+  MatchStartInitiationParams,
+} from '../../infrastructure/middleware/validation';
 import type { Socket } from 'socket.io';
-import { CreateMatchLobbyService } from '../../services/createMatchLobbyService';
+import { createMatchLobbyService } from '../../services/createMatchLobbyService';
+import { sessionStore } from './sessionStore';
+import { manager } from '../../models/matchesManager';
 import socketErrorHandler from '../../infrastructure/middleware/socketErrorHandler';
+import * as createMatchLobbyEmitters from '../../infrastructure/sockets/createMatchLobbyEmitters';
 
 export class CreateMatchLobbySocketController {
+  private createMatchLobbyService = createMatchLobbyService;
 
-  private createMatchLobbyService: CreateMatchLobbyService;
-
-  constructor() {
-    this.createMatchLobbyService = new CreateMatchLobbyService();
-  }
+  constructor() {}
 
   registerPlayerLobby(playerInfo: unknown, socket: Socket): void {
-    const playerInfoResult = validation.validateSocketPayload<RegisterPlayerLobbyParams>(
-      validation.schemas.registerPlayerLobbyParams,
-      playerInfo || {}
-    );
-    if (!playerInfoResult.valid) {
-      socketErrorHandler(undefined, new Error('Invalid registerPlayerLobby payload in CreateMatchLobbySocketController.registerPlayerLobby'));
-      return;
+    try {
+      const playerInfoResult = validation.validateSocketPayload<RegisterPlayerLobbyParams>(
+        validation.schemas.registerPlayerLobbyParams,
+        playerInfo || {}
+      );
+      if (!playerInfoResult.valid) {
+        socketErrorHandler(
+          undefined,
+          new Error(
+            'Invalid registerPlayerLobby payload in CreateMatchLobbySocketController.registerPlayerLobby'
+          )
+        );
+        return;
+      }
+      const matchId = playerInfoResult.value.matchId;
+      const playerName = playerInfoResult.value.playerName;
+      const playerId = manager.getMatch(matchId).getPlayer(playerName).getId();
+      sessionStore.register(socket, '/createMatchSockets', matchId, playerName, playerId);
+      createMatchLobbyEmitters.sendPlayerConnectedEvent(
+        manager.getMatch(matchId),
+        manager.getMatch(matchId).getPlayer(playerName)
+      );
+    } catch (err) {
+      console.error('Error in registerPlayerLobby', err);
     }
-    const matchId = playerInfoResult.value.matchId;
-    const playerName = playerInfoResult.value.playerName;
-    this.createMatchLobbyService.handlerRegisterPlayer(matchId, playerName, socket);
   }
 
   handleMatchStartInitiation(matchId: unknown): void {
-    const matchIdResult = validation.validateSocketPayload<MatchStartInitiationParams>(
-      validation.schemas.matchStartInitiationParams,
-      matchId || {}
-    );
-    if (!matchIdResult.valid) {
-      socketErrorHandler(undefined, new Error('Invalid matchStartInitiation payload in CreateMatchLobbySocketController.handleMatchStartInitiation')
+    try {
+      const matchIdResult = validation.validateSocketPayload<MatchStartInitiationParams>(
+        validation.schemas.matchStartInitiationParams,
+        matchId || {}
       );
-      return;
-    }
-    this.createMatchLobbyService.handleMatchStartInitiation(matchIdResult.value.matchId);
+      if (!matchIdResult.valid) {
+        socketErrorHandler(
+          undefined,
+          new Error(
+            'Invalid matchStartInitiation payload in CreateMatchLobbySocketController.handleMatchStartInitiation'
+          )
+        );
+        return;
+      }
+      this.createMatchLobbyService.handleMatchStartInitiation(matchIdResult.value.matchId);
+      createMatchLobbyEmitters.sendMatchStartInitiationEvent(
+        manager.getMatch(matchIdResult.value.matchId)
+      );
+    } catch (err) {}
   }
 
   handleDisconnectLobby(socket: Socket): void {
-      this.createMatchLobbyService.handleDisconnectLobby(socket);
+    try {
+      const session = sessionStore.unregister(socket);
+      if (session && session.matchId && session.playerName) {
+        const disconnectionSource = this.createMatchLobbyService.handleDisconnectLobby(
+          session.matchId,
+          session.playerName
+        );
+        switch (disconnectionSource.type) {
+          case 'HOST_LEFT':
+            createMatchLobbyEmitters.sendHostDisconnectedEvent(session.matchId);
+            break;
+          case 'GUEST_LEFT':
+            createMatchLobbyEmitters.sendPlayerDisconnectedEvent(manager.getMatch(session.matchId));
+            break;
+          case 'LOBBY_CLOSED':
+            // nothing to do
+            break;
+        }
+      }
+    } catch (err) {
+      console.error('Error in handleDisconnectLobby', err);
+    }
   }
-
 }
+
+export const createMatchLobbySocketController = new CreateMatchLobbySocketController();

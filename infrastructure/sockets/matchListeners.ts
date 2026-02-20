@@ -1,31 +1,30 @@
 import { Socket } from 'socket.io';
-import { MatchSocketController } from '../../controllers/sockets/matchSocketController';
+import { matchSocketController } from '../../controllers/sockets/matchSocketController';
 
 export function respond(socket: Socket): void {
-  
-  const controller = new MatchSocketController();
+  const controller = matchSocketController;
 
   socket.on('registerPlayerMatch', function (playerInfo: unknown) {
     controller.handleRegisterPlayerAndStartMatch(playerInfo, socket);
   });
 
   socket.on('disconnect', function () {
-    controller.handleDisconnectMatch(socket);
+    controller.handleDisconnectMatch(socket.id);
   });
 
   socket.on('goLeft', function () {
-    controller.handleDirection('left');
+    controller.handleDirection('left', socket.id);
   });
 
   socket.on('goUp', function () {
-    controller.handleDirection('up');
+    controller.handleDirection('up', socket.id);
   });
 
   socket.on('goRight', function () {
-    controller.handleDirection('right');
+    controller.handleDirection('right', socket.id);
   });
 
   socket.on('goDown', function () {
-    controller.handleDirection('down');
+    controller.handleDirection('down', socket.id);
   });
 }
