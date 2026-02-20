@@ -1,5 +1,10 @@
-import { getIo } from './sockets/io';
+import type { Server as SocketIOServer } from 'socket.io';
 import { sessionStore } from '../controllers/sockets/sessionStore';
+
+let ioInstance: SocketIOServer | null = null;
+export function initTransport(io: SocketIOServer): void {
+  ioInstance = io;
+}
 
 export function sendToSocketId(
   namespace: string,
@@ -8,7 +13,11 @@ export function sendToSocketId(
   payload?: unknown
 ): void {
   try {
-    const io = getIo();
+    const io = ioInstance;
+    if (!io) {
+      console.warn('transport: io not initialized');
+      return;
+    }
     const nsp = io.of(namespace);
     const socket = nsp.sockets.get(socketId);
     if (socket) {
@@ -33,4 +42,4 @@ export function broadcastToMatch(
   }
 }
 
-export default { sendToSocketId, broadcastToMatch };
+export default { initTransport, sendToSocketId, broadcastToMatch };

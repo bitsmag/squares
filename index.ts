@@ -4,7 +4,7 @@ import { Server as SocketIOServer, Socket } from 'socket.io';
 import path from 'path';
 import nunjucks from 'nunjucks';
 import helmet from 'helmet';
-import { setIo } from './infrastructure/sockets/io';
+import { initTransport } from './infrastructure/transport';
 
 import * as createMatchSockets from './infrastructure/sockets/createMatchLobbyListeners';
 import * as matchSockets from './infrastructure/sockets/matchListeners';
@@ -15,7 +15,7 @@ import errorHandler from './infrastructure/middleware/errorHandler';
 const app = express();
 const httpServer = createServer(app);
 const io = new SocketIOServer(httpServer);
-setIo(io);
+initTransport(io);
 // Use project root for assets so compiled dist build can find original files
 const projectRoot = process.cwd();
 const viewsPath = path.join(projectRoot, 'views');
