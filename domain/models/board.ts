@@ -63,13 +63,13 @@ export class Board {
 
   getSquare(id: number): Square {
     const found = this.squares.find((sq) => sq.getId() === id);
-    if (!found) throw new Error('squareNotFound');
+    if (!found) throw new Error('squareNotFoundById');
     return found;
   }
 
   getSquareByCoordinates(x: number, y: number): Square {
     const found = this.squares.find((sq) => sq.getPosition().x === x && sq.getPosition().y === y);
-    if (!found) throw new Error('squareNotFound');
+    if (!found) throw new Error('squareNotFoundByCoordinates');
     return found;
   }
 }

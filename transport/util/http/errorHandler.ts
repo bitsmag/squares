@@ -17,15 +17,6 @@ function errorHandler(err: unknown, req: Request, res: Response, _next: NextFunc
   const stack = isErrorLike(err) && typeof err.stack === 'string' ? err.stack : undefined;
   console.error('Error (%s):', context, stack ?? err);
 
-  if (req.originalUrl && req.originalUrl.startsWith('/')) {
-    if (isErrorLike(err) && err.message === 'matchNotFound') {
-      res.status(404).render('error.html', {
-        errorMessage: 'The match you are looking for was not found.',
-      });
-      return;
-    }
-  }
-
   const statusCode = isErrorLike(err) && typeof err.status === 'number' ? err.status : 500;
   const userMessage =
     isErrorLike(err) && typeof err.userMessage === 'string'
