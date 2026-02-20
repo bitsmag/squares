@@ -2,17 +2,30 @@ import * as positionCalc from './utilities/positionCalc';
 import type { PlayerColor, PlayerPositions as RawPlayerPositions } from './utilities/positionCalc';
 import * as circuitsCheck from './utilities/circuitsCheck';
 import * as randomSpecials from './utilities/randomSpecials';
-import * as matchSocketService from '../transport/match/socket/matchEmitters';
-import socketErrorHandler from '../transport/util/socket/socketErrorHandler';
 import type { Match } from '../models/match';
+
+export type MatchEmitter = {
+  sendCountdownEvent(match: Match): void;
+  sendMatchEndEvent(match: Match): void;
+  sendUpdateBoardEvent(match: Match, specials: unknown): void;
+  sendClearSquaresEvent(match: Match, clearSquares: unknown[], clearSpecials: number[]): void;
+  sendUpdateScoreEvent(match: Match): void;
+  sendFatalErrorEvent(match: Match): void;
+};
+
+export type MatchErrorHandler = (match: Match | undefined, err: unknown) => void;
 
 type PlayerPositions = RawPlayerPositions;
 
 export class MatchEngine {
   match: Match;
+  private emitter: MatchEmitter;
+  private errorHandler: MatchErrorHandler;
 
-  constructor(match: Match) {
+  constructor(match: Match, emitter: MatchEmitter, errorHandler: MatchErrorHandler) {
     this.match = match;
+    this.emitter = emitter;
+    this.errorHandler = errorHandler;
   }
 
   startMatch(): void {
@@ -21,7 +34,7 @@ export class MatchEngine {
         clearInterval(countdownDurationDecrementInterval);
       } else {
         this.match.countdownDurationDecrement();
-        matchSocketService.sendCountdownEvent(this.match);
+        this.emitter.sendCountdownEvent(this.match);
         if (this.match.getCountdownDuration() === 0) {
           clearInterval(countdownDurationDecrementInterval);
           this.timer();
@@ -52,7 +65,7 @@ export class MatchEngine {
     const tick = () => {
       tickCount++;
       if (!this.match.isActive()) {
-        matchSocketService.sendMatchEndEvent(this.match);
+        this.emitter.sendMatchEndEvent(this.match);
         clearInterval(tickerInterval);
       } else {
         let playerPositions: PlayerPositions;
@@ -110,7 +123,7 @@ export class MatchEngine {
               clearSpecials.push(playerPositionSquare.getId());
             }
           } catch (err) {
-            socketErrorHandler(this.match, err);
+            this.errorHandler(this.match, err);
           }
         });
 
@@ -118,7 +131,7 @@ export class MatchEngine {
           try {
             this.match.getPlayerByColor(color).increaseScore(playerPoints[color].length);
           } catch (err) {
-            socketErrorHandler(this.match, err);
+            this.errorHandler(this.match, err);
           }
         });
 
@@ -133,9 +146,9 @@ export class MatchEngine {
         const specials = randomSpecials.getSpecials(this.match);
         this.match.updateSpecials(specials);
 
-        matchSocketService.sendUpdateBoardEvent(this.match, specials);
-        matchSocketService.sendClearSquaresEvent(this.match, clearSquares, clearSpecials);
-        matchSocketService.sendUpdateScoreEvent(this.match);
+        this.emitter.sendUpdateBoardEvent(this.match, specials);
+        this.emitter.sendClearSquaresEvent(this.match, clearSquares, clearSpecials);
+        this.emitter.sendUpdateScoreEvent(this.match);
       }
     };
     const tickerInterval = setInterval(tick, 250);

@@ -10,3 +10,5 @@ dist/
 .tags
 tags
 node_modules/
+
+models/tags

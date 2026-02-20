@@ -2,7 +2,7 @@ import socketErrorHandler from '../../util/socket/socketErrorHandler';
 import * as validation from '../../util/validation';
 import type { RegisterPlayerMatchParams } from '../../util/validation';
 import type { Socket } from 'socket.io';
-import { matchService } from '../../../services/matchService';
+import { matchService } from '../../../service/matchService';
 import { sessionStore } from '../../util/socket/sessionStore';
 import { manager } from '../../../models/matchesManager';
 

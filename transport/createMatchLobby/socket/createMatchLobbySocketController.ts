@@ -4,7 +4,7 @@ import type {
   MatchStartInitiationParams,
 } from '../../util/validation';
 import type { Socket } from 'socket.io';
-import { createMatchLobbyService } from '../../../services/createMatchLobbyService';
+import { createMatchLobbyService } from '../../../service/createMatchLobbyService';
 import { sessionStore } from '../../util/socket/sessionStore';
 import { manager } from '../../../models/matchesManager';
 import socketErrorHandler from '../../util/socket/socketErrorHandler';
