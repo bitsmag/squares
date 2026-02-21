@@ -12,10 +12,9 @@ export class MatchService {
     if (matchPresenceService.areAllPlayersConnected(matchId, expected)) {
       matchStartCoordinator.cancelCountdown(matchId);
       matchSocketEmitters.sendPrepareMatchEvent(match);
-      match.setActive(true);
-      match.getEngine().startMatch();
+      matchStartCoordinator.startMatch(match);
     } else {
-      matchStartCoordinator.startCountdown(match);
+      matchStartCoordinator.startMatchWithCountdown(match);
     }
   }
 

@@ -26,7 +26,7 @@ export class MatchSocketController {
       sessionStore.register(socket, '/matchSockets', matchId, playerName, playerId);
       this.matchService.handleRegisterPlayerAndStartMatch(matchId, playerName);
     } catch (err) {
-      console.error('Error in handleRegisterPlayerAndStartMatch', err);
+      socketErrorHandler(undefined, err);
     }
   }
 
@@ -38,7 +38,7 @@ export class MatchSocketController {
       this.matchService.handleDisconnectMatch(matchId, playerId);
       sessionStore.unregister(socketId);
     } catch (err) {
-      console.error('Error in handleDisconnectMatch', err);
+      socketErrorHandler(undefined, err);
     }
   }
 
@@ -49,7 +49,7 @@ export class MatchSocketController {
       if (!playerId || !matchId) return;
       this.matchService.setDirection(matchId, playerId, direction);
     } catch (err) {
-      console.error('Error in handleDirection', err);
+      socketErrorHandler(undefined, err);
     }
   }
 }

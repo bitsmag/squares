@@ -9,7 +9,7 @@ export function respond(socket: Socket): void {
   });
 
   socket.on('matchStartInitiation', function (matchId: unknown) {
-    controller.handleMatchStartInitiation(matchId);
+    controller.handleMatchStartInitiation(matchId, socket);
   });
 
   socket.on('disconnect', function () {

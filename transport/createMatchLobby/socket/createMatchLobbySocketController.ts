@@ -25,7 +25,7 @@ export class CreateMatchLobbySocketController {
         socketErrorHandler(
           undefined,
           new Error(
-            'Invalid registerPlayerLobby payload in CreateMatchLobbySocketController.registerPlayerLobby'
+            'Invalid registerPlayerLobby payload'
           )
         );
         return;
@@ -39,11 +39,11 @@ export class CreateMatchLobbySocketController {
         manager.getMatch(matchId).getPlayer(playerName)
       );
     } catch (err) {
-      console.error('Error in registerPlayerLobby', err);
+      socketErrorHandler(undefined, err);
     }
   }
 
-  handleMatchStartInitiation(matchId: unknown): void {
+  handleMatchStartInitiation(matchId: unknown, socket: Socket): void {
     try {
       const matchIdResult = validation.validateSocketPayload<MatchStartInitiationParams>(
         validation.schemas.matchStartInitiationParams,
@@ -53,7 +53,7 @@ export class CreateMatchLobbySocketController {
         socketErrorHandler(
           undefined,
           new Error(
-            'Invalid matchStartInitiation payload in CreateMatchLobbySocketController.handleMatchStartInitiation'
+            'Invalid matchStartInitiation payload'
           )
         );
         return;
@@ -63,7 +63,7 @@ export class CreateMatchLobbySocketController {
         manager.getMatch(matchIdResult.value.matchId)
       );
     } catch (err) {
-      console.error('Error in handleMatchStartInitiation', err);
+      socketErrorHandler(undefined, err);
     }
   }
 
@@ -88,7 +88,7 @@ export class CreateMatchLobbySocketController {
         }
       }
     } catch (err) {
-      console.error('Error in handleDisconnectLobby', err);
+      socketErrorHandler(undefined, err);
     }
   }
 }
