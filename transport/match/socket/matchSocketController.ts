@@ -34,13 +34,7 @@ export class MatchSocketController {
     try {
       const playerId = sessionStore.getPlayerIdForSocket(socketId);
       const matchId = sessionStore.getMatchIdForSocket(socketId);
-      if (!playerId || !matchId) {
-        socketErrorHandler(
-          undefined,
-          new Error('Could not find session for socket in handleDisconnectMatch')
-        );
-        return;
-      }
+      if (!playerId || !matchId) return;
       this.matchService.handleDisconnectMatch(matchId, playerId);
       sessionStore.unregister(socketId);
     } catch (err) {
@@ -52,13 +46,7 @@ export class MatchSocketController {
     try {
       const matchId = sessionStore.getMatchIdForSocket(socketId);
       const playerId = sessionStore.getPlayerIdForSocket(socketId);
-      if (!playerId || !matchId) {
-        socketErrorHandler(
-          undefined,
-          new Error('Could not find session for socket in handleDirection')
-        );
-        return;
-      }
+      if (!playerId || !matchId) return;
       this.matchService.setDirection(matchId, playerId, direction);
     } catch (err) {
       console.error('Error in handleDirection', err);
