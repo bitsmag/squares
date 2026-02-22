@@ -1,8 +1,6 @@
 import { Board } from './board';
-import { MatchEngine } from '../engine/matchEngine';
-import * as matchEmitters from '../../transport/match/socket/matchEmitters';
-import socketErrorHandler from '../../transport/util/socket/socketErrorHandler';
 import { manager } from './matchesManager';
+import type { MatchEngine } from '../engine/matchEngine';
 import type { Player } from './player';
 import type { PlayerColor } from '../engine/utilities/positionCalc';
 
@@ -20,7 +18,7 @@ export class Match {
     this.id = '';
     this.players = [];
     this.board = new Board();
-    this.engine = new MatchEngine(this, matchEmitters, socketErrorHandler);
+    this.engine = undefined as unknown as MatchEngine;
     this.duration = this.board.getMatchDuration();
     this.countdownDuration = this.board.getCountdownDuration();
     this.active = false;
@@ -68,6 +66,10 @@ export class Match {
 
   getEngine(): MatchEngine {
     return this.engine;
+  }
+
+  setEngine(engine: MatchEngine): void {
+    this.engine = engine;
   }
 
   getDuration(): number {

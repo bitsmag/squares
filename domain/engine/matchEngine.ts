@@ -3,29 +3,17 @@ import type { PlayerColor, PlayerPositions as RawPlayerPositions } from './utili
 import * as circuitsCheck from './utilities/circuitsCheck';
 import * as randomSpecials from './utilities/randomSpecials';
 import type { Match } from '../models/match';
-
-export type MatchEmitter = {
-  sendCountdownEvent(_match: Match): void;
-  sendMatchEndEvent(_match: Match): void;
-  sendUpdateBoardEvent(_match: Match, _specials: unknown): void;
-  sendClearSquaresEvent(_match: Match, _clearSquares: unknown[], _clearSpecials: number[]): void;
-  sendUpdateScoreEvent(_match: Match): void;
-  sendFatalErrorEvent(_match: Match): void;
-};
-
-export type MatchErrorHandler = (_match: Match | undefined, _err: unknown) => void;
+import type { ClearedSquare, MatchEventPublisher, MatchSpecials } from './matchEvents';
 
 type PlayerPositions = RawPlayerPositions;
 
 export class MatchEngine {
   match: Match;
-  private emitter: MatchEmitter;
-  private errorHandler: MatchErrorHandler;
+  private publisher: MatchEventPublisher;
 
-  constructor(match: Match, emitter: MatchEmitter, errorHandler: MatchErrorHandler) {
+  constructor(match: Match, publisher: MatchEventPublisher) {
     this.match = match;
-    this.emitter = emitter;
-    this.errorHandler = errorHandler;
+    this.publisher = publisher;
   }
 
   startMatch(): void {
@@ -34,7 +22,7 @@ export class MatchEngine {
         clearInterval(countdownDurationDecrementInterval);
       } else {
         this.match.countdownDurationDecrement();
-        this.emitter.sendCountdownEvent(this.match);
+        this.publisher.publish({ type: 'COUNTDOWN_TICKED', match: this.match });
         if (this.match.getCountdownDuration() === 0) {
           clearInterval(countdownDurationDecrementInterval);
           this.timer();
@@ -65,7 +53,7 @@ export class MatchEngine {
     const tick = () => {
       tickCount++;
       if (!this.match.isActive()) {
-        this.emitter.sendMatchEndEvent(this.match);
+        this.publisher.publish({ type: 'MATCH_ENDED', match: this.match });
         clearInterval(tickerInterval);
       } else {
         let playerPositions: PlayerPositions;
@@ -123,7 +111,7 @@ export class MatchEngine {
               clearSpecials.push(playerPositionSquare.getId());
             }
           } catch (err) {
-            this.errorHandler(this.match, err);
+            this.publisher.publish({ type: 'FATAL_ERROR', match: this.match, error: err });
           }
         });
 
@@ -131,11 +119,11 @@ export class MatchEngine {
           try {
             this.match.getPlayerByColor(color).increaseScore(playerPoints[color].length);
           } catch (err) {
-            this.errorHandler(this.match, err);
+            this.publisher.publish({ type: 'FATAL_ERROR', match: this.match, error: err });
           }
         });
 
-        const clearSquares: { id: number; color: PlayerColor }[] = [];
+        const clearSquares: ClearedSquare[] = [];
         (Object.keys(sanitizedPositions) as PlayerColor[]).forEach((color) => {
           for (let i = 0; i < playerPoints[color].length; i++) {
             clearSquares.push({ id: playerPoints[color][i].getId(), color: color });
@@ -143,12 +131,16 @@ export class MatchEngine {
           }
         });
 
-        const specials = randomSpecials.getSpecials(this.match);
+        const specials: MatchSpecials = randomSpecials.getSpecials(this.match);
         this.match.updateSpecials(specials);
 
-        this.emitter.sendUpdateBoardEvent(this.match, specials);
-        this.emitter.sendClearSquaresEvent(this.match, clearSquares, clearSpecials);
-        this.emitter.sendUpdateScoreEvent(this.match);
+        this.publisher.publish({
+          type: 'TICK_PROCESSED',
+          match: this.match,
+          specials,
+          clearSquares,
+          clearSpecials,
+        });
       }
     };
     const tickerInterval = setInterval(tick, 250);

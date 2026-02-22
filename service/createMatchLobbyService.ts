@@ -1,6 +1,8 @@
 import { manager } from '../domain/models/matchesManager';
 import { Match } from '../domain/models/match';
 import { Player } from '../domain/models/player';
+import { MatchEngine } from '../domain/engine/matchEngine';
+import { SocketMatchEventPublisher } from '../transport/match/socket/matchEventPublisher';
 
 export type DisconnectionSource =
   | { type: 'HOST_LEFT' }
@@ -34,6 +36,9 @@ export class CreateMatchLobbyService {
 
   processCreateMatchLobbyHost(playerName: string): { matchId: string, playerId: string } {
     const match = new Match();
+    const publisher = new SocketMatchEventPublisher();
+    const engine = new MatchEngine(match, publisher);
+    match.setEngine(engine);
     const player = new Player(playerName, match, true);
     return { matchId: match.getId(), playerId: player.getId() };
   }
