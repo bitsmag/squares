@@ -1,6 +1,5 @@
 import Joi from 'joi';
 import xss from 'xss';
-import type { Request, Response, NextFunction } from 'express';
 
 export type CreateMatchParams = { playerName: string };
 export type CreateMatchLobbyGuestParams = { playerName: string; matchId: string };
@@ -55,62 +54,11 @@ function sanitizeValue(value: unknown): unknown {
   return value;
 }
 
-function sanitize<T>(obj: T): T {
+export function sanitize<T>(obj: T): T {
   return sanitizeValue(obj) as T;
 }
 
-type RequestSource = 'body' | 'params' | 'query';
-
-type ValidationErrorDetails = { message: string; path: (string | number)[] };
-type ValidationResult<T> =
+export type ValidationErrorDetails = { message: string; path: (string | number)[] };
+export type ValidationResult<T> =
   | { valid: true; value: T }
   | { valid: false; errors: ValidationErrorDetails[] };
-
-export function validate<T>(source: RequestSource, schema: Joi.ObjectSchema<T>) {
-  return function (req: Request, _res: Response, next: NextFunction) {
-    const target = (req as Record<RequestSource, unknown>)[source] ?? {};
-    const validationResult: Joi.ValidationResult<T> = schema.validate(target, {
-      abortEarly: false,
-      stripUnknown: true,
-    });
-    if (validationResult.error) {
-      const details = validationResult.error.details.map((d) => ({
-        message: d.message,
-        path: d.path,
-      }));
-      const validationError = new Error('invalidRequestParameters') as Error & {
-        status: number;
-        userMessage: string;
-        details: ValidationErrorDetails[];
-      };
-      validationError.status = 400;
-      validationError.userMessage = 'Invalid request parameters.';
-      validationError.details = details;
-      return next(validationError);
-    }
-
-    const value: T = validationResult.value;
-    (req as Record<RequestSource, unknown>)[source] = sanitize<T>(value);
-    return next();
-  };
-}
-
-export function validateSocketPayload<T>(
-  schema: Joi.ObjectSchema<T>,
-  payload: unknown
-): ValidationResult<T> {
-  const validationResult: Joi.ValidationResult<T> = schema.validate(payload, {
-    abortEarly: false,
-    stripUnknown: true,
-  });
-  if (validationResult.error) {
-    return {
-      valid: false,
-      errors: validationResult.error.details.map((d) => ({ message: d.message, path: d.path })),
-    };
-  }
-  const value: T = validationResult.value;
-  return { valid: true, value: sanitize<T>(value) };
-}
-
-export default { schemas, validate, validateSocketPayload };

@@ -1,12 +1,8 @@
-import * as validation from '../../util/validation';
-import type {
-  RegisterPlayerLobbyParams,
-  MatchStartInitiationParams,
-} from '../../util/validation';
-import type { Socket } from 'socket.io';
+import type { RegisterPlayerLobbyParams } from '../../util/validation';
 import { createMatchLobbyService } from '../../../service/createMatchLobbyService';
-import { sessionStore } from '../../util/socket/sessionStore';
+import { sessionStore } from '../../util/socket/socketSessionStore';
 import { manager } from '../../../domain/models/matchesManager';
+import type { Match } from '../../../domain/models/match';
 import socketErrorHandler from '../../util/socket/socketErrorHandler';
 import * as createMatchLobbyEmitters from './createMatchLobbyEmitters';
 
@@ -15,61 +11,44 @@ export class CreateMatchLobbySocketController {
 
   constructor() {}
 
-  registerPlayerLobby(playerInfo: unknown, socket: Socket): void {
+  private resolveMatch(socketId: string): Match | undefined {
     try {
-      const playerInfoResult = validation.validateSocketPayload<RegisterPlayerLobbyParams>(
-        validation.schemas.registerPlayerLobbyParams,
-        playerInfo || {}
-      );
-      if (!playerInfoResult.valid) {
-        socketErrorHandler(
-          undefined,
-          new Error(
-            'Invalid registerPlayerLobby payload'
-          )
-        );
-        return;
-      }
-      const matchId = playerInfoResult.value.matchId;
-      const playerName = playerInfoResult.value.playerName;
+      const matchId = sessionStore.getMatchIdForSocket(socketId);
+      return matchId ? manager.getMatch(matchId) : undefined;
+    } catch {
+      return undefined;
+    }
+  }
+
+  handleRegisterPlayerLobby(playerInfo: RegisterPlayerLobbyParams, socketId: string): void {
+    try {
+      const { matchId, playerName } = playerInfo;
       const playerId = manager.getMatch(matchId).getPlayer(playerName).getId();
-      sessionStore.register(socket, '/createMatchSockets', matchId, playerName, playerId);
+      sessionStore.register(socketId, '/createMatchSockets', matchId, playerName, playerId);
       createMatchLobbyEmitters.sendPlayerConnectedEvent(
         manager.getMatch(matchId),
         manager.getMatch(matchId).getPlayer(playerName)
       );
     } catch (err) {
-      socketErrorHandler(undefined, err);
+      socketErrorHandler(this.resolveMatch(socketId), err);
     }
   }
 
-  handleMatchStartInitiation(matchId: unknown, socket: Socket): void {
+  handleMatchStartInitiation(socketId: string): void {
     try {
-      const matchIdResult = validation.validateSocketPayload<MatchStartInitiationParams>(
-        validation.schemas.matchStartInitiationParams,
-        matchId || {}
-      );
-      if (!matchIdResult.valid) {
-        socketErrorHandler(
-          undefined,
-          new Error(
-            'Invalid matchStartInitiation payload'
-          )
-        );
-        return;
-      }
-      this.createMatchLobbyService.handleMatchStartInitiation(matchIdResult.value.matchId);
-      createMatchLobbyEmitters.sendMatchStartInitiationEvent(
-        manager.getMatch(matchIdResult.value.matchId)
-      );
+      const session = sessionStore.lookup(socketId);
+      if (!session || !session.matchId) return;
+      const matchId = session.matchId;
+      this.createMatchLobbyService.handleMatchStartInitiation(matchId);
+      createMatchLobbyEmitters.sendMatchStartInitiationEvent(manager.getMatch(matchId));
     } catch (err) {
-      socketErrorHandler(undefined, err);
+      socketErrorHandler(this.resolveMatch(socketId), err);
     }
   }
 
-  handleDisconnectLobby(socket: Socket): void {
+  handleDisconnectLobby(socketId: string): void {
     try {
-      const session = sessionStore.unregister(socket);
+      const session = sessionStore.unregister(socketId);
       if (session && session.matchId && session.playerName) {
         const disconnectionSource = this.createMatchLobbyService.handleDisconnectLobby(
           session.matchId,
@@ -88,7 +67,7 @@ export class CreateMatchLobbySocketController {
         }
       }
     } catch (err) {
-      socketErrorHandler(undefined, err);
+      socketErrorHandler(this.resolveMatch(socketId), err);
     }
   }
 }

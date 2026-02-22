@@ -1,5 +1,5 @@
 import type { Match } from '../../../domain/models/match';
-import { sessionStore } from './sessionStore';
+import { sessionStore } from './socketSessionStore';
 import { broadcastToMatch } from './transport';
 
 // Centralized socket error handler — emits a `fatalError` event to all players and destroys the match.

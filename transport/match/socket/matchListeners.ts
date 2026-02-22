@@ -1,11 +1,23 @@
 import { Socket } from 'socket.io';
 import { matchSocketController } from './matchSocketController';
+import { socketValidationMiddleware } from '../../util/socket/socketValidationMiddleware';
+import { schemas } from '../../util/validation';
+import type { RegisterPlayerMatchParams } from '../../util/validation';
 
 export function respond(socket: Socket): void {
   const controller = matchSocketController;
 
+  socket.use(
+    socketValidationMiddleware({
+      registerPlayerMatch: schemas.registerPlayerMatchParams,
+    })
+  );
+
   socket.on('registerPlayerMatch', function (playerInfo: unknown) {
-    controller.handleRegisterPlayerAndStartMatch(playerInfo, socket);
+    controller.handleRegisterPlayerAndStartMatch(
+      playerInfo as RegisterPlayerMatchParams,
+      socket.id
+    );
   });
 
   socket.on('disconnect', function () {

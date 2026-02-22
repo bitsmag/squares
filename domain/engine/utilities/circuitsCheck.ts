@@ -169,4 +169,3 @@ function getPoints(theSquare: any, theColor: string, match: any): any[] {
   setAllSquaresUnvisited();
   return squaresEarningPoints;
 }
-

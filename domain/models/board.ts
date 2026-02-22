@@ -24,9 +24,9 @@ export class Board {
       for (let x = 0; x < this.width; x++) {
         const id = y * this.width + x;
         const edgesTo: number[] = [];
-        if (x > 0) edgesTo.push(id - 1);                // left
-        if (y > 0) edgesTo.push(id - this.width);        // up
-        if (x < this.width - 1) edgesTo.push(id + 1);    // right
+        if (x > 0) edgesTo.push(id - 1); // left
+        if (y > 0) edgesTo.push(id - this.width); // up
+        if (x < this.width - 1) edgesTo.push(id + 1); // right
         if (y < this.height - 1) edgesTo.push(id + this.width); // down
         this.squares.push(new squareModule.Square(id, edgesTo, { x, y }));
       }

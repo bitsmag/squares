@@ -1,9 +1,8 @@
 import socketErrorHandler from '../../util/socket/socketErrorHandler';
-import * as validation from '../../util/validation';
 import type { RegisterPlayerMatchParams } from '../../util/validation';
-import type { Socket } from 'socket.io';
+import type { Match } from '../../../domain/models/match';
 import { matchService } from '../../../service/matchService';
-import { sessionStore } from '../../util/socket/sessionStore';
+import { sessionStore } from '../../util/socket/socketSessionStore';
 import { manager } from '../../../domain/models/matchesManager';
 
 export class MatchSocketController {
@@ -11,22 +10,23 @@ export class MatchSocketController {
 
   constructor() {}
 
-  handleRegisterPlayerAndStartMatch(playerInfo: unknown, socket: Socket): void {
+  private resolveMatch(socketId: string): Match | undefined {
     try {
-      const playerInfoResult = validation.validateSocketPayload<RegisterPlayerMatchParams>(
-        validation.schemas.registerPlayerMatchParams,
-        playerInfo || {}
-      );
-      if (!playerInfoResult.valid) {
-        socketErrorHandler(undefined, new Error('Invalid registerPlayerMatch payload'));
-        return;
-      }
-      const { matchId, playerName } = playerInfoResult.value;
+      const matchId = sessionStore.getMatchIdForSocket(socketId);
+      return matchId ? manager.getMatch(matchId) : undefined;
+    } catch {
+      return undefined;
+    }
+  }
+
+  handleRegisterPlayerAndStartMatch(playerInfo: RegisterPlayerMatchParams, socketId: string): void {
+    try {
+      const { matchId, playerName } = playerInfo;
       const playerId = manager.getMatch(matchId).getPlayer(playerName).getId();
-      sessionStore.register(socket, '/matchSockets', matchId, playerName, playerId);
+      sessionStore.register(socketId, '/matchSockets', matchId, playerName, playerId);
       this.matchService.handleRegisterPlayerAndStartMatch(matchId, playerName);
     } catch (err) {
-      socketErrorHandler(undefined, err);
+      socketErrorHandler(this.resolveMatch(socketId), err);
     }
   }
 
@@ -38,7 +38,7 @@ export class MatchSocketController {
       this.matchService.handleDisconnectMatch(matchId, playerId);
       sessionStore.unregister(socketId);
     } catch (err) {
-      socketErrorHandler(undefined, err);
+      socketErrorHandler(this.resolveMatch(socketId), err);
     }
   }
 
@@ -49,7 +49,7 @@ export class MatchSocketController {
       if (!playerId || !matchId) return;
       this.matchService.setDirection(matchId, playerId, direction);
     } catch (err) {
-      socketErrorHandler(undefined, err);
+      socketErrorHandler(this.resolveMatch(socketId), err);
     }
   }
 }

@@ -46,4 +46,3 @@ export function sendMatchStartInitiationEvent(match: Match): void {
 export function sendFatalErrorEvent(match: Match): void {
   broadcastToMatch(match.getId(), '/createMatchSockets', 'fatalError');
 }
-

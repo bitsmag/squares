@@ -1,5 +1,5 @@
 import type { Server as SocketIOServer } from 'socket.io';
-import { sessionStore } from './sessionStore';
+import { sessionStore } from './socketSessionStore';
 
 let ioInstance: SocketIOServer | null = null;
 export function initTransport(io: SocketIOServer): void {

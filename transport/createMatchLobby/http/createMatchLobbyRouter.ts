@@ -1,20 +1,20 @@
 import type { Application } from 'express';
-import * as validation from '../../util/validation';
+import { schemas } from '../../util/validation';
+import { validate } from '../../util/http/httpValidationMiddleware';
 import {
   handleCreateMatchLobbyHost,
   handleCreateMatchLobbyGuest,
 } from './createMatchLobbyController';
 
 function createMatchLobbyRouter(app: Application): void {
-  
   app.get(
     '/createMatchLobby/:playerName',
-    validation.validate('params', validation.schemas.createMatchParams),
+    validate('params', schemas.createMatchParams),
     handleCreateMatchLobbyHost
   );
   app.get(
     '/createMatchLobby/:playerName/:matchId',
-    validation.validate('params', validation.schemas.createMatchLobbyGuestParams),
+    validate('params', schemas.createMatchLobbyGuestParams),
     handleCreateMatchLobbyGuest
   );
 }

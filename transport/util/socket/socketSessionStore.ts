@@ -1,32 +1,28 @@
-import type { Socket } from 'socket.io';
-
 type Session = { namespace: string; matchId?: string; playerName?: string; playerId?: string };
 
-export class SessionStore {
+export class SocketSessionStore {
   private sessions = new Map<string, Session>();
   private playerToSocket = new Map<string, string>();
 
   register(
-    socket: Socket,
+    socketId: string,
     namespace: string,
     matchId?: string,
     playerName?: string,
     playerId?: string
   ): void {
-    this.sessions.set(socket.id, { namespace, matchId, playerName, playerId });
-    if (playerId) this.playerToSocket.set(playerId, socket.id);
+    this.sessions.set(socketId, { namespace, matchId, playerName, playerId });
+    if (playerId) this.playerToSocket.set(playerId, socketId);
   }
 
-  lookup(socketOrId: Socket | string): Session | undefined {
-    const id = typeof socketOrId === 'string' ? socketOrId : socketOrId.id;
-    return this.sessions.get(id);
+  lookup(socketId: string): Session | undefined {
+    return this.sessions.get(socketId);
   }
 
-  unregister(socketOrId: Socket | string): Session | undefined {
-    const id = typeof socketOrId === 'string' ? socketOrId : socketOrId.id;
-    const s = this.sessions.get(id);
+  unregister(socketId: string): Session | undefined {
+    const s = this.sessions.get(socketId);
     if (s && s.playerId) this.playerToSocket.delete(s.playerId);
-    this.sessions.delete(id);
+    this.sessions.delete(socketId);
     return s;
   }
 
@@ -65,4 +61,4 @@ export class SessionStore {
   }
 }
 
-export const sessionStore = new SessionStore();
+export const sessionStore = new SocketSessionStore();

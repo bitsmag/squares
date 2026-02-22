@@ -25,4 +25,3 @@ export function getSpecials(match: Match): { doubleSpeed: number[]; getPoints: n
 
   return specials;
 }
-
