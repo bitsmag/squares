@@ -19,12 +19,15 @@ export class MatchSocketController {
     }
   }
 
-  handleRegisterPlayerAndStartMatch(playerInfo: RegisterPlayerMatchParams, socketId: string): void {
+  handleRegisterPlayerAndStartMatchWhenReady(
+    playerInfo: RegisterPlayerMatchParams,
+    socketId: string
+  ): void {
     try {
       const { matchId, playerName } = playerInfo;
       const playerId = manager.getMatch(matchId).getPlayer(playerName).getId();
       sessionStore.register(socketId, '/matchSockets', matchId, playerName, playerId);
-      this.matchService.handleRegisterPlayerAndStartMatch(matchId, playerName);
+      this.matchService.startMatchWhenPlayersAreConnected(matchId);
     } catch (err) {
       socketErrorHandler(this.resolveMatch(socketId), err);
     }
@@ -35,7 +38,7 @@ export class MatchSocketController {
       const playerId = sessionStore.getPlayerIdForSocket(socketId);
       const matchId = sessionStore.getMatchIdForSocket(socketId);
       if (!playerId || !matchId) return;
-      this.matchService.handleDisconnectMatch(matchId, playerId);
+      this.matchService.removePlayer(matchId, playerId);
       sessionStore.unregister(socketId);
     } catch (err) {
       socketErrorHandler(this.resolveMatch(socketId), err);

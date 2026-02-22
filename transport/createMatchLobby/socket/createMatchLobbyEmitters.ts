@@ -1,13 +1,7 @@
 import type { Match } from '../../../domain/models/match';
-import type { Player } from '../../../domain/models/player';
 import { broadcastToMatch } from '../../util/socket/transport';
 
-type PlayerStatus = { pos: number | null; dir: string | null; doubleSpeed: boolean | null };
-type Specials = { doubleSpeed: number[]; getPoints: number[] };
-type ClearSquare = { id: number; color: string };
-type Scores = Record<string, number | null>;
-
-export function sendPlayerConnectedEvent(match: Match, player: Player): void {
+export function sendPlayerConnectedEvent(match: Match): void {
   const data = {
     matchId: match.getId(),
     players: [] as { playerName: string; playerColor: string }[],

@@ -31,7 +31,7 @@ export const schemas = {
     playerName: Joi.string().alphanum().min(1).max(12).required(),
     isHost: Joi.boolean().required(),
   }),
-  registerPlayerMatchParams: Joi.object<RegisterPlayerMatchParams>({
+  registerPlayerAndStartMatchWhenReadyParams: Joi.object<RegisterPlayerMatchParams>({
     matchId: Joi.string().alphanum().min(1).required(),
     playerName: Joi.string().alphanum().min(1).max(12).required(),
   }),

@@ -23,7 +23,7 @@ function validateSocketPayload<T>(
 }
 
 export function socketValidationMiddleware(schemas: SchemaMap) {
-  return (packet: [string, ...unknown[]], next: (err?: Error) => void) => {
+  return (packet: [string, ...unknown[]], next: (_err?: Error) => void) => {
     const [event] = packet;
     const schema = schemas[event];
     if (!schema) return next();

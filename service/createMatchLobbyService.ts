@@ -1,4 +1,6 @@
 import { manager } from '../domain/models/matchesManager';
+import { Match } from '../domain/models/match';
+import { Player } from '../domain/models/player';
 
 export type DisconnectionSource =
   | { type: 'HOST_LEFT' }
@@ -6,12 +8,12 @@ export type DisconnectionSource =
   | { type: 'LOBBY_CLOSED' };
 
 export class CreateMatchLobbyService {
-  handleMatchStartInitiation(matchId: string): void {
+  processMatchStartInitiation(matchId: string): void {
     const match = manager.getMatch(matchId);
     match.setStartInitiated(true);
   }
 
-  handleDisconnectLobby(matchId: string, playerName: string): DisconnectionSource {
+  processDisconnectLobby(matchId: string, playerName: string): DisconnectionSource {
     const match = manager.getMatch(matchId);
     if (match.isStartInitiated()) {
       // when match start is initiated players get redirected to match and a new connection gets established, not to worry...
@@ -28,6 +30,18 @@ export class CreateMatchLobbyService {
         return { type: 'GUEST_LEFT' };
       }
     }
+  }
+
+  processCreateMatchLobbyHost(playerName: string): string {
+    const match = new Match();
+    new Player(playerName, match, true);
+    return match.getId();
+  }
+
+  processCreateMatchLobbyGuest(matchId: string, playerName: string): string {
+    const match = manager.getMatch(matchId);
+    new Player(playerName, match, false);
+    return match.getId();
   }
 }
 

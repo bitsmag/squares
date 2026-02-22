@@ -10,7 +10,7 @@ import * as createMatchSockets from './transport/createMatchLobby/socket/createM
 import * as matchSockets from './transport/match/socket/matchListeners';
 import createMatchLobbyRouter from './transport/createMatchLobby/http/createMatchLobbyRouter';
 import matchRouter from './transport/match/http/matchRouter';
-import errorHandler from './transport/util/http/errorHandler';
+import errorHandler from './transport/util/http/httpErrorHandler';
 
 const app = express();
 const httpServer = createServer(app);

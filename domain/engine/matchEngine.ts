@@ -5,15 +5,15 @@ import * as randomSpecials from './utilities/randomSpecials';
 import type { Match } from '../models/match';
 
 export type MatchEmitter = {
-  sendCountdownEvent(match: Match): void;
-  sendMatchEndEvent(match: Match): void;
-  sendUpdateBoardEvent(match: Match, specials: unknown): void;
-  sendClearSquaresEvent(match: Match, clearSquares: unknown[], clearSpecials: number[]): void;
-  sendUpdateScoreEvent(match: Match): void;
-  sendFatalErrorEvent(match: Match): void;
+  sendCountdownEvent(_match: Match): void;
+  sendMatchEndEvent(_match: Match): void;
+  sendUpdateBoardEvent(_match: Match, _specials: unknown): void;
+  sendClearSquaresEvent(_match: Match, _clearSquares: unknown[], _clearSpecials: number[]): void;
+  sendUpdateScoreEvent(_match: Match): void;
+  sendFatalErrorEvent(_match: Match): void;
 };
 
-export type MatchErrorHandler = (match: Match | undefined, err: unknown) => void;
+export type MatchErrorHandler = (_match: Match | undefined, _err: unknown) => void;
 
 type PlayerPositions = RawPlayerPositions;
 

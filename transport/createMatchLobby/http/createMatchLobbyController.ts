@@ -1,7 +1,5 @@
 import type { NextFunction, Request, Response } from 'express';
-import { Match } from '../../../domain/models/match';
-import { manager } from '../../../domain/models/matchesManager';
-import { Player } from '../../../domain/models/player';
+import { createMatchLobbyService } from '../../../service/createMatchLobbyService';
 
 export type CreateMatchLobbyParams = { playerName: string };
 export type CreateMatchLobbyGuestParams = { playerName: string; matchId: string };
@@ -12,17 +10,15 @@ export function handleCreateMatchLobbyHost(
   next: NextFunction
 ): void {
   try {
-    const playerName = req.params.playerName;
-    const newMatch = new Match();
-    new Player(playerName, newMatch, true);
+    const matchId = createMatchLobbyService.processCreateMatchLobbyHost(req.params.playerName);
     res.render('createMatch.html', {
       appData: {
-        matchId: newMatch.getId(),
-        playerName,
+        matchId: matchId,
+        playerName: req.params.playerName,
         isHost: true,
         lobbyMessage:
           'Your match is ready! \n\n Invite up to three friends to play by sharing your match ID (' +
-          newMatch.getId() +
+          matchId +
           ')',
       },
     });
@@ -37,13 +33,14 @@ export function handleCreateMatchLobbyGuest(
   next: NextFunction
 ): void {
   try {
-    const playerName = req.params.playerName;
-    let match = manager.getMatch(req.params.matchId);
-    new Player(playerName, match, false);
+    const matchId = createMatchLobbyService.processCreateMatchLobbyGuest(
+      req.params.matchId,
+      req.params.playerName
+    );
     res.render('createMatch.html', {
       appData: {
-        matchId: match.getId(),
-        playerName,
+        matchId: matchId,
+        playerName: req.params.playerName,
         isHost: false,
         lobbyMessage: 'You have joined the match! \n\n Waiting for the host to start the game.',
       },

@@ -3,7 +3,7 @@ const playerPositions = { blue: null, orange: null, green: null, red: null };
 const matchSockets = io.connect('/matchSockets');
 
 matchSockets.on('connect', function () {
-  matchSockets.emit('registerPlayerMatch', playerInfo);
+  matchSockets.emit('registerPlayerAndStartMatchWhenReady', playerInfo);
 
   matchSockets.on('prepareMatch', prepareMatch);
   matchSockets.on('updateBoard', updateBoard);

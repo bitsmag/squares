@@ -25,10 +25,7 @@ export class CreateMatchLobbySocketController {
       const { matchId, playerName } = playerInfo;
       const playerId = manager.getMatch(matchId).getPlayer(playerName).getId();
       sessionStore.register(socketId, '/createMatchSockets', matchId, playerName, playerId);
-      createMatchLobbyEmitters.sendPlayerConnectedEvent(
-        manager.getMatch(matchId),
-        manager.getMatch(matchId).getPlayer(playerName)
-      );
+      createMatchLobbyEmitters.sendPlayerConnectedEvent(manager.getMatch(matchId));
     } catch (err) {
       socketErrorHandler(this.resolveMatch(socketId), err);
     }
@@ -39,7 +36,7 @@ export class CreateMatchLobbySocketController {
       const session = sessionStore.lookup(socketId);
       if (!session || !session.matchId) return;
       const matchId = session.matchId;
-      this.createMatchLobbyService.handleMatchStartInitiation(matchId);
+      this.createMatchLobbyService.processMatchStartInitiation(matchId);
       createMatchLobbyEmitters.sendMatchStartInitiationEvent(manager.getMatch(matchId));
     } catch (err) {
       socketErrorHandler(this.resolveMatch(socketId), err);
@@ -50,7 +47,7 @@ export class CreateMatchLobbySocketController {
     try {
       const session = sessionStore.unregister(socketId);
       if (session && session.matchId && session.playerName) {
-        const disconnectionSource = this.createMatchLobbyService.handleDisconnectLobby(
+        const disconnectionSource = this.createMatchLobbyService.processDisconnectLobby(
           session.matchId,
           session.playerName
         );

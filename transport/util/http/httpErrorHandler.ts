@@ -12,6 +12,7 @@ function isErrorLike(err: unknown): err is ErrorLike {
   return typeof err === 'object' && err !== null;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function errorHandler(err: unknown, req: Request, res: Response, _next: NextFunction): void {
   const context = isErrorLike(err) && typeof err.context === 'string' ? err.context : 'server';
   const stack = isErrorLike(err) && typeof err.stack === 'string' ? err.stack : undefined;

@@ -9,12 +9,12 @@ export function respond(socket: Socket): void {
 
   socket.use(
     socketValidationMiddleware({
-      registerPlayerMatch: schemas.registerPlayerMatchParams,
+      registerPlayerAndStartMatchWhenReady: schemas.registerPlayerAndStartMatchWhenReadyParams,
     })
   );
 
-  socket.on('registerPlayerMatch', function (playerInfo: unknown) {
-    controller.handleRegisterPlayerAndStartMatch(
+  socket.on('registerPlayerAndStartMatchWhenReady', function (playerInfo: unknown) {
+    controller.handleRegisterPlayerAndStartMatchWhenReady(
       playerInfo as RegisterPlayerMatchParams,
       socket.id
     );
