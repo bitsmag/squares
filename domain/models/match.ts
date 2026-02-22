@@ -38,6 +38,14 @@ export class Match {
     return this.players;
   }
 
+  getPlayer(playerName: string): Player {
+    const foundPlayer = this.players.find((p) => p.getName() === playerName);
+    if (!foundPlayer) {
+      throw new Error('playerNotFound');
+    }
+    return foundPlayer;
+  }
+
   getPlayerById(playerId: string): Player {
     const foundPlayer = this.players.find((p) => p.getId() === playerId);
     if (!foundPlayer) {
