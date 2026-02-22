@@ -1,9 +1,11 @@
+const { matchId, playerId } = window.APP_DATA;
+
 const playerPositions = { blue: null, orange: null, green: null, red: null };
 
 const matchSockets = io.connect('/matchSockets');
 
 matchSockets.on('connect', function () {
-  matchSockets.emit('registerPlayerAndStartMatchWhenReady', playerInfo);
+  matchSockets.emit('registerPlayerAndStartMatchWhenReady', { matchId, playerId });
 
   matchSockets.on('prepareMatch', prepareMatch);
   matchSockets.on('updateBoard', updateBoard);

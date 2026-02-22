@@ -30,6 +30,12 @@ export function socketValidationMiddleware(schemas: SchemaMap) {
 
     const result = validateSocketPayload(schema, packet[1] || {});
     if (!result.valid) {
+      // Log socket validation errors for easier debugging
+      console.error('[socketValidationMiddleware] Invalid payload', {
+        event,
+        errors: result.errors,
+        payload: packet[1],
+      });
       return next(new Error(`Invalid ${event} payload`));
     }
     packet[1] = result.value;

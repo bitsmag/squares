@@ -13,14 +13,14 @@ export class CreateMatchLobbyService {
     match.setStartInitiated(true);
   }
 
-  processDisconnectLobby(matchId: string, playerName: string): DisconnectionSource {
+  processDisconnectLobby(matchId: string, playerId: string): DisconnectionSource {
     const match = manager.getMatch(matchId);
     if (match.isStartInitiated()) {
       // when match start is initiated players get redirected to match and a new connection gets established, not to worry...
       return { type: 'LOBBY_CLOSED' };
     } else {
       // if disconnect was not due to match start, we need to handle it
-      const player = match.getPlayer(playerName);
+      const player = match.getPlayerById(playerId);
       if (player.isHost()) {
         match.removePlayer(player);
         match.destroy();
@@ -32,16 +32,16 @@ export class CreateMatchLobbyService {
     }
   }
 
-  processCreateMatchLobbyHost(playerName: string): string {
+  processCreateMatchLobbyHost(playerName: string): { matchId: string, playerId: string } {
     const match = new Match();
-    new Player(playerName, match, true);
-    return match.getId();
+    const player = new Player(playerName, match, true);
+    return { matchId: match.getId(), playerId: player.getId() };
   }
 
-  processCreateMatchLobbyGuest(matchId: string, playerName: string): string {
+  processCreateMatchLobbyGuest(matchId: string, playerName: string): { matchId: string, playerId: string } {
     const match = manager.getMatch(matchId);
-    new Player(playerName, match, false);
-    return match.getId();
+    const player = new Player(playerName, match, false);
+    return { matchId: match.getId(), playerId: player.getId() };
   }
 }
 

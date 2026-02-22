@@ -22,9 +22,8 @@ export class CreateMatchLobbySocketController {
 
   handleRegisterPlayerLobby(playerInfo: RegisterPlayerLobbyParams, socketId: string): void {
     try {
-      const { matchId, playerName } = playerInfo;
-      const playerId = manager.getMatch(matchId).getPlayer(playerName).getId();
-      sessionStore.register(socketId, '/createMatchSockets', matchId, playerName, playerId);
+      const { matchId, playerId } = playerInfo;
+      sessionStore.register(socketId, '/createMatchSockets', matchId, playerId);
       createMatchLobbyEmitters.sendPlayerConnectedEvent(manager.getMatch(matchId));
     } catch (err) {
       socketErrorHandler(this.resolveMatch(socketId), err);
@@ -46,10 +45,10 @@ export class CreateMatchLobbySocketController {
   handleDisconnectLobby(socketId: string): void {
     try {
       const session = sessionStore.unregister(socketId);
-      if (session && session.matchId && session.playerName) {
+      if (session && session.matchId && session.playerId) {
         const disconnectionSource = this.createMatchLobbyService.processDisconnectLobby(
           session.matchId,
-          session.playerName
+          session.playerId
         );
         switch (disconnectionSource.type) {
           case 'HOST_LEFT':

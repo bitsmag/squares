@@ -1,8 +1,8 @@
 var expect = require('chai').expect;
-var matchMod = require('../models/match');
-var playerMod = require('../models/player');
-var boardMod = require('../models/board');
-var circuitsCheck = require('../controllers/matchTicker/circuitsCheck');
+var matchMod = require('../domain/models/match.ts');
+var playerMod = require('../domain/models/player.ts');
+var boardMod = require('../domain/models/board.ts');
+var circuitsCheck = require('../domain/engine/utilities/circuitsCheck.ts');
 
 describe('CircuitsCheck', function () {
   it('detects a 3x3 loop and awards enclosed + loop squares', function () {

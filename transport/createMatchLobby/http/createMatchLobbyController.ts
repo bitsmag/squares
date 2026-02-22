@@ -10,10 +10,11 @@ export function handleCreateMatchLobbyHost(
   next: NextFunction
 ): void {
   try {
-    const matchId = createMatchLobbyService.processCreateMatchLobbyHost(req.params.playerName);
+    const { matchId, playerId } = createMatchLobbyService.processCreateMatchLobbyHost(req.params.playerName);
     res.render('createMatch.html', {
       appData: {
         matchId: matchId,
+        playerId: playerId,
         playerName: req.params.playerName,
         isHost: true,
         lobbyMessage:
@@ -33,13 +34,14 @@ export function handleCreateMatchLobbyGuest(
   next: NextFunction
 ): void {
   try {
-    const matchId = createMatchLobbyService.processCreateMatchLobbyGuest(
+    const { matchId, playerId } = createMatchLobbyService.processCreateMatchLobbyGuest(
       req.params.matchId,
       req.params.playerName
     );
     res.render('createMatch.html', {
       appData: {
         matchId: matchId,
+        playerId: playerId,
         playerName: req.params.playerName,
         isHost: false,
         lobbyMessage: 'You have joined the match! \n\n Waiting for the host to start the game.',

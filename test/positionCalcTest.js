@@ -1,7 +1,7 @@
 var expect = require('chai').expect;
-var matchMod = require('../models/match');
-var playerMod = require('../models/player');
-var positionCalc = require('../controllers/matchTicker/positionCalc');
+var matchMod = require('../domain/models/match.ts');
+var playerMod = require('../domain/models/player.ts');
+var positionCalc = require('../domain/engine/utilities/positionCalc.ts');
 
 describe('PositionCalc', function () {
   it('calculates simple right move for a single player', function () {

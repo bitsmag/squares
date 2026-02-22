@@ -2,7 +2,7 @@ import { Socket } from 'socket.io';
 import { matchSocketController } from './matchSocketController';
 import { socketValidationMiddleware } from '../../util/socket/socketValidationMiddleware';
 import { schemas } from '../../util/validation';
-import type { RegisterPlayerMatchParams } from '../../util/validation';
+import type { RegisterPlayerAndStartMatchWhenReadyParams } from '../../util/validation';
 
 export function respond(socket: Socket): void {
   const controller = matchSocketController;
@@ -15,7 +15,7 @@ export function respond(socket: Socket): void {
 
   socket.on('registerPlayerAndStartMatchWhenReady', function (playerInfo: unknown) {
     controller.handleRegisterPlayerAndStartMatchWhenReady(
-      playerInfo as RegisterPlayerMatchParams,
+      playerInfo as RegisterPlayerAndStartMatchWhenReadyParams,
       socket.id
     );
   });

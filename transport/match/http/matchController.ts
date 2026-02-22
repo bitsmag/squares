@@ -1,6 +1,6 @@
 import type { NextFunction, Request, Response } from 'express';
 
-export type GetMatchParams = { matchCreatorFlag: 't' | 'f'; matchId: string; playerName: string };
+export type GetMatchParams = { matchCreatorFlag: 't' | 'f'; matchId: string; playerId: string };
 
 export function handleGetMatch(
   req: Request<GetMatchParams>,
@@ -8,8 +8,13 @@ export function handleGetMatch(
   next: NextFunction
 ): void {
   try {
-    const { matchId, playerName } = req.params;
-    res.render('match.html', { matchId: matchId, playerName: playerName });
+    const { matchId, playerId } = req.params;
+    res.render('match.html', {
+      appData: {
+        matchId: matchId,
+        playerId: playerId,
+      },
+    });
   } catch (err) {
     next(err);
   }

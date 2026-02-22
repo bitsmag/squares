@@ -1,5 +1,5 @@
 import socketErrorHandler from '../../util/socket/socketErrorHandler';
-import type { RegisterPlayerMatchParams } from '../../util/validation';
+import type { RegisterPlayerAndStartMatchWhenReadyParams } from '../../util/validation';
 import type { Match } from '../../../domain/models/match';
 import { matchService } from '../../../service/matchService';
 import { sessionStore } from '../../util/socket/socketSessionStore';
@@ -20,13 +20,12 @@ export class MatchSocketController {
   }
 
   handleRegisterPlayerAndStartMatchWhenReady(
-    playerInfo: RegisterPlayerMatchParams,
+    playerInfo: RegisterPlayerAndStartMatchWhenReadyParams,
     socketId: string
   ): void {
     try {
-      const { matchId, playerName } = playerInfo;
-      const playerId = manager.getMatch(matchId).getPlayer(playerName).getId();
-      sessionStore.register(socketId, '/matchSockets', matchId, playerName, playerId);
+      const { matchId, playerId } = playerInfo;
+      sessionStore.register(socketId, '/matchSockets', matchId, playerId);
       this.matchService.startMatchWhenPlayersAreConnected(matchId);
     } catch (err) {
       socketErrorHandler(this.resolveMatch(socketId), err);

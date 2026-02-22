@@ -1,8 +1,8 @@
 var assert = require('chai').assert;
 var expect = require('chai').expect;
-var match = require('../models/match');
-var player = require('../models/player');
-var matchesManager = require('../models/matchesManager');
+var match = require('../domain/models/match.ts');
+var player = require('../domain/models/player.ts');
+var matchesManager = require('../domain/models/matchesManager.ts');
 
 describe('Hooks', function () {
   var m; // global var to remove Match after each test

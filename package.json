@@ -24,15 +24,15 @@
     "eslint": "^8.52.0",
     "eslint-config-prettier": "^8.8.0",
     "eslint-plugin-prettier": "^4.1.0",
-    "istanbul": "^0.4.5",
     "mocha": "^10.2.0",
+    "nyc": "^15.1.0",
     "prettier": "^2.8.8",
     "socket.io-client": "^4.7.2",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3"
   },
   "scripts": {
-    "test": "node -r ts-node/register ./node_modules/istanbul/lib/cli.js cover ./node_modules/.bin/_mocha",
+    "test": "nyc mocha \"test/**/*.js\" \"test/**/*.ts\"",
     "start": "npm run build && node dist/index.js",
     "dev": "ts-node index.ts",
     "lint": "eslint . --ext .js,.ts",

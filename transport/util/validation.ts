@@ -1,20 +1,20 @@
 import Joi from 'joi';
 import xss from 'xss';
 
-export type CreateMatchParams = { playerName: string };
+export type CreateMatchLobbyHostParams = { playerName: string };
 export type CreateMatchLobbyGuestParams = { playerName: string; matchId: string };
 export type MatchRouteParams = {
   matchCreatorFlag: 't' | 'f';
   matchId: string;
-  playerName: string;
+  playerId: string;
 };
-export type RegisterPlayerLobbyParams = { matchId: string; playerName: string; isHost: boolean };
-export type RegisterPlayerMatchParams = { matchId: string; playerName: string };
+export type RegisterPlayerLobbyParams = { matchId: string; playerId: string; playerName: string; isHost: boolean };
+export type RegisterPlayerAndStartMatchWhenReadyParams = { matchId: string; playerId: string; playerName: string };
 export type MatchStartInitiationParams = { matchId: string };
 
 // Shared schemas
 export const schemas = {
-  createMatchParams: Joi.object<CreateMatchParams>({
+  createMatchLobbyHostParams: Joi.object<CreateMatchLobbyHostParams>({
     playerName: Joi.string().alphanum().min(1).max(12).required(),
   }),
   createMatchLobbyGuestParams: Joi.object<CreateMatchLobbyGuestParams>({
@@ -24,16 +24,17 @@ export const schemas = {
   matchRouteParams: Joi.object<MatchRouteParams>({
     matchCreatorFlag: Joi.string().valid('t', 'f').required(),
     matchId: Joi.string().alphanum().min(1).required(),
-    playerName: Joi.string().alphanum().min(1).max(12).required(),
+    playerId: Joi.string().min(1).max(64).required(),
   }),
   registerPlayerLobbyParams: Joi.object<RegisterPlayerLobbyParams>({
     matchId: Joi.string().alphanum().min(1).required(),
+    playerId: Joi.string().min(1).max(64).required(),
     playerName: Joi.string().alphanum().min(1).max(12).required(),
     isHost: Joi.boolean().required(),
   }),
-  registerPlayerAndStartMatchWhenReadyParams: Joi.object<RegisterPlayerMatchParams>({
+  registerPlayerAndStartMatchWhenReadyParams: Joi.object<RegisterPlayerAndStartMatchWhenReadyParams>({
     matchId: Joi.string().alphanum().min(1).required(),
-    playerName: Joi.string().alphanum().min(1).max(12).required(),
+    playerId: Joi.string().min(1).max(64).required(),
   }),
   matchStartInitiationParams: Joi.object<MatchStartInitiationParams>({
     matchId: Joi.string().alphanum().min(1).required(),

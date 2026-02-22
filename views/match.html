@@ -16,8 +16,7 @@
     <link rel="stylesheet" href="/css/main.css">
     <link rel="stylesheet" href="/css/match.css">
     <script>
-    var playerInfo = {matchId: '{{matchId}}',
-              playerName: '{{playerName}}'};
+    window.APP_DATA = {{ appData | dump | safe }};
     </script>
     <script src="/js/jquery.min.js"></script>
     <script src="/socket.io/socket.io.js"></script>

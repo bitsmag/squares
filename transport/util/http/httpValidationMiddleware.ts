@@ -17,6 +17,14 @@ export function validate<T>(source: RequestSource, schema: Joi.ObjectSchema<T>) 
         message: d.message,
         path: d.path,
       }));
+      // Log HTTP validation errors for easier debugging
+      console.error('[httpValidationMiddleware] Invalid request parameters', {
+        method: req.method,
+        url: req.originalUrl ?? req.url,
+        source,
+        errors: details,
+        payload: target,
+      });
       const validationError = new Error('invalidRequestParameters') as Error & {
         status: number;
         userMessage: string;

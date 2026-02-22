@@ -5,7 +5,7 @@ import { handleGetMatch } from './matchController';
 
 function matchRouter(app: Application): void {
   app.get(
-    '/match/:matchCreatorFlag/:matchId/:playerName',
+    '/match/:matchCreatorFlag/:matchId/:playerId',
     validate('params', schemas.matchRouteParams),
     handleGetMatch
   );

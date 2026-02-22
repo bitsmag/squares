@@ -1,17 +1,17 @@
-const { matchId, playerName, isHost, lobbyMessage } = window.APP_DATA;
+const { matchId, playerId, playerName, isHost, lobbyMessage } = window.APP_DATA;
 
 /*CLICKHANDLER*/
 $('#initiateMatchStartBtn').click(function () {
   createMatchSockets.emit('matchStartInitiation', { matchId });
   createMatchSockets.disconnect();
-  window.location.replace('/match/t/' + matchId + '/' + playerName);
+  window.location.replace('/match/t/' + matchId + '/' + playerId);
 });
 
 /*SOCKETS*/
 
 const createMatchSockets = io.connect('/createMatchSockets');
 createMatchSockets.on('connect', function () {
-  createMatchSockets.emit('registerPlayerLobby', { matchId, playerName, isHost });
+  createMatchSockets.emit('registerPlayerLobby', { matchId, playerId, playerName, isHost });
 
   createMatchSockets.on('playerConnected', function (connectedPlayers) {
     $('#playerTable').find('[id$="PlayerName"], [id$="PlayerStatus"]').empty();

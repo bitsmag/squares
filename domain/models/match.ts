@@ -38,14 +38,6 @@ export class Match {
     return this.players;
   }
 
-  getPlayer(playerName: string): Player {
-    const foundPlayer = this.players.find((p) => p.getName() === playerName);
-    if (!foundPlayer) {
-      throw new Error('playerNotFound');
-    }
-    return foundPlayer;
-  }
-
   getPlayerById(playerId: string): Player {
     const foundPlayer = this.players.find((p) => p.getId() === playerId);
     if (!foundPlayer) {
@@ -60,18 +52,6 @@ export class Match {
       throw new Error('playerNotFound');
     }
     return foundPlayer;
-  }
-
-  getMatchCreator(): Player {
-    if (this.players.length === 0) {
-      throw new Error('matchCreatorNotFound');
-    }
-    for (let i = 0; i < this.players.length; i++) {
-      if (this.players[i].isHost()) {
-        return this.players[i];
-      }
-    }
-    throw new Error('matchCreatorNotFound');
   }
 
   getBoard(): Board {

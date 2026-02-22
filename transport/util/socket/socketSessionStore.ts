@@ -1,4 +1,4 @@
-type Session = { namespace: string; matchId?: string; playerName?: string; playerId?: string };
+type Session = { namespace: string; matchId?: string; playerId?: string };
 
 export class SocketSessionStore {
   private sessions = new Map<string, Session>();
@@ -8,10 +8,9 @@ export class SocketSessionStore {
     socketId: string,
     namespace: string,
     matchId?: string,
-    playerName?: string,
     playerId?: string
   ): void {
-    this.sessions.set(socketId, { namespace, matchId, playerName, playerId });
+    this.sessions.set(socketId, { namespace, matchId, playerId });
     if (playerId) this.playerToSocket.set(playerId, socketId);
   }
 
@@ -43,8 +42,8 @@ export class SocketSessionStore {
   getConnectedPlayers(matchId: string, namespace = '/matchSockets'): string[] {
     const out: string[] = [];
     for (const [, s] of this.sessions) {
-      if (s.namespace === namespace && s.matchId === matchId && s.playerName) {
-        out.push(s.playerName);
+      if (s.namespace === namespace && s.matchId === matchId && s.playerId) {
+        out.push(s.playerId);
       }
     }
     return out;

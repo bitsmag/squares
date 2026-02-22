@@ -1,6 +1,6 @@
 var expect = require('chai').expect;
-var randomSpecials = require('../controllers/matchTicker/randomSpecials');
-var matchMod = require('../models/match');
+var randomSpecials = require('../domain/engine/utilities/randomSpecials.ts');
+var matchMod = require('../domain/models/match.ts');
 
 describe('RandomSpecials', function () {
   it('can produce both specials when random returns low values', function () {

@@ -9,7 +9,7 @@ import {
 function createMatchLobbyRouter(app: Application): void {
   app.get(
     '/createMatchLobby/:playerName',
-    validate('params', schemas.createMatchParams),
+    validate('params', schemas.createMatchLobbyHostParams),
     handleCreateMatchLobbyHost
   );
   app.get(
