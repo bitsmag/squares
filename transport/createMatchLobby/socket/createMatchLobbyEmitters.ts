@@ -1,10 +1,11 @@
 import type { Match } from '../../../domain/models/match';
 import { broadcastToMatch } from '../../util/socket/transport';
+import type { LobbyPlayersDTO } from '../../../shared/dto/lobbyDtos';
 
 export function sendPlayerConnectedEvent(match: Match): void {
-  const data = {
+  const data: LobbyPlayersDTO = {
     matchId: match.id,
-    players: [] as { playerName: string; playerColor: string }[],
+    players: [] as LobbyPlayersDTO['players'],
   };
   for (let i = 0; i < match.players.length; i++) {
     data.players[i] = {
@@ -17,9 +18,9 @@ export function sendPlayerConnectedEvent(match: Match): void {
 }
 
 export function sendPlayerDisconnectedEvent(match: Match): void {
-  const data = {
+  const data: LobbyPlayersDTO = {
     matchId: match.id,
-    players: [] as { playerName: string; playerColor: string }[],
+    players: [] as LobbyPlayersDTO['players'],
   };
   for (let i = 0; i < match.players.length; i++) {
     data.players[i] = {

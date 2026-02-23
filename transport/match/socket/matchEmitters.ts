@@ -3,41 +3,24 @@ import type { Match } from '../../../domain/models/match';
 import type { Board } from '../../../domain/models/board';
 import type { PlayerColor } from '../../../domain/models/colors';
 import { broadcastToMatch } from '../../util/socket/transport';
-import type { BoardDTO, PrepareMatchDTO, PrepareMatchPlayerDTO } from '../../../shared/dto/matchDtos';
-
-type PlayerStatus = { pos: number | null; dir: string | null; doubleSpeed: boolean | null };
-type Specials = { doubleSpeed: number[]; getPoints: number[] };
-type ClearSquare = { id: number; color: PlayerColor };
-type Scores = Record<PlayerColor, number | null>;
-
-function toBoardDTO(board: Board): BoardDTO {
-  return {
-    width: board.width,
-    height: board.height,
-    squares: board.squares.map((sq) => ({
-      id: sq.id,
-      color: sq.color,
-    })),
-  };
-}
+import type {
+  PrepareMatchDTO,
+  ClearSquaresDTO,
+  UpdateBoardDTO,
+  UpdateScoreDTO,
+  CountdownDTO,
+} from '../../../shared/dto/matchDtos';
 
 export function sendPrepareMatchEvent(match: Match): void {
-  const boardDto = toBoardDTO(match.board);
-  const players: PrepareMatchPlayerDTO[] = [];
-  for (let i = 0; i < match.players.length; i++) {
-    players[i] = {
-      playerName: match.players[i].name,
-      playerColor: match.players[i].color,
-    };
-  }
-
-  const data: PrepareMatchDTO = { players, board: boardDto };
-
+  const data = toPrepareMatchDTO(match.board, match.players);
   broadcastToMatch(match.id, '/matchSockets', 'prepareMatch', data);
 }
 
-export function sendUpdateBoardEvent(match: Match, specials: Specials): void {
-  const playerStatuses: Record<PlayerColor, PlayerStatus> = {
+export function sendUpdateBoardEvent(
+  match: Match,
+  specials: { doubleSpeed: number[]; getPoints: number[] }
+): void {
+  const playerStatuses: UpdateBoardDTO['playerStatuses'] = {
     blue: { pos: null, dir: null, doubleSpeed: null },
     orange: { pos: null, dir: null, doubleSpeed: null },
     green: { pos: null, dir: null, doubleSpeed: null },
@@ -61,7 +44,7 @@ export function sendUpdateBoardEvent(match: Match, specials: Specials): void {
       socketErrorHandler(match, err);
     }
   }
-  const data = {
+  const data: UpdateBoardDTO = {
     playerStatuses: playerStatuses,
     specials: specials,
     duration: match.duration,
@@ -72,16 +55,21 @@ export function sendUpdateBoardEvent(match: Match, specials: Specials): void {
 
 export function sendClearSquaresEvent(
   match: Match,
-  clearSquares: ClearSquare[],
+  clearSquares: ClearSquaresDTO['clearSquares'],
   clearSpecials: number[]
 ): void {
-  const data = { clearSquares: clearSquares, clearSpecials: clearSpecials };
+  const data: ClearSquaresDTO = { clearSquares: clearSquares, clearSpecials: clearSpecials };
 
   broadcastToMatch(match.id, '/matchSockets', 'clearSquares', data);
 }
 
 export function sendUpdateScoreEvent(match: Match): void {
-  const scores: Scores = { blue: null, orange: null, green: null, red: null };
+  const scores: UpdateScoreDTO['scores'] = {
+    blue: null,
+    orange: null,
+    green: null,
+    red: null,
+  };
 
   const activeColors: PlayerColor[] = [];
   const players = match.players;
@@ -97,7 +85,7 @@ export function sendUpdateScoreEvent(match: Match): void {
     }
   }
 
-  const data = { scores: scores };
+  const data: UpdateScoreDTO = { scores: scores };
 
   broadcastToMatch(match.id, '/matchSockets', 'updateScore', data);
 }
@@ -107,11 +95,28 @@ export function sendMatchEndEvent(match: Match): void {
 }
 
 export function sendCountdownEvent(match: Match): void {
-  const data = { countdownDuration: match.countdownDuration };
+  const data: CountdownDTO = { countdownDuration: match.countdownDuration };
 
   broadcastToMatch(match.id, '/matchSockets', 'countdown', data);
 }
 
 export function sendFatalErrorEvent(match: Match): void {
   broadcastToMatch(match.id, '/matchSockets', 'fatalError');
+}
+
+function toPrepareMatchDTO(board: Board, players: Match['players']): PrepareMatchDTO {
+  return {
+    board: {
+      width: board.width,
+      height: board.height,
+      squares: board.squares.map((sq) => ({
+        id: sq.id,
+        color: sq.color,
+      })),
+    },
+    players: players.map((player) => ({
+      playerName: player.name,
+      playerColor: player.color,
+    })),
+  };
 }
