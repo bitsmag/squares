@@ -1,11 +1,12 @@
 import * as squareModule from './square';
 import type { Square } from './square';
+import type { PlayerColor } from './colors';
 
 export class Board {
   squares: Square[];
   width: number;
   height: number;
-  startSquares: { [color: string]: number };
+  startSquares: { [color in PlayerColor]: number };
   matchDuration: number;
   countdownDuration: number;
   doubleSpeedDuration: number;
@@ -45,7 +46,7 @@ export class Board {
     return this.height;
   }
 
-  getStartSquares(): { [color: string]: number } {
+  getStartSquares(): { [color in PlayerColor]: number } {
     return this.startSquares;
   }
 

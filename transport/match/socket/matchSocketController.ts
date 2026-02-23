@@ -1,6 +1,7 @@
 import socketErrorHandler from '../../util/socket/socketErrorHandler';
 import type { RegisterPlayerAndStartMatchWhenReadyParams } from '../../util/validation';
 import type { Match } from '../../../domain/models/match';
+import type { Direction } from '../../../domain/models/direction';
 import { MatchService } from '../../../service/matchService';
 import { MatchPresenceService } from '../../../service/matchPresenceService';
 import { MatchStartCoordinator } from '../../../service/matchStartCoordinator';
@@ -50,7 +51,7 @@ export class MatchSocketController {
     }
   }
 
-  handleDirection(direction: 'left' | 'up' | 'right' | 'down', socketId: string): void {
+  handleDirection(direction: Direction, socketId: string): void {
     try {
       const matchId = sessionStore.getMatchIdForSocket(socketId);
       const playerId = sessionStore.getPlayerIdForSocket(socketId);

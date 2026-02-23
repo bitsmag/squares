@@ -1,8 +1,9 @@
 import type { Match } from '../../models/match';
 import type { Board } from '../../models/board';
 import type { Square } from '../../models/square';
+import type { PlayerColor } from '../../models/colors';
+import type { Direction } from '../../models/direction';
 
-export type PlayerColor = 'blue' | 'orange' | 'green' | 'red';
 export type PlayerPositions = Partial<Record<PlayerColor, number>>;
 
 export function calculateNewPlayerPositions(
@@ -98,7 +99,7 @@ export function calculateNewPlayerPositions(
 
 function calculateFuturePos(
   currentPosition: number,
-  activeDirection: string | null,
+  activeDirection: Direction | null,
   board: Board,
   match: Match
 ): number {

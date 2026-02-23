@@ -1,9 +1,10 @@
 import * as positionCalc from './utilities/positionCalc';
-import type { PlayerColor, PlayerPositions as RawPlayerPositions } from './utilities/positionCalc';
+import type { PlayerPositions as RawPlayerPositions } from './utilities/positionCalc';
 import * as circuitsCheck from './utilities/circuitsCheck';
 import * as randomSpecials from './utilities/randomSpecials';
 import type { Match } from '../models/match';
 import { manager } from '../models/matchesManager';
+import type { PlayerColor } from '../models/colors';
 import type { ClearedSquare, MatchEventPublisher, MatchSpecials } from './matchEvents';
 
 type PlayerPositions = RawPlayerPositions;

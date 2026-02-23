@@ -1,7 +1,7 @@
 import { Board } from './board';
 import type { MatchEngine } from '../engine/matchEngine';
 import type { Player } from './player';
-import type { PlayerColor } from '../engine/utilities/positionCalc';
+import type { PlayerColor } from './colors';
 
 export class Match {
   id: string;
@@ -48,7 +48,7 @@ export class Match {
     return foundPlayer;
   }
 
-  getPlayerByColor(playerColor: string): Player {
+  getPlayerByColor(playerColor: PlayerColor): Player {
     const foundPlayer = this.players.find((p) => p.getColor() === playerColor);
     if (!foundPlayer) {
       throw new Error('playerNotFound');

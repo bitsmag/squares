@@ -1,6 +1,6 @@
 import type { Match } from '../../models/match';
 import type { Square } from '../../models/square';
-import type { PlayerColor } from './positionCalc';
+import type { PlayerColor } from '../../models/colors';
 
 export function getPlayerPoints(match: Match): Record<PlayerColor, Square[]> {
   const playerPoints: Record<PlayerColor, Square[]> = {
@@ -23,7 +23,7 @@ export function getPlayerPoints(match: Match): Record<PlayerColor, Square[]> {
 function getPoints(theSquare: Square, theColor: PlayerColor, match: Match): Square[] {
   const stack: Square[] = [];
   let justPopped: Square | undefined;
-  let prefDir = '';
+  let prefDir: '' | 'left' | 'right' | 'up' | 'down' = '';
   let squaresEarningPoints: Square[] = [];
 
   function getVertices(s: Square, c: PlayerColor): Square[] {

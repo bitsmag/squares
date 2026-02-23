@@ -1,4 +1,5 @@
 import { manager } from '../domain/models/matchesManager';
+import type { Direction } from '../domain/models/direction';
 import * as matchSocketEmitters from '../transport/match/socket/matchEmitters';
 import { MatchPresenceService } from './matchPresenceService';
 import { MatchStartCoordinator } from './matchStartCoordinator';
@@ -24,7 +25,7 @@ export class MatchService {
   setDirection(
     matchId: string,
     playerId: string,
-    direction: 'left' | 'up' | 'right' | 'down'
+      direction: Direction
   ): void {
     const match = manager.getMatch(matchId);
     const player = match.getPlayerById(playerId);

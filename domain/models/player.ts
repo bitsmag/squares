@@ -1,12 +1,14 @@
 import { randomUUID } from 'crypto';
 import type { Match } from './match';
+import type { PlayerColor } from './colors';
+import type { Direction } from './direction';
 
 export class Player {
   id: string;
   name: string;
-  color: string;
+  color: PlayerColor;
   position: number;
-  activeDirection: string | null;
+  activeDirection: Direction | null;
   score: number;
   doubleSpeedSpecial: boolean;
   host: boolean;
@@ -14,17 +16,15 @@ export class Player {
   constructor(name: string, match: Match, host: boolean) {
     this.id = randomUUID();
     this.name = name;
-    this.color = '';
-    this.position = 0;
+    const unusedColor = getUnusedColor(match);
+    this.color = unusedColor;
+    this.position = match.getBoard().getStartSquares()[unusedColor];
     this.activeDirection = null;
     this.score = 0;
     this.doubleSpeedSpecial = false;
     this.host = host;
 
     if (!match.isActive()) {
-      const unusedColor = getUnusedColor(match);
-      this.color = unusedColor;
-      this.position = match.getBoard().getStartSquares()[unusedColor];
       match.addPlayer(this);
     } else {
       throw new Error('matchIsActive');
@@ -39,7 +39,7 @@ export class Player {
     return this.id;
   }
 
-  getColor(): string {
+  getColor(): PlayerColor {
     return this.color;
   }
 
@@ -47,7 +47,7 @@ export class Player {
     return this.position;
   }
 
-  getActiveDirection(): string | null {
+  getActiveDirection(): Direction | null {
     return this.activeDirection;
   }
 
@@ -63,10 +63,8 @@ export class Player {
     return this.host;
   }
 
-  setActiveDirection(dir: string): void {
-    if (dir === 'left' || dir === 'right' || dir === 'up' || dir === 'down') {
-      this.activeDirection = dir;
-    }
+  setActiveDirection(dir: Direction): void {
+    this.activeDirection = dir;
   }
 
   setPosition(pos: number): void {
@@ -92,8 +90,8 @@ export class Player {
   }
 }
 
-function getUnusedColor(match: Match): string {
-  const unusedColors = ['blue', 'orange', 'green', 'red'];
+function getUnusedColor(match: Match): PlayerColor {
+  const unusedColors: PlayerColor[] = ['blue', 'orange', 'green', 'red'];
   const players = match.getPlayers();
 
   for (let i = 0; i < players.length; i++) {

@@ -1,8 +1,10 @@
+import type { SquareColor } from './colors';
+
 export class Square {
   id: number;
   edgesTo: number[];
   position: { x: number; y: number };
-  color: string;
+  color: SquareColor;
   doubleSpeedSpecial: boolean;
   getPointsSpecial: boolean;
   dfsVisited: boolean;
@@ -29,7 +31,7 @@ export class Square {
     return this.position;
   }
 
-  getColor(): string {
+  getColor(): SquareColor {
     return this.color;
   }
 
@@ -45,7 +47,7 @@ export class Square {
     return this.dfsVisited;
   }
 
-  setColor(color: string): void {
+  setColor(color: SquareColor): void {
     this.color = color;
   }
 
