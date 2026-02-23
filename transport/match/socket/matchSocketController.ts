@@ -1,9 +1,15 @@
 import socketErrorHandler from '../../util/socket/socketErrorHandler';
 import type { RegisterPlayerAndStartMatchWhenReadyParams } from '../../util/validation';
 import type { Match } from '../../../domain/models/match';
-import { matchService } from '../../../service/matchService';
+import { MatchService } from '../../../service/matchService';
+import { MatchPresenceService } from '../../../service/matchPresenceService';
+import { MatchStartCoordinator } from '../../../service/matchStartCoordinator';
 import { sessionStore } from '../../util/socket/socketSessionStore';
 import { manager } from '../../../domain/models/matchesManager';
+
+const matchPresenceService = new MatchPresenceService();
+const matchStartCoordinator = new MatchStartCoordinator();
+const matchService = new MatchService(matchPresenceService, matchStartCoordinator);
 
 export class MatchSocketController {
   private matchService = matchService;

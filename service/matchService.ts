@@ -1,18 +1,23 @@
 import { manager } from '../domain/models/matchesManager';
 import * as matchSocketEmitters from '../transport/match/socket/matchEmitters';
-import { matchPresenceService } from './matchPresenceService';
-import { matchStartCoordinator } from './matchStartCoordinator';
+import { MatchPresenceService } from './matchPresenceService';
+import { MatchStartCoordinator } from './matchStartCoordinator';
 
 export class MatchService {
+  constructor(
+    private readonly presenceService: MatchPresenceService,
+    private readonly startCoordinator: MatchStartCoordinator
+  ) {}
+
   startMatchWhenPlayersAreConnected(matchId: string): void {
     const match = manager.getMatch(matchId);
     const expected = match.getPlayers().length;
-    if (matchPresenceService.areAllPlayersConnected(matchId, expected)) {
-      matchStartCoordinator.cancelCountdown(matchId);
+    if (this.presenceService.areAllPlayersConnected(matchId, expected)) {
+      this.startCoordinator.cancelCountdown(matchId);
       matchSocketEmitters.sendPrepareMatchEvent(match);
-      matchStartCoordinator.startMatch(match);
+      this.startCoordinator.startMatch(match);
     } else {
-      matchStartCoordinator.startMatchWithCountdown(match);
+      this.startCoordinator.startMatchWithCountdown(match);
     }
   }
 
@@ -33,5 +38,3 @@ export class MatchService {
     match.removePlayer(player);
   }
 }
-
-export const matchService = new MatchService();

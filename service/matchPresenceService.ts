@@ -18,5 +18,3 @@ export class MatchPresenceService {
     return sessionStore.getSocketIdsForMatch(matchId, namespace);
   }
 }
-
-export const matchPresenceService = new MatchPresenceService();

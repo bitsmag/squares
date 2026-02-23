@@ -33,5 +33,3 @@ export class MatchStartCoordinator {
     this.timers.delete(matchId);
   }
 }
-
-export const matchStartCoordinator = new MatchStartCoordinator();

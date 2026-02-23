@@ -48,5 +48,3 @@ export class CreateMatchLobbyService {
     return { matchId: match.getId(), playerId: player.getId() };
   }
 }
-
-export const createMatchLobbyService = new CreateMatchLobbyService();

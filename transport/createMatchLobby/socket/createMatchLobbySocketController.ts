@@ -1,10 +1,12 @@
 import type { RegisterPlayerLobbyParams } from '../../util/validation';
-import { createMatchLobbyService } from '../../../service/createMatchLobbyService';
+import { CreateMatchLobbyService } from '../../../service/createMatchLobbyService';
 import { sessionStore } from '../../util/socket/socketSessionStore';
 import { manager } from '../../../domain/models/matchesManager';
 import type { Match } from '../../../domain/models/match';
 import socketErrorHandler from '../../util/socket/socketErrorHandler';
 import * as createMatchLobbyEmitters from './createMatchLobbyEmitters';
+
+const createMatchLobbyService = new CreateMatchLobbyService();
 
 export class CreateMatchLobbySocketController {
   private createMatchLobbyService = createMatchLobbyService;

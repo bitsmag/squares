@@ -1,8 +1,10 @@
 import type { NextFunction, Request, Response } from 'express';
-import { createMatchLobbyService } from '../../../service/createMatchLobbyService';
+import { CreateMatchLobbyService } from '../../../service/createMatchLobbyService';
 
 export type CreateMatchLobbyParams = { playerName: string };
 export type CreateMatchLobbyGuestParams = { playerName: string; matchId: string };
+
+const createMatchLobbyService = new CreateMatchLobbyService();
 
 export function handleCreateMatchLobbyHost(
   req: Request<CreateMatchLobbyParams>,
