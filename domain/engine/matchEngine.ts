@@ -20,12 +20,12 @@ export class MatchEngine {
 
   startMatch(): void {
     const countdownDurationDecrementInterval = setInterval(() => {
-      if (!this.match.isActive()) {
+      if (!this.match.active) {
         clearInterval(countdownDurationDecrementInterval);
       } else {
         this.match.countdownDurationDecrement();
         this.publisher.publish({ type: 'COUNTDOWN_TICKED', match: this.match });
-        if (this.match.getCountdownDuration() === 0) {
+        if (this.match.countdownDuration === 0) {
           clearInterval(countdownDurationDecrementInterval);
           this.timer();
           this.matchTicker();
@@ -36,13 +36,13 @@ export class MatchEngine {
 
   timer(): void {
     const durationDecrementInterval = setInterval(() => {
-      if (!this.match.isActive()) {
+      if (!this.match.active) {
         clearInterval(durationDecrementInterval);
       } else {
         this.match.durationDecrement();
-        if (this.match.getDuration() === 0) {
+        if (this.match.duration === 0) {
           clearInterval(durationDecrementInterval);
-          this.match.setActive(false);
+          this.match.active = false;
           // Cleanup finished match so it is removed from the registry
           manager.destroyMatch(this.match);
         }
@@ -54,7 +54,7 @@ export class MatchEngine {
     let tickCount = 0;
     const tick = () => {
       tickCount++;
-      if (!this.match.isActive()) {
+      if (!this.match.active) {
         this.publisher.publish({ type: 'MATCH_ENDED', match: this.match });
         clearInterval(tickerInterval);
       } else {
@@ -62,17 +62,17 @@ export class MatchEngine {
         try {
           if (tickCount % 2 !== 0) {
             const activeColors: PlayerColor[] = [];
-            const players = this.match.getPlayers();
+            const players = this.match.players;
             for (let i = 0; i < players.length; i++) {
-              activeColors.push(players[i].getColor() as PlayerColor);
+              activeColors.push(players[i].color as PlayerColor);
             }
             playerPositions = positionCalc.calculateNewPlayerPositions(this.match, activeColors);
           } else {
             const doubleSpeedColors: PlayerColor[] = [];
-            const players = this.match.getPlayers();
+            const players = this.match.players;
             for (let i = 0; i < players.length; i++) {
-              if (players[i].getDoubleSpeedSpecial()) {
-                doubleSpeedColors.push(players[i].getColor() as PlayerColor);
+              if (players[i].doubleSpeedSpecial) {
+                doubleSpeedColors.push(players[i].color as PlayerColor);
               }
             }
             playerPositions = positionCalc.calculateNewPlayerPositions(
@@ -113,23 +113,23 @@ export class MatchEngine {
         const clearSpecials: number[] = [];
         (Object.keys(sanitizedPositions) as PlayerColor[]).forEach((color) => {
           try {
-            const playerPositionSquare = this.match.getBoard().getSquare(sanitizedPositions[color]);
-            if (playerPositionSquare.getGetPointsSpecial()) {
-              for (let i = 0; i < this.match.getBoard().getSquares().length; i++) {
-                const square = this.match.getBoard().getSquares()[i];
-                if (square.getColor() === color) {
+            const playerPositionSquare = this.match.board.getSquare(sanitizedPositions[color]);
+            if (playerPositionSquare.hasGetPointsSpecial) {
+              for (let i = 0; i < this.match.board.squares.length; i++) {
+                const square = this.match.board.squares[i];
+                if (square.color === color) {
                   playerPoints[color].push(square);
                 }
               }
-              playerPositionSquare.setGetPointsSpecial(false);
-              clearSpecials.push(playerPositionSquare.getId());
+              playerPositionSquare.hasGetPointsSpecial = false;
+              clearSpecials.push(playerPositionSquare.id);
             }
-            if (playerPositionSquare.getDoubleSpeedSpecial()) {
+            if (playerPositionSquare.doubleSpeedSpecial) {
               this.match
                 .getPlayerByColor(color)
-                .startDoubleSpeedSpecial(this.match.getBoard().getDoubleSpeedDuration());
-              playerPositionSquare.setDoubleSpeedSpecial(false);
-              clearSpecials.push(playerPositionSquare.getId());
+                .startDoubleSpeedSpecial(this.match.board.doubleSpeedDuration);
+              playerPositionSquare.doubleSpeedSpecial = false;
+              clearSpecials.push(playerPositionSquare.id);
             }
           } catch (err) {
             this.publisher.publish({ type: 'FATAL_ERROR', match: this.match, error: err });
@@ -147,8 +147,8 @@ export class MatchEngine {
         const clearSquares: ClearedSquare[] = [];
         (Object.keys(sanitizedPositions) as PlayerColor[]).forEach((color) => {
           for (let i = 0; i < playerPoints[color].length; i++) {
-            clearSquares.push({ id: playerPoints[color][i].getId(), color: color });
-            playerPoints[color][i].setColor('');
+            clearSquares.push({ id: playerPoints[color][i].id, color: color });
+            playerPoints[color][i].color = '';
           }
         });
 

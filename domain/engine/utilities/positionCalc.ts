@@ -11,9 +11,9 @@ export function calculateNewPlayerPositions(
   playerList: PlayerColor[]
 ): PlayerPositions {
   const activeColors: PlayerColor[] = [];
-  const players = match.getPlayers();
+  const players = match.players;
   for (let i = 0; i < players.length; i++) {
-    activeColors.push(players[i].getColor() as PlayerColor);
+    activeColors.push(players[i].color as PlayerColor);
   }
 
   const currentPos: Partial<Record<PlayerColor, number>> = {};
@@ -22,11 +22,11 @@ export function calculateNewPlayerPositions(
 
   for (let i = 0; i < activeColors.length; i++) {
     const player = match.getPlayerByColor(activeColors[i]);
-    currentPos[activeColors[i]] = player.getPosition();
+    currentPos[activeColors[i]] = player.position;
     futurePos[activeColors[i]] = calculateFuturePos(
-      player.getPosition(),
-      player.getActiveDirection(),
-      match.getBoard(),
+      player.position,
+      player.activeDirection,
+      match.board,
       match
     );
     if (playerList.indexOf(activeColors[i]) === -1) {
@@ -107,26 +107,26 @@ function calculateFuturePos(
   if (square) {
     switch (activeDirection) {
       case 'left':
-        if (square.getPosition().x > 0) {
+        if (square.position.x > 0) {
           return currentPosition - 1;
         } else {
           return currentPosition;
         }
       case 'up':
-        if (square.getPosition().y > 0) {
-          return currentPosition - board.getWidth();
+        if (square.position.y > 0) {
+          return currentPosition - board.width;
         } else {
           return currentPosition;
         }
       case 'right':
-        if (square.getPosition().x < board.getWidth() - 1) {
+        if (square.position.x < board.width - 1) {
           return currentPosition + 1;
         } else {
           return currentPosition;
         }
       case 'down':
-        if (square.getPosition().y < board.getHeight() - 1) {
-          return currentPosition + board.getWidth();
+        if (square.position.y < board.height - 1) {
+          return currentPosition + board.width;
         } else {
           return currentPosition;
         }

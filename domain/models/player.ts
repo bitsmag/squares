@@ -68,47 +68,6 @@ export class Player {
     return this._host;
   }
 
-  // Backwards-compatible methods
-  getName(): string {
-    return this.name;
-  }
-
-  getId(): string {
-    return this.id;
-  }
-
-  getColor(): PlayerColor {
-    return this.color;
-  }
-
-  getPosition(): number {
-    return this.position;
-  }
-
-  getActiveDirection(): Direction | null {
-    return this.activeDirection;
-  }
-
-  getScore(): number {
-    return this.score;
-  }
-
-  getDoubleSpeedSpecial(): boolean {
-    return this.doubleSpeedSpecial;
-  }
-
-  isHost(): boolean {
-    return this.host;
-  }
-
-  setActiveDirection(dir: Direction): void {
-    this.activeDirection = dir;
-  }
-
-  setPosition(pos: number): void {
-    this.position = pos;
-  }
-
   increaseScore(points: number): void {
     this._score += points;
   }

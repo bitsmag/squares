@@ -12,7 +12,7 @@ export class MatchService {
 
   startMatchWhenPlayersAreConnected(matchId: string): void {
     const match = manager.getMatch(matchId);
-    const expected = match.getPlayers().length;
+    const expected = match.players.length;
     if (this.presenceService.areAllPlayersConnected(matchId, expected)) {
       this.startCoordinator.cancelCountdown(matchId);
       matchSocketEmitters.sendPrepareMatchEvent(match);
@@ -30,7 +30,7 @@ export class MatchService {
     const match = manager.getMatch(matchId);
     const player = match.getPlayerById(playerId);
 
-    player.setActiveDirection(direction);
+    player.activeDirection = direction;
   }
 
   removePlayer(matchId: string, playerId: string): void {

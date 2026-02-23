@@ -9,10 +9,10 @@ export function getPlayerPoints(match: Match): Record<PlayerColor, Square[]> {
     green: [],
     red: [],
   };
-  for (let i = 0; i < match.getPlayers().length; i++) {
-    const playerPositionSquare = match.getBoard().getSquare(match.getPlayers()[i].getPosition());
+  for (let i = 0; i < match.players.length; i++) {
+    const playerPositionSquare = match.board.getSquare(match.players[i].position);
     if (playerPositionSquare) {
-      const playerColor = match.getPlayers()[i].getColor() as PlayerColor;
+      const playerColor = match.players[i].color as PlayerColor;
       const squaresEarningPoints = getPoints(playerPositionSquare, playerColor, match);
       playerPoints[playerColor] = squaresEarningPoints;
     }
@@ -37,10 +37,10 @@ function getPoints(theSquare: Square, theColor: PlayerColor, match: Match): Squa
       }
       this.splice(new_index, 0, this.splice(old_index, 1)[0]);
     };
-    for (let i = 0; i < s.getEdgesTo().length; i++) {
-      const edgeSquare = match.getBoard().getSquare(s.getEdgesTo()[i]);
+    for (let i = 0; i < s.edgesTo.length; i++) {
+      const edgeSquare = match.board.getSquare(s.edgesTo[i]);
       if (edgeSquare) {
-        if (edgeSquare.getColor() === c && edgeSquare !== justPopped) {
+        if (edgeSquare.color === c && edgeSquare !== justPopped) {
           vertices.push(edgeSquare);
         }
       }
@@ -48,10 +48,10 @@ function getPoints(theSquare: Square, theColor: PlayerColor, match: Match): Squa
 
     for (let i = 0; i < vertices.length; i++) {
       if (
-        (s.getPosition().x < vertices[i].getPosition().x && prefDir === 'right') ||
-        (s.getPosition().x > vertices[i].getPosition().x && prefDir === 'left') ||
-        (s.getPosition().y > vertices[i].getPosition().y && prefDir === 'down') ||
-        (s.getPosition().y < vertices[i].getPosition().y && prefDir === 'up')
+        (s.position.x < vertices[i].position.x && prefDir === 'right') ||
+        (s.position.x > vertices[i].position.x && prefDir === 'left') ||
+        (s.position.y > vertices[i].position.y && prefDir === 'down') ||
+        (s.position.y < vertices[i].position.y && prefDir === 'up')
       ) {
         (vertices as any).move(i, 0);
       }
@@ -60,20 +60,20 @@ function getPoints(theSquare: Square, theColor: PlayerColor, match: Match): Squa
   }
 
   function setAllSquaresUnvisited() {
-    for (let i = 0; i < match.getBoard().getSquares().length; i++) {
-      match.getBoard().getSquares()[i].setDfsVisited(false);
+    for (let i = 0; i < match.board.squares.length; i++) {
+      match.board.squares[i].dfsVisited = false;
     }
   }
 
   function setPrefDir(theSquareInner: Square, nextSquare: Square) {
     if (stack.length > 0) {
-      if (theSquareInner.getPosition().x < nextSquare.getPosition().x) {
+      if (theSquareInner.position.x < nextSquare.position.x) {
         prefDir = 'right';
-      } else if (theSquareInner.getPosition().x > nextSquare.getPosition().x) {
+      } else if (theSquareInner.position.x > nextSquare.position.x) {
         prefDir = 'left';
-      } else if (theSquareInner.getPosition().y > nextSquare.getPosition().y) {
+      } else if (theSquareInner.position.y > nextSquare.position.y) {
         prefDir = 'down';
-      } else if (theSquareInner.getPosition().y < nextSquare.getPosition().y) {
+      } else if (theSquareInner.position.y < nextSquare.position.y) {
         prefDir = 'up';
       }
     }
@@ -90,21 +90,20 @@ function getPoints(theSquare: Square, theColor: PlayerColor, match: Match): Squa
       for (let j = 0; j < 9; j++) {
         const squaresInSameRow: Square[] = [];
         for (let k = 0; k < circuitArray.length; k++) {
-          if (circuitArray[k].getPosition().y == j) {
+          if (circuitArray[k].position.y == j) {
             squaresInSameRow.push(circuitArray[k]);
           }
         }
         squaresInSameRow.sort(function (a: Square, b: Square) {
-          return a.getPosition().x - b.getPosition().x;
+          return a.position.x - b.position.x;
         });
 
         for (let k = 1; k < squaresInSameRow.length; k++) {
-          const diff =
-            squaresInSameRow[k].getPosition().x - squaresInSameRow[k - 1].getPosition().x;
+          const diff = squaresInSameRow[k].position.x - squaresInSameRow[k - 1].position.x;
           if (diff != 1) {
             for (let l = 1; l < diff; l++) {
               points.push(
-                match.getBoard().getSquareByCoordinates(squaresInSameRow[k].getPosition().x - l, j)
+                match.board.getSquareByCoordinates(squaresInSameRow[k].position.x - l, j)
               );
             }
           }
@@ -127,13 +126,13 @@ function getPoints(theSquare: Square, theColor: PlayerColor, match: Match): Squa
         theSquareInner = stack[stack.length - 1];
       }
 
-      theSquareInner.setDfsVisited(true);
+      theSquareInner.dfsVisited = true;
 
       const vertices = getVertices(theSquareInner, theColorInner);
 
       for (let i = 0; i < vertices.length; i++) {
         if (squaresEarningPoints.length < 1) {
-          if (vertices[i].isDfsVisited() && vertices[i] !== stack[stack.length - 2]) {
+          if (vertices[i].dfsVisited && vertices[i] !== stack[stack.length - 2]) {
             squaresEarningPoints = checkValidity(stack, vertices[i]);
 
             if (squaresEarningPoints.length === 0 && i === vertices.length - 1) {
@@ -142,14 +141,14 @@ function getPoints(theSquare: Square, theColor: PlayerColor, match: Match): Squa
               setPrefDir(theSquareInner, stack[stack.length - 1]);
               dfs(null, theColorInner);
             }
-          } else if (vertices[i].isDfsVisited() && vertices[i] === stack[stack.length - 2]) {
+          } else if (vertices[i].dfsVisited && vertices[i] === stack[stack.length - 2]) {
             if (i === vertices.length - 1) {
               stack.pop();
               justPopped = theSquareInner;
               setPrefDir(theSquareInner, stack[stack.length - 1]);
               dfs(null, theColorInner);
             }
-          } else if (!vertices[i].isDfsVisited()) {
+          } else if (!vertices[i].dfsVisited) {
             justPopped = undefined;
             setPrefDir(theSquareInner, vertices[i]);
             dfs(vertices[i], theColorInner);

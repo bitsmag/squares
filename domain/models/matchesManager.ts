@@ -38,7 +38,7 @@ export class MatchesManager {
   }
 
   destroyMatch(match: Match): void {
-    match.setActive(false);
+    match.active = false;
     this.removeMatch(match);
   }
 

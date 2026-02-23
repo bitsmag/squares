@@ -33,7 +33,6 @@ export class Board {
       }
     }
   }
-
   // Accessors
   get squares(): Square[] {
     return this._squares;
@@ -63,43 +62,14 @@ export class Board {
     return this._doubleSpeedDuration;
   }
 
-  // Backwards-compatible methods
-  getSquares(): Square[] {
-    return this.squares;
-  }
-
-  getWidth(): number {
-    return this.width;
-  }
-
-  getHeight(): number {
-    return this.height;
-  }
-
-  getStartSquares(): { [color in PlayerColor]: number } {
-    return this.startSquares;
-  }
-
-  getMatchDuration(): number {
-    return this.matchDuration;
-  }
-
-  getCountdownDuration(): number {
-    return this.countdownDuration;
-  }
-
-  getDoubleSpeedDuration(): number {
-    return this.doubleSpeedDuration;
-  }
-
   getSquare(id: number): Square {
-    const found = this.squares.find((sq) => sq.getId() === id);
+    const found = this.squares.find((sq) => sq.id === id);
     if (!found) throw new Error('squareNotFoundById');
     return found;
   }
 
   getSquareByCoordinates(x: number, y: number): Square {
-    const found = this.squares.find((sq) => sq.getPosition().x === x && sq.getPosition().y === y);
+    const found = this.squares.find((sq) => sq.position.x === x && sq.position.y === y);
     if (!found) throw new Error('squareNotFoundByCoordinates');
     return found;
   }

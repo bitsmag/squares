@@ -9,17 +9,17 @@ type ClearSquare = { id: number; color: PlayerColor };
 type Scores = Record<PlayerColor, number | null>;
 
 export function sendPrepareMatchEvent(match: Match): void {
-  const board = match.getBoard();
+  const board = match.board;
   const playersData: { playerName: string; playerColor: PlayerColor }[] = [];
   const data = { players: playersData, board: board };
-  for (let i = 0; i < match.getPlayers().length; i++) {
+  for (let i = 0; i < match.players.length; i++) {
     data.players[i] = {
-      playerName: match.getPlayers()[i].getName(),
-      playerColor: match.getPlayers()[i].getColor(),
+      playerName: match.players[i].name,
+      playerColor: match.players[i].color,
     };
   }
 
-  broadcastToMatch(match.getId(), '/matchSockets', 'prepareMatch', data);
+  broadcastToMatch(match.id, '/matchSockets', 'prepareMatch', data);
 }
 
 export function sendUpdateBoardEvent(match: Match, specials: Specials): void {
@@ -30,19 +30,19 @@ export function sendUpdateBoardEvent(match: Match, specials: Specials): void {
     red: { pos: null, dir: null, doubleSpeed: null },
   };
   const activeColors: PlayerColor[] = [];
-  const players = match.getPlayers();
+  const players = match.players;
   for (let i = 0; i < players.length; i++) {
-    activeColors.push(players[i].getColor());
+    activeColors.push(players[i].color);
   }
   for (let i = 0; i < activeColors.length; i++) {
     try {
-      playerStatuses[activeColors[i]].pos = match.getPlayerByColor(activeColors[i]).getPosition();
+      playerStatuses[activeColors[i]].pos = match.getPlayerByColor(activeColors[i]).position;
       playerStatuses[activeColors[i]].dir = match
         .getPlayerByColor(activeColors[i])
-        .getActiveDirection();
+        .activeDirection;
       playerStatuses[activeColors[i]].doubleSpeed = match
         .getPlayerByColor(activeColors[i])
-        .getDoubleSpeedSpecial();
+        .doubleSpeedSpecial;
     } catch (err) {
       socketErrorHandler(match, err);
     }
@@ -50,10 +50,10 @@ export function sendUpdateBoardEvent(match: Match, specials: Specials): void {
   const data = {
     playerStatuses: playerStatuses,
     specials: specials,
-    duration: match.getDuration(),
+    duration: match.duration,
   };
 
-  broadcastToMatch(match.getId(), '/matchSockets', 'updateBoard', data);
+  broadcastToMatch(match.id, '/matchSockets', 'updateBoard', data);
 }
 
 export function sendClearSquaresEvent(
@@ -63,21 +63,21 @@ export function sendClearSquaresEvent(
 ): void {
   const data = { clearSquares: clearSquares, clearSpecials: clearSpecials };
 
-  broadcastToMatch(match.getId(), '/matchSockets', 'clearSquares', data);
+  broadcastToMatch(match.id, '/matchSockets', 'clearSquares', data);
 }
 
 export function sendUpdateScoreEvent(match: Match): void {
   const scores: Scores = { blue: null, orange: null, green: null, red: null };
 
   const activeColors: PlayerColor[] = [];
-  const players = match.getPlayers();
+  const players = match.players;
   for (let i = 0; i < players.length; i++) {
-    activeColors.push(players[i].getColor());
+    activeColors.push(players[i].color);
   }
 
   for (let i = 0; i < activeColors.length; i++) {
     try {
-      scores[activeColors[i]] = match.getPlayerByColor(activeColors[i]).getScore();
+      scores[activeColors[i]] = match.getPlayerByColor(activeColors[i]).score;
     } catch (err) {
       socketErrorHandler(match, err);
     }
@@ -85,19 +85,19 @@ export function sendUpdateScoreEvent(match: Match): void {
 
   const data = { scores: scores };
 
-  broadcastToMatch(match.getId(), '/matchSockets', 'updateScore', data);
+  broadcastToMatch(match.id, '/matchSockets', 'updateScore', data);
 }
 
 export function sendMatchEndEvent(match: Match): void {
-  broadcastToMatch(match.getId(), '/matchSockets', 'matchEnd');
+  broadcastToMatch(match.id, '/matchSockets', 'matchEnd');
 }
 
 export function sendCountdownEvent(match: Match): void {
-  const data = { countdownDuration: match.getCountdownDuration() };
+  const data = { countdownDuration: match.countdownDuration };
 
-  broadcastToMatch(match.getId(), '/matchSockets', 'countdown', data);
+  broadcastToMatch(match.id, '/matchSockets', 'countdown', data);
 }
 
 export function sendFatalErrorEvent(match: Match): void {
-  broadcastToMatch(match.getId(), '/matchSockets', 'fatalError');
+  broadcastToMatch(match.id, '/matchSockets', 'fatalError');
 }

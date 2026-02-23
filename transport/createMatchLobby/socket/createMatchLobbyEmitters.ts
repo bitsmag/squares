@@ -3,30 +3,31 @@ import { broadcastToMatch } from '../../util/socket/transport';
 
 export function sendPlayerConnectedEvent(match: Match): void {
   const data = {
-    matchId: match.getId(),
+    matchId: match.id,
     players: [] as { playerName: string; playerColor: string }[],
   };
-  for (let i = 0; i < match.getPlayers().length; i++) {
+  for (let i = 0; i < match.players.length; i++) {
     data.players[i] = {
-      playerName: match.getPlayers()[i].getName(),
-      playerColor: match.getPlayers()[i].getColor(),
+      playerName: match.players[i].name,
+      playerColor: match.players[i].color,
     };
   }
-  broadcastToMatch(match.getId(), '/createMatchSockets', 'playerConnected', data);
+  broadcastToMatch(match.id, '/createMatchSockets', 'playerConnected', data);
+  broadcastToMatch(match.id, '/createMatchSockets', 'playerConnected', data);
 }
 
 export function sendPlayerDisconnectedEvent(match: Match): void {
   const data = {
-    matchId: match.getId(),
+    matchId: match.id,
     players: [] as { playerName: string; playerColor: string }[],
   };
-  for (let i = 0; i < match.getPlayers().length; i++) {
+  for (let i = 0; i < match.players.length; i++) {
     data.players[i] = {
-      playerName: match.getPlayers()[i].getName(),
-      playerColor: match.getPlayers()[i].getColor(),
+      playerName: match.players[i].name,
+      playerColor: match.players[i].color,
     };
   }
-  broadcastToMatch(match.getId(), '/createMatchSockets', 'playerDisconnected', data);
+  broadcastToMatch(match.id, '/createMatchSockets', 'playerDisconnected', data);
 }
 
 export function sendHostDisconnectedEvent(matchId: string): void {
@@ -34,9 +35,9 @@ export function sendHostDisconnectedEvent(matchId: string): void {
 }
 
 export function sendMatchStartInitiationEvent(match: Match): void {
-  broadcastToMatch(match.getId(), '/createMatchSockets', 'matchStartInitiation');
+  broadcastToMatch(match.id, '/createMatchSockets', 'matchStartInitiation');
 }
 
 export function sendFatalErrorEvent(match: Match): void {
-  broadcastToMatch(match.getId(), '/createMatchSockets', 'fatalError');
+  broadcastToMatch(match.id, '/createMatchSockets', 'fatalError');
 }

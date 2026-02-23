@@ -6,15 +6,15 @@ export class MatchStartCoordinator {
   private readonly defaultCountdownMs = 3000; // 3s
 
   startMatchWithCountdown(match: Match, durationMs?: number): void {
-    const matchId = match.getId();
+    const matchId = match.id;
     if (this.timers.has(matchId)) return; // already counting down
     const dur = durationMs ?? this.defaultCountdownMs;
 
     const cb = () => {
       // when timer expires, start with whoever is currently connected
       matchSocketEmitters.sendPrepareMatchEvent(match);
-      match.setActive(true);
-      match.getEngine().startMatch();
+      match.active = true;
+      match.engine.startMatch();
       this.timers.delete(matchId);
     };
 
@@ -23,8 +23,8 @@ export class MatchStartCoordinator {
   }
 
   startMatch(match: Match): void {
-    match.setActive(true);
-    match.getEngine().startMatch();
+    match.active = true;
+    match.engine.startMatch();
   }
 
   cancelCountdown(matchId: string): void {

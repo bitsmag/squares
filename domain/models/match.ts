@@ -69,17 +69,8 @@ export class Match {
     this._startInitiated = startInitiated;
   }
 
-  // Backwards-compatible methods
-  getId(): string {
-    return this.id;
-  }
-
-  getPlayers(): Player[] {
-    return this.players;
-  }
-
   getPlayer(playerName: string): Player {
-    const foundPlayer = this.players.find((p) => p.getName() === playerName);
+    const foundPlayer = this.players.find((p) => p.name === playerName);
     if (!foundPlayer) {
       throw new Error('playerNotFound');
     }
@@ -87,7 +78,7 @@ export class Match {
   }
 
   getPlayerById(playerId: string): Player {
-    const foundPlayer = this.players.find((p) => p.getId() === playerId);
+    const foundPlayer = this.players.find((p) => p.id === playerId);
     if (!foundPlayer) {
       throw new Error('playerNotFound');
     }
@@ -95,50 +86,22 @@ export class Match {
   }
 
   getPlayerByColor(playerColor: PlayerColor): Player {
-    const foundPlayer = this.players.find((p) => p.getColor() === playerColor);
+    const foundPlayer = this.players.find((p) => p.color === playerColor);
     if (!foundPlayer) {
       throw new Error('playerNotFound');
     }
     return foundPlayer;
   }
 
-  getBoard(): Board {
-    return this.board;
-  }
-
-  getEngine(): MatchEngine {
-    return this.engine;
-  }
-
-  setEngine(engine: MatchEngine): void {
-    this.engine = engine;
-  }
-
-  getDuration(): number {
-    return this.duration;
-  }
-
-  getCountdownDuration(): number {
-    return this.countdownDuration;
-  }
-
-  isActive(): boolean {
-    return this.active;
-  }
-
-  isStartInitiated(): boolean {
-    return this.startInitiated;
-  }
-
   addPlayer(player: Player): void {
-    const nameDuplicate = this.isNameInUse(player.getName());
+    const nameDuplicate = this.isNameInUse(player.name);
     if (this.players.length >= 4) {
       throw new Error('matchIsFull');
     } else if (nameDuplicate) {
       throw new Error('nameInUse');
     } else {
-      const startSquares = this.getBoard().getStartSquares();
-      this.getBoard().getSquare(startSquares[player.getColor()]).setColor(player.getColor());
+      const startSquares = this.board.startSquares;
+      this.board.getSquare(startSquares[player.color]).color = player.color;
       this.players.push(player);
     }
   }
@@ -146,8 +109,8 @@ export class Match {
   removePlayer(player: Player): void {
     const index = this.players.indexOf(player);
     if (index > -1) {
-      const startSquares = this.getBoard().getStartSquares();
-      this.getBoard().getSquare(startSquares[player.getColor()]).setColor('');
+      const startSquares = this.board.startSquares;
+      this.board.getSquare(startSquares[player.color]).color = '';
       this.players.splice(index, 1);
     }
     if (this.players.length < 1) {
@@ -163,40 +126,32 @@ export class Match {
     this._countdownDuration--;
   }
 
-  setActive(active: boolean): void {
-    this.active = active;
-  }
-
-  setStartInitiated(startInitiated: boolean): void {
-    this.startInitiated = startInitiated;
-  }
-
   updatePlayers(playerPositions: Record<PlayerColor, number>): void {
     (Object.keys(playerPositions) as PlayerColor[]).forEach((color) => {
       const player = this.getPlayerByColor(color);
-      player.setPosition(playerPositions[color]);
+      player.position = playerPositions[color];
     });
   }
 
   updateBoard(playerPositions: Record<PlayerColor, number>): void {
     (Object.keys(playerPositions) as PlayerColor[]).forEach((color) => {
-      this.getBoard().getSquare(playerPositions[color]).setColor(color);
+      this.board.getSquare(playerPositions[color]).color = color;
     });
   }
 
   updateSpecials(specials: { doubleSpeed: number[]; getPoints: number[] }): void {
     if (specials.doubleSpeed.length) {
-      this.getBoard().getSquare(specials.doubleSpeed[0]).setDoubleSpeedSpecial(true);
+      this.board.getSquare(specials.doubleSpeed[0]).doubleSpeedSpecial = true;
     }
     if (specials.getPoints.length) {
-      this.getBoard().getSquare(specials.getPoints[0]).setGetPointsSpecial(true);
+      this.board.getSquare(specials.getPoints[0]).hasGetPointsSpecial = true;
     }
   }
 
   isNameInUse(name: string): boolean | undefined {
     let nameInUse: boolean | undefined;
     for (let i = 0; i < this.players.length; i++) {
-      if (this.players[i].getName() === name) {
+      if (this.players[i].name === name) {
         nameInUse = true;
       }
     }
@@ -204,6 +159,6 @@ export class Match {
   }
 
   destroy(): void {
-    this.setActive(false);
+    this.active = false;
   }
 }

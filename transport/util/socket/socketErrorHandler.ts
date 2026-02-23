@@ -5,7 +5,7 @@ import { broadcastToMatch } from './transport';
 // Centralized socket error handler — emits a `fatalError` event to all players and destroys the match.
 function fatalErrorHandler(match: Match | undefined, err: unknown): void {
   try {
-    broadcastToMatch(match?.getId() ?? '', '/matchSockets', 'fatalError');
+    broadcastToMatch(match?.id ?? '', '/matchSockets', 'fatalError');
   } catch (_e) {
     // ignore
   }

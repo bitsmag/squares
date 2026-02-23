@@ -3,7 +3,7 @@ import type { Match } from '../../models/match';
 export function getSpecials(match: Match): { doubleSpeed: number[]; getPoints: number[] } {
   const specials = { doubleSpeed: [] as number[], getPoints: [] as number[] };
 
-  const maxIndex = match.getBoard().getSquares().length;
+  const maxIndex = match.board.squares.length;
   if (maxIndex === 0) return specials;
 
   let randomDoubleSpeedSquare = 0;
