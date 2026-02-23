@@ -1,7 +1,7 @@
 import { Board } from './board';
-import { manager } from './matchesManager';
 import type { MatchEngine } from '../engine/matchEngine';
-import type { Player, PlayerColor } from './player';
+import type { Player } from './player';
+import type { PlayerColor } from '../engine/utilities/positionCalc';
 
 export class Match {
   id: string;
@@ -13,8 +13,8 @@ export class Match {
   active: boolean;
   startInitiated: boolean;
 
-  constructor() {
-    this.id = '';
+  constructor(id: string) {
+    this.id = id;
     this.players = [];
     this.board = new Board();
     this.engine = undefined as unknown as MatchEngine;
@@ -22,9 +22,6 @@ export class Match {
     this.countdownDuration = this.board.getCountdownDuration();
     this.active = false;
     this.startInitiated = false;
-
-    this.id = createUniqueId();
-    manager.addMatch(this);
   }
 
   getId(): string {
@@ -162,29 +159,5 @@ export class Match {
 
   destroy(): void {
     this.setActive(false);
-    manager.removeMatch(this);
   }
-}
-
-function createUniqueId(): string {
-  let timestamp: string,
-    matchId: string = '',
-    duplicate: boolean,
-    unique = false;
-
-  while (!unique) {
-    timestamp = Date.now().toString();
-    matchId = 'x' + timestamp.substring(timestamp.length - 4, timestamp.length);
-
-    duplicate = false;
-    for (let i = 0; i < manager.getMatches().length; i++) {
-      if (manager.getMatches()[i].getId() === matchId) {
-        duplicate = true;
-      }
-    }
-    if (!duplicate) {
-      unique = true;
-    }
-  }
-  return matchId;
 }

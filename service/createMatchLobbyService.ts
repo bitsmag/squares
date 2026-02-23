@@ -1,5 +1,4 @@
 import { manager } from '../domain/models/matchesManager';
-import { Match } from '../domain/models/match';
 import { Player } from '../domain/models/player';
 import { MatchEngine } from '../domain/engine/matchEngine';
 import { SocketMatchEventPublisher } from '../transport/match/socket/matchEventPublisher';
@@ -25,7 +24,7 @@ export class CreateMatchLobbyService {
       const player = match.getPlayerById(playerId);
       if (player.isHost()) {
         match.removePlayer(player);
-        match.destroy();
+        manager.destroyMatch(match);
         return { type: 'HOST_LEFT' };
       } else {
         match.removePlayer(player);
@@ -35,7 +34,7 @@ export class CreateMatchLobbyService {
   }
 
   processCreateMatchLobbyHost(playerName: string): { matchId: string, playerId: string } {
-    const match = new Match();
+    const match = manager.createMatch();
     const publisher = new SocketMatchEventPublisher();
     const engine = new MatchEngine(match, publisher);
     match.setEngine(engine);

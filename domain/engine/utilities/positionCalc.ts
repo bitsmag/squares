@@ -1,8 +1,8 @@
 import type { Match } from '../../models/match';
 import type { Board } from '../../models/board';
 import type { Square } from '../../models/square';
-import type { PlayerColor } from '../../models/player';
 
+export type PlayerColor = 'blue' | 'orange' | 'green' | 'red';
 export type PlayerPositions = Partial<Record<PlayerColor, number>>;
 
 export function calculateNewPlayerPositions(
@@ -12,7 +12,7 @@ export function calculateNewPlayerPositions(
   const activeColors: PlayerColor[] = [];
   const players = match.getPlayers();
   for (let i = 0; i < players.length; i++) {
-    activeColors.push(players[i].getColor());
+    activeColors.push(players[i].getColor() as PlayerColor);
   }
 
   const currentPos: Partial<Record<PlayerColor, number>> = {};

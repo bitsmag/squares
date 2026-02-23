@@ -1,9 +1,9 @@
 import * as positionCalc from './utilities/positionCalc';
-import type { PlayerPositions as RawPlayerPositions } from './utilities/positionCalc';
-import type { PlayerColor } from '../models/player';
+import type { PlayerColor, PlayerPositions as RawPlayerPositions } from './utilities/positionCalc';
 import * as circuitsCheck from './utilities/circuitsCheck';
 import * as randomSpecials from './utilities/randomSpecials';
 import type { Match } from '../models/match';
+import { manager } from '../models/matchesManager';
 import type { ClearedSquare, MatchEventPublisher, MatchSpecials } from './matchEvents';
 
 type PlayerPositions = RawPlayerPositions;
@@ -42,8 +42,8 @@ export class MatchEngine {
         if (this.match.getDuration() === 0) {
           clearInterval(durationDecrementInterval);
           this.match.setActive(false);
-          // Cleanup finished match so it is removed from the singleton registry
-          this.match.destroy();
+          // Cleanup finished match so it is removed from the registry
+          manager.destroyMatch(this.match);
         }
       }
     }, 1000);
@@ -63,7 +63,7 @@ export class MatchEngine {
             const activeColors: PlayerColor[] = [];
             const players = this.match.getPlayers();
             for (let i = 0; i < players.length; i++) {
-              activeColors.push(players[i].getColor());
+              activeColors.push(players[i].getColor() as PlayerColor);
             }
             playerPositions = positionCalc.calculateNewPlayerPositions(this.match, activeColors);
           } else {
@@ -71,7 +71,7 @@ export class MatchEngine {
             const players = this.match.getPlayers();
             for (let i = 0; i < players.length; i++) {
               if (players[i].getDoubleSpeedSpecial()) {
-                doubleSpeedColors.push(players[i].getColor());
+                doubleSpeedColors.push(players[i].getColor() as PlayerColor);
               }
             }
             playerPositions = positionCalc.calculateNewPlayerPositions(

@@ -1,4 +1,4 @@
-import type { Match } from './match';
+import { Match } from './match';
 
 export class MatchesManager {
   matches: Match[];
@@ -28,6 +28,34 @@ export class MatchesManager {
     if (index > -1) {
       this.matches.splice(index, 1);
     }
+  }
+
+  createMatch(): Match {
+    const id = this.createUniqueId();
+    const match = new Match(id);
+    this.addMatch(match);
+    return match;
+  }
+
+  destroyMatch(match: Match): void {
+    match.setActive(false);
+    this.removeMatch(match);
+  }
+
+  private createUniqueId(): string {
+    let timestamp: string;
+    let matchId = '';
+    let unique = false;
+
+    while (!unique) {
+      timestamp = Date.now().toString();
+      matchId = 'x' + timestamp.substring(timestamp.length - 4);
+
+      const duplicate = this.matches.some((m) => m.id === matchId);
+      unique = !duplicate;
+    }
+
+    return matchId;
   }
 }
 

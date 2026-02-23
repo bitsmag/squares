@@ -14,10 +14,10 @@ describe('MatchesManager', function () {
   describe('#getMatch01', function () {
     it('should return the match with the same id as the passed parameter', function () {
       var mm = matchesManager.manager;
-      var m = new match.Match();
+      var m = mm.createMatch();
       expect(mm.getMatch(m.id)).to.deep.equal(m);
-      //after
-      m.destroy();
+      // after
+      mm.destroyMatch(m);
     });
   });
   describe('#getMatch02', function () {
@@ -32,37 +32,37 @@ describe('MatchesManager', function () {
   describe('#destroyMatch01', function () {
     it('should destroy the only match so there are no more matches in the manager', function () {
       var mm = matchesManager.manager;
-      var m = new match.Match();
-      m.destroy();
+      var m = mm.createMatch();
+      mm.destroyMatch(m);
       expect(mm.getMatches().length).to.equal(0);
     });
   });
   describe('#destroyMatch02', function () {
     it('should destroy one of three matches so there are two matches left in the manager', function () {
       var mm = matchesManager.manager;
-      var m = new match.Match();
-      var m1 = new match.Match();
-      var m2 = new match.Match();
-      m.destroy();
-      expect(mm.matches.length).to.equal(2);
-      //after
-      m1.destroy();
-      m2.destroy();
+      var m = mm.createMatch();
+      var m1 = mm.createMatch();
+      var m2 = mm.createMatch();
+      mm.destroyMatch(m);
+      expect(mm.getMatches().length).to.equal(2);
+      // after
+      mm.destroyMatch(m1);
+      mm.destroyMatch(m2);
     });
   });
   describe('#destroyMatch03', function () {
     it('should throw an error after trying to get a destroyed match', function () {
       var mm = matchesManager.manager;
-      var m = new match.Match();
-      var m1 = new match.Match();
-      m.destroy();
+      var m = mm.createMatch();
+      var m1 = mm.createMatch();
+      mm.destroyMatch(m);
 
       var m2 = function () {
-        mm.getMatch(m);
+        mm.getMatch(m.id);
       };
       expect(m2).to.throw(Error);
-      //after
-      m1.destroy();
+      // after
+      mm.destroyMatch(m1);
     });
   });
 });

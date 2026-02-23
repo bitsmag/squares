@@ -1,6 +1,6 @@
 import type { Match } from '../../models/match';
 import type { Square } from '../../models/square';
-import type { PlayerColor } from '../../models/player';
+import type { PlayerColor } from './positionCalc';
 
 export function getPlayerPoints(match: Match): Record<PlayerColor, Square[]> {
   const playerPoints: Record<PlayerColor, Square[]> = {
@@ -12,7 +12,7 @@ export function getPlayerPoints(match: Match): Record<PlayerColor, Square[]> {
   for (let i = 0; i < match.getPlayers().length; i++) {
     const playerPositionSquare = match.getBoard().getSquare(match.getPlayers()[i].getPosition());
     if (playerPositionSquare) {
-      const playerColor = match.getPlayers()[i].getColor();
+      const playerColor = match.getPlayers()[i].getColor() as PlayerColor;
       const squaresEarningPoints = getPoints(playerPositionSquare, playerColor, match);
       playerPoints[playerColor] = squaresEarningPoints;
     }

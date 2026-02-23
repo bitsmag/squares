@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import { createMatchLobbyService, CreateMatchLobbyService, DisconnectionSource } from '../service/createMatchLobbyService';
 import { manager } from '../domain/models/matchesManager';
-import { Match } from '../domain/models/match';
+import type { Match } from '../domain/models/match';
 import { Player } from '../domain/models/player';
 
 function getMatchesSnapshot(): Match[] {
@@ -16,7 +16,7 @@ describe('CreateMatchLobbyService', () => {
     const matches = getMatchesSnapshot();
     matches.forEach((m) => {
       try {
-        m.destroy();
+        manager.destroyMatch(m);
       } catch (_e) {
         // ignore, destroy is idempotent for our purposes
       }
@@ -24,7 +24,7 @@ describe('CreateMatchLobbyService', () => {
   });
 
   it('processMatchStartInitiation marks the match as start-initiated', () => {
-    const match = new Match();
+    const match = manager.createMatch();
     expect(match.isStartInitiated()).to.equal(false);
 
     service.processMatchStartInitiation(match.getId());
@@ -33,7 +33,7 @@ describe('CreateMatchLobbyService', () => {
   });
 
   it('processDisconnectLobby returns LOBBY_CLOSED when start is already initiated', () => {
-    const match = new Match();
+    const match = manager.createMatch();
     const host = new Player('host', match, true);
     match.setStartInitiated(true);
 
@@ -46,7 +46,7 @@ describe('CreateMatchLobbyService', () => {
   });
 
   it('processDisconnectLobby removes host and destroys match when host leaves before start', () => {
-    const match = new Match();
+    const match = manager.createMatch();
     const host = new Player('host', match, true);
     const guest = new Player('guest', match, false);
 
@@ -58,7 +58,7 @@ describe('CreateMatchLobbyService', () => {
   });
 
   it('processDisconnectLobby removes guest but keeps match when guest leaves before start', () => {
-    const match = new Match();
+    const match = manager.createMatch();
     const host = new Player('host', match, true);
     const guest = new Player('guest', match, false);
 
