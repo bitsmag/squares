@@ -117,7 +117,7 @@ createMatchSockets.on('connect', function () {
 
   createMatchSockets.on('matchStartInitiation', function () {
     createMatchSockets.disconnect();
-    window.location.replace('/match/f/' + matchId + '/' + playerName);
+    window.location.replace('/match/f/' + matchId + '/' + playerId);
   });
 
   createMatchSockets.on('fatalError', function () {
