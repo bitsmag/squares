@@ -1,17 +1,17 @@
-import socketErrorHandler from '../../../transport/util/socket/socketErrorHandler';
+import type { Match } from '../../models/match';
+import type { Square } from '../../models/square';
+import type { PlayerColor } from '../../models/player';
 
-export function getPlayerPoints(match: any): Record<string, any[]> {
-  const playerPoints: Record<string, any[]> = { blue: [], orange: [], green: [], red: [] };
+export function getPlayerPoints(match: Match): Record<PlayerColor, Square[]> {
+  const playerPoints: Record<PlayerColor, Square[]> = {
+    blue: [],
+    orange: [],
+    green: [],
+    red: [],
+  };
   for (let i = 0; i < match.getPlayers().length; i++) {
-    let playerPositionSquare;
-    let error = false;
-    try {
-      playerPositionSquare = match.getBoard().getSquare(match.getPlayers()[i].getPosition());
-    } catch (err) {
-      error = true;
-      socketErrorHandler(match, err);
-    }
-    if (!error && playerPositionSquare) {
+    const playerPositionSquare = match.getBoard().getSquare(match.getPlayers()[i].getPosition());
+    if (playerPositionSquare) {
       const playerColor = match.getPlayers()[i].getColor();
       const squaresEarningPoints = getPoints(playerPositionSquare, playerColor, match);
       playerPoints[playerColor] = squaresEarningPoints;
@@ -20,14 +20,14 @@ export function getPlayerPoints(match: any): Record<string, any[]> {
   return playerPoints;
 }
 
-function getPoints(theSquare: any, theColor: string, match: any): any[] {
-  const stack: any[] = [];
-  let justPopped: any;
+function getPoints(theSquare: Square, theColor: PlayerColor, match: Match): Square[] {
+  const stack: Square[] = [];
+  let justPopped: Square | undefined;
   let prefDir = '';
-  let squaresEarningPoints: any[] = [];
+  let squaresEarningPoints: Square[] = [];
 
-  function getVertices(s: any, c: string): any[] {
-    const vertices: any[] = [];
+  function getVertices(s: Square, c: PlayerColor): Square[] {
+    const vertices: Square[] = [];
     (vertices as any).move = function (old_index: number, new_index: number) {
       if (new_index >= this.length) {
         let k = new_index - this.length;
@@ -38,15 +38,8 @@ function getPoints(theSquare: any, theColor: string, match: any): any[] {
       this.splice(new_index, 0, this.splice(old_index, 1)[0]);
     };
     for (let i = 0; i < s.getEdgesTo().length; i++) {
-      let edgeSquare;
-      let error = false;
-      try {
-        edgeSquare = match.getBoard().getSquare(s.getEdgesTo()[i]);
-      } catch (err) {
-        error = true;
-        socketErrorHandler(match, err);
-      }
-      if (!error && edgeSquare) {
+      const edgeSquare = match.getBoard().getSquare(s.getEdgesTo()[i]);
+      if (edgeSquare) {
         if (edgeSquare.getColor() === c && edgeSquare !== justPopped) {
           vertices.push(edgeSquare);
         }
@@ -72,7 +65,7 @@ function getPoints(theSquare: any, theColor: string, match: any): any[] {
     }
   }
 
-  function setPrefDir(theSquareInner: any, nextSquare: any) {
+  function setPrefDir(theSquareInner: Square, nextSquare: Square) {
     if (stack.length > 0) {
       if (theSquareInner.getPosition().x < nextSquare.getPosition().x) {
         prefDir = 'right';
@@ -86,8 +79,8 @@ function getPoints(theSquare: any, theColor: string, match: any): any[] {
     }
   }
 
-  function checkValidity(stackInner: any[], alreadyVisitedVertex: any): any[] {
-    const points: any[] = [];
+  function checkValidity(stackInner: Square[], alreadyVisitedVertex: Square): Square[] {
+    const points: Square[] = [];
     if (stackInner.length > 7) {
       const circuitArray = stackInner.slice(
         stackInner.indexOf(alreadyVisitedVertex),
@@ -95,13 +88,13 @@ function getPoints(theSquare: any, theColor: string, match: any): any[] {
       );
 
       for (let j = 0; j < 9; j++) {
-        const squaresInSameRow: any[] = [];
+        const squaresInSameRow: Square[] = [];
         for (let k = 0; k < circuitArray.length; k++) {
           if (circuitArray[k].getPosition().y == j) {
             squaresInSameRow.push(circuitArray[k]);
           }
         }
-        squaresInSameRow.sort(function (a: any, b: any) {
+        squaresInSameRow.sort(function (a: Square, b: Square) {
           return a.getPosition().x - b.getPosition().x;
         });
 
@@ -126,7 +119,7 @@ function getPoints(theSquare: any, theColor: string, match: any): any[] {
     return points.length > 0 ? points : [];
   }
 
-  function dfs(theSquareInner: any, theColorInner: string) {
+  function dfs(theSquareInner: Square | null, theColorInner: PlayerColor) {
     if (theSquareInner || stack.length > 0) {
       if (theSquareInner) {
         stack.push(theSquareInner);
@@ -147,17 +140,17 @@ function getPoints(theSquare: any, theColor: string, match: any): any[] {
               stack.pop();
               justPopped = theSquareInner;
               setPrefDir(theSquareInner, stack[stack.length - 1]);
-              dfs(null as any, theColorInner);
+              dfs(null, theColorInner);
             }
           } else if (vertices[i].isDfsVisited() && vertices[i] === stack[stack.length - 2]) {
             if (i === vertices.length - 1) {
               stack.pop();
               justPopped = theSquareInner;
               setPrefDir(theSquareInner, stack[stack.length - 1]);
-              dfs(null as any, theColorInner);
+              dfs(null, theColorInner);
             }
           } else if (!vertices[i].isDfsVisited()) {
-            justPopped = null;
+            justPopped = undefined;
             setPrefDir(theSquareInner, vertices[i]);
             dfs(vertices[i], theColorInner);
           }

@@ -1,10 +1,12 @@
 import { randomUUID } from 'crypto';
 import type { Match } from './match';
 
+export type PlayerColor = 'blue' | 'orange' | 'green' | 'red';
+
 export class Player {
   id: string;
   name: string;
-  color: string;
+  color: PlayerColor;
   position: number;
   activeDirection: string | null;
   score: number;
@@ -14,7 +16,7 @@ export class Player {
   constructor(name: string, match: Match, host: boolean) {
     this.id = randomUUID();
     this.name = name;
-    this.color = '';
+    this.color = 'blue';
     this.position = 0;
     this.activeDirection = null;
     this.score = 0;
@@ -39,7 +41,7 @@ export class Player {
     return this.id;
   }
 
-  getColor(): string {
+  getColor(): PlayerColor {
     return this.color;
   }
 
@@ -92,8 +94,8 @@ export class Player {
   }
 }
 
-function getUnusedColor(match: Match): string {
-  const unusedColors = ['blue', 'orange', 'green', 'red'];
+function getUnusedColor(match: Match): PlayerColor {
+  const unusedColors: PlayerColor[] = ['blue', 'orange', 'green', 'red'];
   const players = match.getPlayers();
 
   for (let i = 0; i < players.length; i++) {

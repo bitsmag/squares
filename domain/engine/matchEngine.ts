@@ -1,5 +1,6 @@
 import * as positionCalc from './utilities/positionCalc';
-import type { PlayerColor, PlayerPositions as RawPlayerPositions } from './utilities/positionCalc';
+import type { PlayerPositions as RawPlayerPositions } from './utilities/positionCalc';
+import type { PlayerColor } from '../models/player';
 import * as circuitsCheck from './utilities/circuitsCheck';
 import * as randomSpecials from './utilities/randomSpecials';
 import type { Match } from '../models/match';
@@ -57,22 +58,30 @@ export class MatchEngine {
         clearInterval(tickerInterval);
       } else {
         let playerPositions: PlayerPositions;
-        if (tickCount % 2 !== 0) {
-          const activeColors: PlayerColor[] = [];
-          const players = this.match.getPlayers();
-          for (let i = 0; i < players.length; i++) {
-            activeColors.push(players[i].getColor() as PlayerColor);
-          }
-          playerPositions = positionCalc.calculateNewPlayerPositions(this.match, activeColors);
-        } else {
-          const doubleSpeedColors: PlayerColor[] = [];
-          const players = this.match.getPlayers();
-          for (let i = 0; i < players.length; i++) {
-            if (players[i].getDoubleSpeedSpecial()) {
-              doubleSpeedColors.push(players[i].getColor() as PlayerColor);
+        try {
+          if (tickCount % 2 !== 0) {
+            const activeColors: PlayerColor[] = [];
+            const players = this.match.getPlayers();
+            for (let i = 0; i < players.length; i++) {
+              activeColors.push(players[i].getColor());
             }
+            playerPositions = positionCalc.calculateNewPlayerPositions(this.match, activeColors);
+          } else {
+            const doubleSpeedColors: PlayerColor[] = [];
+            const players = this.match.getPlayers();
+            for (let i = 0; i < players.length; i++) {
+              if (players[i].getDoubleSpeedSpecial()) {
+                doubleSpeedColors.push(players[i].getColor());
+              }
+            }
+            playerPositions = positionCalc.calculateNewPlayerPositions(
+              this.match,
+              doubleSpeedColors
+            );
           }
-          playerPositions = positionCalc.calculateNewPlayerPositions(this.match, doubleSpeedColors);
+        } catch (err) {
+          this.publisher.publish({ type: 'FATAL_ERROR', match: this.match, error: err });
+          return;
         }
 
         // Only propagate positions that are resolved numbers
@@ -84,10 +93,21 @@ export class MatchEngine {
           }
         });
 
-        this.match.updatePlayers(sanitizedPositions);
-        this.match.updateBoard(sanitizedPositions);
+        try {
+          this.match.updatePlayers(sanitizedPositions);
+          this.match.updateBoard(sanitizedPositions);
+        } catch (err) {
+          this.publisher.publish({ type: 'FATAL_ERROR', match: this.match, error: err });
+          return;
+        }
 
-        const playerPoints = circuitsCheck.getPlayerPoints(this.match);
+        let playerPoints;
+        try {
+          playerPoints = circuitsCheck.getPlayerPoints(this.match);
+        } catch (err) {
+          this.publisher.publish({ type: 'FATAL_ERROR', match: this.match, error: err });
+          return;
+        }
 
         const clearSpecials: number[] = [];
         (Object.keys(sanitizedPositions) as PlayerColor[]).forEach((color) => {
@@ -131,8 +151,14 @@ export class MatchEngine {
           }
         });
 
-        const specials: MatchSpecials = randomSpecials.getSpecials(this.match);
-        this.match.updateSpecials(specials);
+        let specials: MatchSpecials;
+        try {
+          specials = randomSpecials.getSpecials(this.match);
+          this.match.updateSpecials(specials);
+        } catch (err) {
+          this.publisher.publish({ type: 'FATAL_ERROR', match: this.match, error: err });
+          return;
+        }
 
         this.publisher.publish({
           type: 'TICK_PROCESSED',

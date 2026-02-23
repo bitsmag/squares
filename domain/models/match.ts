@@ -1,8 +1,7 @@
 import { Board } from './board';
 import { manager } from './matchesManager';
 import type { MatchEngine } from '../engine/matchEngine';
-import type { Player } from './player';
-import type { PlayerColor } from '../engine/utilities/positionCalc';
+import type { Player, PlayerColor } from './player';
 
 export class Match {
   id: string;

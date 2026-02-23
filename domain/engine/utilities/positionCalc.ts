@@ -1,9 +1,8 @@
-import socketErrorHandler from '../../../transport/util/socket/socketErrorHandler';
 import type { Match } from '../../models/match';
 import type { Board } from '../../models/board';
 import type { Square } from '../../models/square';
+import type { PlayerColor } from '../../models/player';
 
-export type PlayerColor = 'blue' | 'orange' | 'green' | 'red';
 export type PlayerPositions = Partial<Record<PlayerColor, number>>;
 
 export function calculateNewPlayerPositions(
@@ -13,7 +12,7 @@ export function calculateNewPlayerPositions(
   const activeColors: PlayerColor[] = [];
   const players = match.getPlayers();
   for (let i = 0; i < players.length; i++) {
-    activeColors.push(players[i].getColor() as PlayerColor);
+    activeColors.push(players[i].getColor());
   }
 
   const currentPos: Partial<Record<PlayerColor, number>> = {};
@@ -21,28 +20,19 @@ export function calculateNewPlayerPositions(
   const prio: Partial<Record<PlayerColor, boolean>> = {};
 
   for (let i = 0; i < activeColors.length; i++) {
-    let player;
-    let error = false;
-    try {
-      player = match.getPlayerByColor(activeColors[i]);
-    } catch (err) {
-      error = true;
-      socketErrorHandler(match, err);
+    const player = match.getPlayerByColor(activeColors[i]);
+    currentPos[activeColors[i]] = player.getPosition();
+    futurePos[activeColors[i]] = calculateFuturePos(
+      player.getPosition(),
+      player.getActiveDirection(),
+      match.getBoard(),
+      match
+    );
+    if (playerList.indexOf(activeColors[i]) === -1) {
+      futurePos[activeColors[i]] = currentPos[activeColors[i]];
     }
-    if (!error && player) {
-      currentPos[activeColors[i]] = player.getPosition();
-      futurePos[activeColors[i]] = calculateFuturePos(
-        player.getPosition(),
-        player.getActiveDirection(),
-        match.getBoard(),
-        match
-      );
-      if (playerList.indexOf(activeColors[i]) === -1) {
-        futurePos[activeColors[i]] = currentPos[activeColors[i]];
-      }
-      if (currentPos[activeColors[i]] === futurePos[activeColors[i]]) {
-        prio[activeColors[i]] = true;
-      }
+    if (currentPos[activeColors[i]] === futurePos[activeColors[i]]) {
+      prio[activeColors[i]] = true;
     }
   }
 
@@ -112,15 +102,8 @@ function calculateFuturePos(
   board: Board,
   match: Match
 ): number {
-  let square: Square | undefined;
-  let error = false;
-  try {
-    square = board.getSquare(currentPosition);
-  } catch (err) {
-    error = true;
-    socketErrorHandler(match, err);
-  }
-  if (!error && square) {
+  const square: Square = board.getSquare(currentPosition);
+  if (square) {
     switch (activeDirection) {
       case 'left':
         if (square.getPosition().x > 0) {

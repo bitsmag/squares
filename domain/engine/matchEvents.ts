@@ -1,5 +1,5 @@
 import type { Match } from '../models/match';
-import type { PlayerColor } from './utilities/positionCalc';
+import type { PlayerColor } from '../models/player';
 
 export type MatchSpecials = {
   doubleSpeed: number[];
