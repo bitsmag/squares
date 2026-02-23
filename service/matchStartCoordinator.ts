@@ -1,14 +1,16 @@
 import * as matchSocketEmitters from '../transport/match/socket/matchEmitters';
 import type { Match } from '../domain/models/match';
 
+// Default delay before automatically starting a match (in milliseconds).
+const DEFAULT_MATCH_START_COUNTDOWN_MS = 3000; // 3 seconds
+
 export class MatchStartCoordinator {
   private timers = new Map<string, NodeJS.Timeout>();
-  private readonly defaultCountdownMs = 3000; // 3s
 
   startMatchWithCountdown(match: Match, durationMs?: number): void {
     const matchId = match.id;
     if (this.timers.has(matchId)) return; // already counting down
-    const dur = durationMs ?? this.defaultCountdownMs;
+    const dur = durationMs ?? DEFAULT_MATCH_START_COUNTDOWN_MS;
 
     const cb = () => {
       // when timer expires, start with whoever is currently connected

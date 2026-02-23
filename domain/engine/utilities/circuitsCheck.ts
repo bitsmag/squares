@@ -2,6 +2,10 @@ import type { Match } from '../../models/match';
 import type { Square } from '../../models/square';
 import type { PlayerColor } from '../../models/colors';
 
+// Minimum path length (in squares) required to consider a circuit valid for scoring.
+// Previously this was encoded as "stackInner.length > 7".
+const MIN_CIRCUIT_LENGTH = 8;
+
 export function getPlayerPoints(match: Match): Record<PlayerColor, Square[]> {
   const playerPoints: Record<PlayerColor, Square[]> = {
     blue: [],
@@ -81,13 +85,14 @@ function getPoints(theSquare: Square, theColor: PlayerColor, match: Match): Squa
 
   function checkValidity(stackInner: Square[], alreadyVisitedVertex: Square): Square[] {
     const points: Square[] = [];
-    if (stackInner.length > 7) {
+    if (stackInner.length >= MIN_CIRCUIT_LENGTH) {
       const circuitArray = stackInner.slice(
         stackInner.indexOf(alreadyVisitedVertex),
         stackInner.length
       );
 
-      for (let j = 0; j < 9; j++) {
+      // Use the actual board height instead of hard-coding 9 rows.
+      for (let j = 0; j < match.board.height; j++) {
         const squaresInSameRow: Square[] = [];
         for (let k = 0; k < circuitArray.length; k++) {
           if (circuitArray[k].position.y == j) {
