@@ -4,26 +4,72 @@ import type { Player } from './player';
 import type { PlayerColor } from './colors';
 
 export class Match {
-  id: string;
-  players: Player[];
-  board: Board;
-  engine: MatchEngine;
-  duration: number;
-  countdownDuration: number;
-  active: boolean;
-  startInitiated: boolean;
+  private _id: string;
+  private _players: Player[];
+  private _board: Board;
+  private _engine: MatchEngine;
+  private _duration: number;
+  private _countdownDuration: number;
+  private _active: boolean;
+  private _startInitiated: boolean;
 
   constructor(id: string) {
-    this.id = id;
-    this.players = [];
-    this.board = new Board();
-    this.engine = undefined as unknown as MatchEngine;
-    this.duration = this.board.getMatchDuration();
-    this.countdownDuration = this.board.getCountdownDuration();
-    this.active = false;
-    this.startInitiated = false;
+    this._id = id;
+    this._players = [];
+    this._board = new Board();
+    this._engine = undefined as unknown as MatchEngine;
+    this._duration = this._board.matchDuration;
+    this._countdownDuration = this._board.countdownDuration;
+    this._active = false;
+    this._startInitiated = false;
   }
 
+  // Accessors
+  get id(): string {
+    return this._id;
+  }
+
+  get players(): Player[] {
+    return this._players;
+  }
+
+  get board(): Board {
+    return this._board;
+  }
+
+  get engine(): MatchEngine {
+    return this._engine;
+  }
+
+  set engine(engine: MatchEngine) {
+    this._engine = engine;
+  }
+
+  get duration(): number {
+    return this._duration;
+  }
+
+  get countdownDuration(): number {
+    return this._countdownDuration;
+  }
+
+  get active(): boolean {
+    return this._active;
+  }
+
+  set active(active: boolean) {
+    this._active = active;
+  }
+
+  get startInitiated(): boolean {
+    return this._startInitiated;
+  }
+
+  set startInitiated(startInitiated: boolean) {
+    this._startInitiated = startInitiated;
+  }
+
+  // Backwards-compatible methods
   getId(): string {
     return this.id;
   }
@@ -110,11 +156,11 @@ export class Match {
   }
 
   durationDecrement(): void {
-    this.duration--;
+    this._duration--;
   }
 
   countdownDurationDecrement(): void {
-    this.countdownDuration--;
+    this._countdownDuration--;
   }
 
   setActive(active: boolean): void {
