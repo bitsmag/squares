@@ -18,7 +18,7 @@ export function calculateNewPlayerPositions(
 
   const currentPos: Partial<Record<PlayerColor, number>> = {};
   const futurePos: Partial<Record<PlayerColor, number>> = {};
-  const prio: Partial<Record<PlayerColor, boolean>> = {};
+  const hasPriority: Partial<Record<PlayerColor, boolean>> = {};
 
   for (let i = 0; i < activeColors.length; i++) {
     const player = match.getPlayerByColor(activeColors[i]);
@@ -33,19 +33,19 @@ export function calculateNewPlayerPositions(
       futurePos[activeColors[i]] = currentPos[activeColors[i]];
     }
     if (currentPos[activeColors[i]] === futurePos[activeColors[i]]) {
-      prio[activeColors[i]] = true;
+      hasPriority[activeColors[i]] = true;
     }
   }
 
-  let loosers: PlayerColor[] = [];
+  let losingColors: PlayerColor[] = [];
 
   for (let i = 0; i < activeColors.length; i++) {
     for (let j = 0; j < activeColors.length; j++) {
       if (i !== j && futurePos[activeColors[i]] === futurePos[activeColors[j]]) {
-        if (prio[activeColors[i]]) {
-          loosers.push(activeColors[j]);
-        } else if (prio[activeColors[j]]) {
-          loosers.push(activeColors[i]);
+        if (hasPriority[activeColors[i]]) {
+          losingColors.push(activeColors[j]);
+        } else if (hasPriority[activeColors[j]]) {
+          losingColors.push(activeColors[i]);
         } else {
           const uniqueRandomNumbers = activeColors.reduce<Record<PlayerColor, number>>(
             (acc, color) => {
@@ -58,9 +58,9 @@ export function calculateNewPlayerPositions(
             uniqueRandomNumbers[activeColors[i]] ===
             Math.max(uniqueRandomNumbers[activeColors[i]], uniqueRandomNumbers[activeColors[j]])
           ) {
-            loosers.push(activeColors[j]);
+            losingColors.push(activeColors[j]);
           } else {
-            loosers.push(activeColors[i]);
+            losingColors.push(activeColors[i]);
           }
         }
       }
@@ -74,18 +74,18 @@ export function calculateNewPlayerPositions(
         futurePos[activeColors[i]] === currentPos[activeColors[j]] &&
         futurePos[activeColors[j]] === currentPos[activeColors[i]]
       ) {
-        loosers.push(activeColors[i]);
-        loosers.push(activeColors[j]);
+        losingColors.push(activeColors[i]);
+        losingColors.push(activeColors[j]);
       }
     }
   }
 
-  loosers = loosers.reduce<PlayerColor[]>((a, b) => {
+  losingColors = losingColors.reduce<PlayerColor[]>((a, b) => {
     if (a.indexOf(b) < 0) a.push(b);
     return a;
   }, []);
-  for (let i = 0; i < loosers.length; i++) {
-    futurePos[loosers[i]] = currentPos[loosers[i]];
+  for (let i = 0; i < losingColors.length; i++) {
+    futurePos[losingColors[i]] = currentPos[losingColors[i]];
   }
 
   (Object.keys(futurePos) as PlayerColor[]).forEach((color) => {

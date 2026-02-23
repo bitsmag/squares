@@ -25,7 +25,6 @@ export const schemas = {
     matchId: Joi.string().alphanum().min(1).required(),
   }),
   matchRouteParams: Joi.object<MatchRouteParams>({
-    matchCreatorFlag: Joi.string().valid('t', 'f').required(),
     matchId: Joi.string().alphanum().min(1).required(),
     playerId: Joi.string().min(1).max(64).required(),
   }),

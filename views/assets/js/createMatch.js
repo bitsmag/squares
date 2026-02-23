@@ -4,7 +4,7 @@ const { matchId, playerId, playerName, isHost, lobbyMessage } = window.APP_DATA;
 $('#initiateMatchStartBtn').click(function () {
   createMatchSockets.emit('matchStartInitiation', { matchId });
   createMatchSockets.disconnect();
-  window.location.replace('/match/t/' + matchId + '/' + playerId);
+  window.location.replace('/match/' + matchId + '/' + playerId);
 });
 
 /*SOCKETS*/
@@ -117,7 +117,7 @@ createMatchSockets.on('connect', function () {
 
   createMatchSockets.on('matchStartInitiation', function () {
     createMatchSockets.disconnect();
-    window.location.replace('/match/f/' + matchId + '/' + playerId);
+    window.location.replace('/match/' + matchId + '/' + playerId);
   });
 
   createMatchSockets.on('fatalError', function () {

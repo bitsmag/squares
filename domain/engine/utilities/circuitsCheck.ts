@@ -23,7 +23,7 @@ export function getPlayerPoints(match: Match): Record<PlayerColor, Square[]> {
 function getPoints(theSquare: Square, theColor: PlayerColor, match: Match): Square[] {
   const stack: Square[] = [];
   let justPopped: Square | undefined;
-  let prefDir: '' | 'left' | 'right' | 'up' | 'down' = '';
+  let preferredDirection: '' | 'left' | 'right' | 'up' | 'down' = '';
   let squaresEarningPoints: Square[] = [];
 
   function getVertices(s: Square, c: PlayerColor): Square[] {
@@ -48,10 +48,10 @@ function getPoints(theSquare: Square, theColor: PlayerColor, match: Match): Squa
 
     for (let i = 0; i < vertices.length; i++) {
       if (
-        (s.position.x < vertices[i].position.x && prefDir === 'right') ||
-        (s.position.x > vertices[i].position.x && prefDir === 'left') ||
-        (s.position.y > vertices[i].position.y && prefDir === 'down') ||
-        (s.position.y < vertices[i].position.y && prefDir === 'up')
+        (s.position.x < vertices[i].position.x && preferredDirection === 'right') ||
+        (s.position.x > vertices[i].position.x && preferredDirection === 'left') ||
+        (s.position.y > vertices[i].position.y && preferredDirection === 'down') ||
+        (s.position.y < vertices[i].position.y && preferredDirection === 'up')
       ) {
         (vertices as any).move(i, 0);
       }
@@ -65,16 +65,16 @@ function getPoints(theSquare: Square, theColor: PlayerColor, match: Match): Squa
     }
   }
 
-  function setPrefDir(theSquareInner: Square, nextSquare: Square) {
+  function setPreferredDirection(theSquareInner: Square, nextSquare: Square) {
     if (stack.length > 0) {
       if (theSquareInner.position.x < nextSquare.position.x) {
-        prefDir = 'right';
+        preferredDirection = 'right';
       } else if (theSquareInner.position.x > nextSquare.position.x) {
-        prefDir = 'left';
+        preferredDirection = 'left';
       } else if (theSquareInner.position.y > nextSquare.position.y) {
-        prefDir = 'down';
+        preferredDirection = 'down';
       } else if (theSquareInner.position.y < nextSquare.position.y) {
-        prefDir = 'up';
+        preferredDirection = 'up';
       }
     }
   }
@@ -138,19 +138,19 @@ function getPoints(theSquare: Square, theColor: PlayerColor, match: Match): Squa
             if (squaresEarningPoints.length === 0 && i === vertices.length - 1) {
               stack.pop();
               justPopped = theSquareInner;
-              setPrefDir(theSquareInner, stack[stack.length - 1]);
+              setPreferredDirection(theSquareInner, stack[stack.length - 1]);
               dfs(null, theColorInner);
             }
           } else if (vertices[i].dfsVisited && vertices[i] === stack[stack.length - 2]) {
             if (i === vertices.length - 1) {
               stack.pop();
               justPopped = theSquareInner;
-              setPrefDir(theSquareInner, stack[stack.length - 1]);
+              setPreferredDirection(theSquareInner, stack[stack.length - 1]);
               dfs(null, theColorInner);
             }
           } else if (!vertices[i].dfsVisited) {
             justPopped = undefined;
-            setPrefDir(theSquareInner, vertices[i]);
+            setPreferredDirection(theSquareInner, vertices[i]);
             dfs(vertices[i], theColorInner);
           }
         }
