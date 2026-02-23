@@ -1,23 +1,37 @@
 import socketErrorHandler from '../../util/socket/socketErrorHandler';
 import type { Match } from '../../../domain/models/match';
+import type { Board } from '../../../domain/models/board';
 import type { PlayerColor } from '../../../domain/models/colors';
 import { broadcastToMatch } from '../../util/socket/transport';
+import type { BoardDTO, PrepareMatchDTO, PrepareMatchPlayerDTO } from '../../../shared/dto/matchDtos';
 
 type PlayerStatus = { pos: number | null; dir: string | null; doubleSpeed: boolean | null };
 type Specials = { doubleSpeed: number[]; getPoints: number[] };
 type ClearSquare = { id: number; color: PlayerColor };
 type Scores = Record<PlayerColor, number | null>;
 
+function toBoardDTO(board: Board): BoardDTO {
+  return {
+    width: board.width,
+    height: board.height,
+    squares: board.squares.map((sq) => ({
+      id: sq.id,
+      color: sq.color,
+    })),
+  };
+}
+
 export function sendPrepareMatchEvent(match: Match): void {
-  const board = match.board;
-  const playersData: { playerName: string; playerColor: PlayerColor }[] = [];
-  const data = { players: playersData, board: board };
+  const boardDto = toBoardDTO(match.board);
+  const players: PrepareMatchPlayerDTO[] = [];
   for (let i = 0; i < match.players.length; i++) {
-    data.players[i] = {
+    players[i] = {
       playerName: match.players[i].name,
       playerColor: match.players[i].color,
     };
   }
+
+  const data: PrepareMatchDTO = { players, board: boardDto };
 
   broadcastToMatch(match.id, '/matchSockets', 'prepareMatch', data);
 }
