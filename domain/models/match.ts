@@ -1,4 +1,5 @@
-import { Board } from './board';
+import type { Board } from './board';
+import { createDefaultBoard } from './boardTopology';
 import type { MatchEngine } from '../engine/matchEngine';
 import type { Player } from './player';
 import type { PlayerColor } from './colors';
@@ -16,7 +17,7 @@ export class Match {
   constructor(id: string) {
     this._id = id;
     this._players = [];
-    this._board = new Board();
+    this._board = createDefaultBoard();
     this._engine = undefined as unknown as MatchEngine;
     this._duration = this._board.matchDuration;
     this._countdownDuration = this._board.countdownDuration;
