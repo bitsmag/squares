@@ -2,6 +2,7 @@ import { manager } from '../domain/models/matchesManager';
 import { Player } from '../domain/models/player';
 import { MatchEngine } from '../domain/engine/matchEngine';
 import { SocketMatchEventPublisher } from '../transport/match/socket/matchEventPublisher';
+import type { PlayerColor } from '../domain/models/colors';
 
 export type DisconnectionSource =
   | { type: 'HOST_LEFT' }
@@ -38,13 +39,38 @@ export class CreateMatchLobbyService {
     const publisher = new SocketMatchEventPublisher();
     const engine = new MatchEngine(match, publisher);
     match.setEngine(engine);
-    const player = new Player(playerName, match, true);
+    const { color, position } = this.allocateColorAndPosition(match);
+    const player = new Player(playerName, color, position, true);
+    match.addPlayer(player);
     return { matchId: match.getId(), playerId: player.getId() };
   }
 
   processCreateMatchLobbyGuest(matchId: string, playerName: string): { matchId: string, playerId: string } {
     const match = manager.getMatch(matchId);
-    const player = new Player(playerName, match, false);
+    const { color, position } = this.allocateColorAndPosition(match);
+    const player = new Player(playerName, color, position, false);
+    match.addPlayer(player);
     return { matchId: match.getId(), playerId: player.getId() };
+  }
+
+  private allocateColorAndPosition(match: import('../domain/models/match').Match): { color: PlayerColor; position: number } {
+    const availableColors: PlayerColor[] = ['blue', 'orange', 'green', 'red'];
+    const players = match.getPlayers();
+
+    for (let i = 0; i < players.length; i++) {
+      const index = availableColors.indexOf(players[i].getColor());
+      if (index > -1) {
+        availableColors.splice(index, 1);
+      }
+    }
+
+    if (availableColors.length === 0) {
+      throw new Error('matchIsFull');
+    }
+
+    const color = availableColors[0];
+    const position = match.getBoard().getStartSquares()[color];
+
+    return { color, position };
   }
 }

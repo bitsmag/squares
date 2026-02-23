@@ -1,5 +1,4 @@
 import { randomUUID } from 'crypto';
-import type { Match } from './match';
 import type { PlayerColor } from './colors';
 import type { Direction } from './direction';
 
@@ -13,22 +12,15 @@ export class Player {
   doubleSpeedSpecial: boolean;
   host: boolean;
 
-  constructor(name: string, match: Match, host: boolean) {
+  constructor(name: string, color: PlayerColor, position: number, host: boolean) {
     this.id = randomUUID();
     this.name = name;
-    const unusedColor = getUnusedColor(match);
-    this.color = unusedColor;
-    this.position = match.getBoard().getStartSquares()[unusedColor];
+    this.color = color;
+    this.position = position;
     this.activeDirection = null;
     this.score = 0;
     this.doubleSpeedSpecial = false;
     this.host = host;
-
-    if (!match.isActive()) {
-      match.addPlayer(this);
-    } else {
-      throw new Error('matchIsActive');
-    }
   }
 
   getName(): string {
@@ -87,23 +79,5 @@ export class Player {
 
   private getDefaultDoubleSpeedDuration(): number {
     return 5000;
-  }
-}
-
-function getUnusedColor(match: Match): PlayerColor {
-  const unusedColors: PlayerColor[] = ['blue', 'orange', 'green', 'red'];
-  const players = match.getPlayers();
-
-  for (let i = 0; i < players.length; i++) {
-    const index = unusedColors.indexOf(players[i].getColor());
-    if (index > -1) {
-      unusedColors.splice(index, 1);
-    }
-  }
-
-  if (unusedColors.length > 0) {
-    return unusedColors[0];
-  } else {
-    throw new Error('matchIsFull');
   }
 }

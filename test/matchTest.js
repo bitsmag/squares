@@ -15,9 +15,12 @@ describe('Hooks', function () {
   describe('Match', function () {
     describe('#getPlayer01', function () {
       it('should return the player with the same name as the passed parameter', function () {
-        m = new match.Match();
-        var p = new player.Player('bob', m, true);
-        var p2 = new player.Player('mara', m, false);
+        m = matchesManager.manager.createMatch();
+        var colors = ['blue', 'orange'];
+        var p = new player.Player('bob', colors[0], m.getBoard().getStartSquares()[colors[0]], true);
+        var p2 = new player.Player('mara', colors[1], m.getBoard().getStartSquares()[colors[1]], false);
+        m.addPlayer(p);
+        m.addPlayer(p2);
 
         var p3 = m.getPlayer('bob');
         expect(p).to.deep.equal(p3);
@@ -25,9 +28,12 @@ describe('Hooks', function () {
     });
     describe('#getPlayer02', function () {
       it('should throw an error after trying to get a non-existing player', function () {
-        m = new match.Match();
-        var p = new player.Player('bob', m, true);
-        var p2 = new player.Player('mara', m, false);
+        m = matchesManager.manager.createMatch();
+        var colors = ['blue', 'orange'];
+        var p = new player.Player('bob', colors[0], m.getBoard().getStartSquares()[colors[0]], true);
+        var p2 = new player.Player('mara', colors[1], m.getBoard().getStartSquares()[colors[1]], false);
+        m.addPlayer(p);
+        m.addPlayer(p2);
 
         var p3 = function () {
           m.getPlayer('milan');
