@@ -3,31 +3,12 @@ import { broadcastToMatch } from '../../util/socket/transport';
 import type { LobbyPlayersDTO } from '../../../shared/dto/lobbyDtos';
 
 export function sendPlayerConnectedEvent(match: Match): void {
-  const data: LobbyPlayersDTO = {
-    matchId: match.id,
-    players: [] as LobbyPlayersDTO['players'],
-  };
-  for (let i = 0; i < match.players.length; i++) {
-    data.players[i] = {
-      playerName: match.players[i].name,
-      playerColor: match.players[i].color,
-    };
-  }
-  broadcastToMatch(match.id, '/createMatchSockets', 'playerConnected', data);
+  const data = toLobbyPlayersDTO(match);
   broadcastToMatch(match.id, '/createMatchSockets', 'playerConnected', data);
 }
 
 export function sendPlayerDisconnectedEvent(match: Match): void {
-  const data: LobbyPlayersDTO = {
-    matchId: match.id,
-    players: [] as LobbyPlayersDTO['players'],
-  };
-  for (let i = 0; i < match.players.length; i++) {
-    data.players[i] = {
-      playerName: match.players[i].name,
-      playerColor: match.players[i].color,
-    };
-  }
+  const data = toLobbyPlayersDTO(match);
   broadcastToMatch(match.id, '/createMatchSockets', 'playerDisconnected', data);
 }
 
@@ -41,4 +22,14 @@ export function sendMatchStartInitiationEvent(match: Match): void {
 
 export function sendFatalErrorEvent(match: Match): void {
   broadcastToMatch(match.id, '/createMatchSockets', 'fatalError');
+}
+
+function toLobbyPlayersDTO(match: Match): LobbyPlayersDTO {
+  return {
+    matchId: match.id,
+    players: match.players.map((player) => ({
+      playerName: player.name,
+      playerColor: player.color,
+    })),
+  };
 }
