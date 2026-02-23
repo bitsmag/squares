@@ -1,4 +1,4 @@
-import type { RegisterPlayerLobbyParams } from '../../util/validation';
+import type { RegisterPlayerLobbyDTO } from '../../../shared/dto/socket/incoming/createMatchLobbySocketDtos';
 import { CreateMatchLobbyService } from '../../../service/createMatchLobbyService';
 import { sessionStore } from '../../util/socket/socketSessionStore';
 import { manager } from '../../../domain/models/matchesManager';
@@ -22,7 +22,7 @@ export class CreateMatchLobbySocketController {
     }
   }
 
-  handleRegisterPlayerLobby(playerInfo: RegisterPlayerLobbyParams, socketId: string): void {
+  handleRegisterPlayerLobby(playerInfo: RegisterPlayerLobbyDTO, socketId: string): void {
     try {
       const { matchId, playerId } = playerInfo;
       sessionStore.register(socketId, '/createMatchSockets', matchId, playerId);

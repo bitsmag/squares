@@ -1,5 +1,5 @@
 import socketErrorHandler from '../../util/socket/socketErrorHandler';
-import type { RegisterPlayerAndStartMatchWhenReadyParams } from '../../util/validation';
+import type { RegisterPlayerAndStartMatchWhenReadyDTO } from '../../../shared/dto/socket/incoming/matchSocketDtos';
 import type { Match } from '../../../domain/models/match';
 import type { Direction } from '../../../domain/models/direction';
 import { MatchService } from '../../../service/matchService';
@@ -27,7 +27,7 @@ export class MatchSocketController {
   }
 
   handleRegisterPlayerAndStartMatchWhenReady(
-    playerInfo: RegisterPlayerAndStartMatchWhenReadyParams,
+    playerInfo: RegisterPlayerAndStartMatchWhenReadyDTO,
     socketId: string
   ): void {
     try {

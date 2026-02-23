@@ -2,11 +2,12 @@ import type { Application } from 'express';
 import { schemas } from '../../util/validation';
 import { validate } from '../../util/http/httpValidationMiddleware';
 import { handleGetMatch } from './matchController';
+import type { GetMatchRequestDTO } from '../../../shared/dto/http/matchHttpDtos';
 
 function matchRouter(app: Application): void {
-  app.get(
+  app.get<GetMatchRequestDTO>(
     '/match/:matchCreatorFlag/:matchId/:playerId',
-    validate('params', schemas.matchRouteParams),
+    validate<GetMatchRequestDTO>('params', schemas.matchRouteParams),
     handleGetMatch
   );
 }

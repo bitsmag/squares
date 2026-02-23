@@ -1,6 +1,7 @@
 import type { NextFunction, Request, Response } from 'express';
+import type { GetMatchRequestDTO, MatchAppDataDTO } from '../../../shared/dto/http/matchHttpDtos';
 
-export type GetMatchParams = { matchCreatorFlag: 't' | 'f'; matchId: string; playerId: string };
+export type GetMatchParams = GetMatchRequestDTO;
 
 export function handleGetMatch(
   req: Request<GetMatchParams>,
@@ -9,12 +10,8 @@ export function handleGetMatch(
 ): void {
   try {
     const { matchId, playerId } = req.params;
-    res.render('match.html', {
-      appData: {
-        matchId: matchId,
-        playerId: playerId,
-      },
-    });
+    const appData: MatchAppDataDTO = { matchId, playerId };
+    res.render('match.html', { appData });
   } catch (err) {
     next(err);
   }

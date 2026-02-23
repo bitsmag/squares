@@ -2,7 +2,7 @@ import { Socket } from 'socket.io';
 import { createMatchLobbySocketController } from './createMatchLobbySocketController';
 import { socketValidationMiddleware } from '../../util/socket/socketValidationMiddleware';
 import { schemas } from '../../util/validation';
-import type { RegisterPlayerLobbyParams } from '../../util/validation';
+import type { RegisterPlayerLobbyDTO } from '../../../shared/dto/socket/incoming/createMatchLobbySocketDtos';
 
 export function respond(socket: Socket): void {
   const controller = createMatchLobbySocketController;
@@ -14,7 +14,7 @@ export function respond(socket: Socket): void {
   );
 
   socket.on('registerPlayerLobby', function (playerInfo: unknown) {
-    controller.handleRegisterPlayerLobby(playerInfo as RegisterPlayerLobbyParams, socket.id);
+		controller.handleRegisterPlayerLobby(playerInfo as RegisterPlayerLobbyDTO, socket.id);
   });
 
   socket.on('matchStartInitiation', function () {

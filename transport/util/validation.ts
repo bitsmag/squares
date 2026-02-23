@@ -1,15 +1,18 @@
 import Joi from 'joi';
 import xss from 'xss';
+import type {
+  CreateMatchLobbyHostRequestDTO,
+  CreateMatchLobbyGuestRequestDTO,
+} from '../../shared/dto/http/createMatchLobbyHttpDtos';
+import type { GetMatchRequestDTO } from '../../shared/dto/http/matchHttpDtos';
+import type { RegisterPlayerLobbyDTO } from '../../shared/dto/socket/incoming/createMatchLobbySocketDtos';
+import type { RegisterPlayerAndStartMatchWhenReadyDTO } from '../../shared/dto/socket/incoming/matchSocketDtos';
 
-export type CreateMatchLobbyHostParams = { playerName: string };
-export type CreateMatchLobbyGuestParams = { playerName: string; matchId: string };
-export type MatchRouteParams = {
-  matchCreatorFlag: 't' | 'f';
-  matchId: string;
-  playerId: string;
-};
-export type RegisterPlayerLobbyParams = { matchId: string; playerId: string; playerName: string; isHost: boolean };
-export type RegisterPlayerAndStartMatchWhenReadyParams = { matchId: string; playerId: string; playerName: string };
+export type CreateMatchLobbyHostParams = CreateMatchLobbyHostRequestDTO;
+export type CreateMatchLobbyGuestParams = CreateMatchLobbyGuestRequestDTO;
+export type MatchRouteParams = GetMatchRequestDTO;
+export type RegisterPlayerLobbyParams = RegisterPlayerLobbyDTO;
+export type RegisterPlayerAndStartMatchWhenReadyParams = RegisterPlayerAndStartMatchWhenReadyDTO;
 export type MatchStartInitiationParams = { matchId: string };
 
 // Shared schemas

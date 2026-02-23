@@ -1,8 +1,13 @@
 import type { NextFunction, Request, Response } from 'express';
 import { CreateMatchLobbyService } from '../../../service/createMatchLobbyService';
+import type {
+  CreateMatchLobbyHostRequestDTO,
+  CreateMatchLobbyGuestRequestDTO,
+  CreateMatchLobbyAppDataDTO,
+} from '../../../shared/dto/http/createMatchLobbyHttpDtos';
 
-export type CreateMatchLobbyParams = { playerName: string };
-export type CreateMatchLobbyGuestParams = { playerName: string; matchId: string };
+export type CreateMatchLobbyParams = CreateMatchLobbyHostRequestDTO;
+export type CreateMatchLobbyGuestParams = CreateMatchLobbyGuestRequestDTO;
 
 const createMatchLobbyService = new CreateMatchLobbyService();
 
@@ -12,19 +17,19 @@ export function handleCreateMatchLobbyHost(
   next: NextFunction
 ): void {
   try {
-    const { matchId, playerId } = createMatchLobbyService.processCreateMatchLobbyHost(req.params.playerName);
-    res.render('createMatch.html', {
-      appData: {
-        matchId: matchId,
-        playerId: playerId,
-        playerName: req.params.playerName,
-        isHost: true,
-        lobbyMessage:
-          'Your match is ready! \n\n Invite up to three friends to play by sharing your match ID (' +
-          matchId +
-          ')',
-      },
-    });
+    const { matchId, playerId } =
+      createMatchLobbyService.processCreateMatchLobbyHost(req.params.playerName);
+    const appData: CreateMatchLobbyAppDataDTO = {
+      matchId,
+      playerId,
+      playerName: req.params.playerName,
+      isHost: true,
+      lobbyMessage:
+        'Your match is ready! \n\n Invite up to three friends to play by sharing your match ID (' +
+        matchId +
+        ')',
+    };
+    res.render('createMatch.html', { appData });
   } catch (err) {
     next(err);
   }
@@ -40,15 +45,15 @@ export function handleCreateMatchLobbyGuest(
       req.params.matchId,
       req.params.playerName
     );
-    res.render('createMatch.html', {
-      appData: {
-        matchId: matchId,
-        playerId: playerId,
-        playerName: req.params.playerName,
-        isHost: false,
-        lobbyMessage: 'You have joined the match! \n\n Waiting for the host to start the game.',
-      },
-    });
+    const appData: CreateMatchLobbyAppDataDTO = {
+      matchId,
+      playerId,
+      playerName: req.params.playerName,
+      isHost: false,
+      lobbyMessage:
+        'You have joined the match! \n\n Waiting for the host to start the game.',
+    };
+    res.render('createMatch.html', { appData });
   } catch (err) {
     next(err);
   }

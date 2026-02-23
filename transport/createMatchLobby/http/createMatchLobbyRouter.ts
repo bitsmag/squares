@@ -5,16 +5,20 @@ import {
   handleCreateMatchLobbyHost,
   handleCreateMatchLobbyGuest,
 } from './createMatchLobbyController';
+import type {
+  CreateMatchLobbyHostRequestDTO,
+  CreateMatchLobbyGuestRequestDTO,
+} from '../../../shared/dto/http/createMatchLobbyHttpDtos';
 
 function createMatchLobbyRouter(app: Application): void {
-  app.get(
+  app.get<CreateMatchLobbyHostRequestDTO>(
     '/createMatchLobby/:playerName',
-    validate('params', schemas.createMatchLobbyHostParams),
+    validate<CreateMatchLobbyHostRequestDTO>('params', schemas.createMatchLobbyHostParams),
     handleCreateMatchLobbyHost
   );
-  app.get(
+  app.get<CreateMatchLobbyGuestRequestDTO>(
     '/createMatchLobby/:playerName/:matchId',
-    validate('params', schemas.createMatchLobbyGuestParams),
+    validate<CreateMatchLobbyGuestRequestDTO>('params', schemas.createMatchLobbyGuestParams),
     handleCreateMatchLobbyGuest
   );
 }
