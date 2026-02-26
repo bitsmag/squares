@@ -20,10 +20,6 @@ export function sendMatchStartInitiationEvent(match: Match): void {
   broadcastToMatch(match.id, '/createMatchSockets', 'matchStartInitiation');
 }
 
-export function sendFatalErrorEvent(match: Match): void {
-  broadcastToMatch(match.id, '/createMatchSockets', 'fatalError');
-}
-
 function toLobbyPlayersDTO(match: Match): LobbyPlayersDTO {
   return {
     matchId: match.id,

@@ -239,9 +239,7 @@ function countdown(data) {
 
 function matchEnd() {
   let congratsDiv =
-    '<div id="congratsDiv" class="form-style-8"><h2>Congratulations ' +
-    playerInfo.playerName +
-    '</h2>';
+    '<div id="congratsDiv" class="form-style-8"><h2>Congratulations!</h2>';
 
   const scores = [];
   $('#scores > td').each(function () {

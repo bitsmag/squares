@@ -3,7 +3,6 @@ import type { PlayerPositions as RawPlayerPositions } from './utilities/position
 import * as circuitsCheck from './utilities/circuitsCheck';
 import * as randomSpecials from './utilities/randomSpecials';
 import type { Match } from '../models/match';
-import { manager } from '../models/matchesManager';
 import type { PlayerColor } from '../models/colors';
 import type { ClearedSquare, MatchEventPublisher, MatchSpecials } from './matchEvents';
 
@@ -43,8 +42,7 @@ export class MatchEngine {
         if (this.match.duration === 0) {
           clearInterval(durationDecrementInterval);
           this.match.active = false;
-          // Cleanup finished match so it is removed from the registry
-          manager.destroyMatch(this.match);
+          this.publisher.publish({ type: 'MATCH_DURATION_EXPIRED', match: this.match });
         }
       }
     }, 1000);

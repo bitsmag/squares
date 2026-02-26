@@ -4,12 +4,18 @@ import type {
 } from '../../../domain/engine/matchEvents';
 import * as matchEmitters from './matchEmitters';
 import socketErrorHandler from '../../util/socket/socketErrorHandler';
+import { manager } from '../../../domain/models/matchesManager';
 
 export class SocketMatchEventPublisher implements MatchEventPublisher {
   publish(event: MatchDomainEvent): void {
     switch (event.type) {
       case 'COUNTDOWN_TICKED': {
         matchEmitters.sendCountdownEvent(event.match);
+        break;
+      }
+      case 'MATCH_DURATION_EXPIRED': {
+        // Duration reached zero: remove match from registry and let ticker emit MATCH_ENDED
+        manager.destroyMatch(event.match);
         break;
       }
       case 'MATCH_ENDED': {
