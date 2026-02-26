@@ -1,7 +1,7 @@
 import { manager } from '../domain/models/matchesManager';
 import { Player } from '../domain/models/player';
 import { MatchEngine } from '../domain/engine/matchEngine';
-import { SocketMatchEventPublisher } from '../transport/match/socket/matchEventPublisher';
+import type { MatchEventPublisher } from '../domain/engine/matchEvents';
 import type { PlayerColor } from '../domain/models/colors';
 
 export type DisconnectionSource =
@@ -10,6 +10,8 @@ export type DisconnectionSource =
   | { type: 'LOBBY_CLOSED' };
 
 export class CreateMatchLobbyService {
+  constructor(private readonly eventPublisher: MatchEventPublisher) {}
+
   processMatchStartInitiation(matchId: string): void {
     const match = manager.getMatch(matchId);
     match.startInitiated = true;
@@ -36,8 +38,7 @@ export class CreateMatchLobbyService {
 
   processCreateMatchLobbyHost(playerName: string): { matchId: string, playerId: string } {
     const match = manager.createMatch();
-    const publisher = new SocketMatchEventPublisher();
-    const engine = new MatchEngine(match, publisher);
+    const engine = new MatchEngine(match, this.eventPublisher);
     match.engine = engine;
     const { color, position } = this.allocateColorAndPosition(match);
     const player = new Player(playerName, color, position, true);

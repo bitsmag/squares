@@ -1,12 +1,14 @@
 import type { RegisterPlayerLobbyDTO } from '../../../shared/dto/socket/incoming/createMatchLobbySocketDtos';
 import { CreateMatchLobbyService } from '../../../service/createMatchLobbyService';
+import { SocketMatchEventPublisher } from '../../match/socket/matchEventPublisher';
 import { sessionStore } from '../../util/socket/socketSessionStore';
 import { manager } from '../../../domain/models/matchesManager';
 import type { Match } from '../../../domain/models/match';
 import socketErrorHandler from '../../util/socket/socketErrorHandler';
 import * as createMatchLobbyEmitters from './createMatchLobbyEmitters';
 
-const createMatchLobbyService = new CreateMatchLobbyService();
+const matchEventPublisher = new SocketMatchEventPublisher();
+const createMatchLobbyService = new CreateMatchLobbyService(matchEventPublisher);
 
 export class CreateMatchLobbySocketController {
   private createMatchLobbyService = createMatchLobbyService;

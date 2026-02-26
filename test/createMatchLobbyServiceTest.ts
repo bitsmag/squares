@@ -3,13 +3,23 @@ import { CreateMatchLobbyService, DisconnectionSource } from '../service/createM
 import { manager } from '../domain/models/matchesManager';
 import type { Match } from '../domain/models/match';
 import { Player } from '../domain/models/player';
+import type { MatchDomainEvent, MatchEventPublisher } from '../domain/engine/matchEvents';
 
 function getMatchesSnapshot(): Match[] {
   return manager.getMatches().slice();
 }
 
 describe('CreateMatchLobbyService', () => {
-  const service: CreateMatchLobbyService = new CreateMatchLobbyService();
+  class TestMatchEventPublisher implements MatchEventPublisher {
+    public events: MatchDomainEvent[] = [];
+
+    publish(event: MatchDomainEvent): void {
+      this.events.push(event);
+    }
+  }
+
+  const publisher = new TestMatchEventPublisher();
+  const service: CreateMatchLobbyService = new CreateMatchLobbyService(publisher);
 
   afterEach(() => {
     // Clean up all matches created during a test to keep global manager state isolated

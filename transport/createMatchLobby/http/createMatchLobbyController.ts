@@ -1,5 +1,6 @@
 import type { NextFunction, Request, Response } from 'express';
 import { CreateMatchLobbyService } from '../../../service/createMatchLobbyService';
+import { SocketMatchEventPublisher } from '../../match/socket/matchEventPublisher';
 import type {
   CreateMatchLobbyHostRequestDTO,
   CreateMatchLobbyGuestRequestDTO,
@@ -9,7 +10,8 @@ import type {
 export type CreateMatchLobbyParams = CreateMatchLobbyHostRequestDTO;
 export type CreateMatchLobbyGuestParams = CreateMatchLobbyGuestRequestDTO;
 
-const createMatchLobbyService = new CreateMatchLobbyService();
+const matchEventPublisher = new SocketMatchEventPublisher();
+const createMatchLobbyService = new CreateMatchLobbyService(matchEventPublisher);
 
 export function handleCreateMatchLobbyHost(
   req: Request<CreateMatchLobbyParams>,
