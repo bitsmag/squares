@@ -10,4 +10,5 @@ export interface GetMatchRequestDTO {
 export interface MatchAppDataDTO {
   matchId: string;
   playerId: string;
+  playerName: string;
 }

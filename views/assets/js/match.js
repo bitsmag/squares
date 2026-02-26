@@ -1,4 +1,4 @@
-const { matchId, playerId } = window.APP_DATA;
+const { matchId, playerId, playerName } = window.APP_DATA;
 
 const playerPositions = { blue: null, orange: null, green: null, red: null };
 
@@ -239,7 +239,9 @@ function countdown(data) {
 
 function matchEnd() {
   let congratsDiv =
-    '<div id="congratsDiv" class="form-style-8"><h2>Congratulations!</h2>';
+    '<div id="congratsDiv" class="form-style-8"><h2>Congratulations ' +
+    playerName +
+    '</h2>';
 
   const scores = [];
   $('#scores > td').each(function () {
@@ -249,7 +251,7 @@ function matchEnd() {
 
   let place;
   $('#scores > td').each(function () {
-    if ($('.name', this).html() === playerInfo.playerName) {
+    if ($('.name', this).html() === playerName) {
       place = sorted.indexOf($('.score', this).html());
       place = sorted.length - place;
     }
