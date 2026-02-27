@@ -13,13 +13,10 @@ export class SocketMatchEventPublisher implements MatchEventPublisher {
         matchEmitters.sendCountdownEvent(event.match);
         break;
       }
-      case 'MATCH_DURATION_EXPIRED': {
-        // Duration reached zero: remove match from registry and let ticker emit MATCH_ENDED
-        manager.destroyMatch(event.match);
-        break;
-      }
       case 'MATCH_ENDED': {
+        // Normal end of match: notify clients and clean up server-side
         matchEmitters.sendMatchEndEvent(event.match);
+        manager.destroyMatch(event.match);
         break;
       }
       case 'TICK_PROCESSED': {

@@ -30,17 +30,16 @@ function getPoints(theSquare: Square, theColor: PlayerColor, match: Match): Squa
   let preferredDirection: '' | 'left' | 'right' | 'up' | 'down' = '';
   let squaresEarningPoints: Square[] = [];
 
+  function moveToFront<T>(array: T[], fromIndex: number): void {
+    if (fromIndex <= 0 || fromIndex >= array.length) {
+      return;
+    }
+    const [item] = array.splice(fromIndex, 1);
+    array.unshift(item);
+  }
+
   function getVertices(s: Square, c: PlayerColor): Square[] {
     const vertices: Square[] = [];
-    (vertices as any).move = function (old_index: number, new_index: number) {
-      if (new_index >= this.length) {
-        let k = new_index - this.length;
-        while (k-- + 1) {
-          this.push(undefined);
-        }
-      }
-      this.splice(new_index, 0, this.splice(old_index, 1)[0]);
-    };
     for (let i = 0; i < s.edgesTo.length; i++) {
       const edgeSquare = match.board.getSquare(s.edgesTo[i]);
       if (edgeSquare) {
@@ -57,7 +56,7 @@ function getPoints(theSquare: Square, theColor: PlayerColor, match: Match): Squa
         (s.position.y > vertices[i].position.y && preferredDirection === 'down') ||
         (s.position.y < vertices[i].position.y && preferredDirection === 'up')
       ) {
-        (vertices as any).move(i, 0);
+        moveToFront(vertices, i);
       }
     }
     return vertices;
@@ -84,81 +83,114 @@ function getPoints(theSquare: Square, theColor: PlayerColor, match: Match): Squa
   }
 
   function checkValidity(stackInner: Square[], alreadyVisitedVertex: Square): Square[] {
+    if (stackInner.length < MIN_CIRCUIT_LENGTH) {
+      return [];
+    }
+
+    const circuitArray = stackInner.slice(
+      stackInner.indexOf(alreadyVisitedVertex),
+      stackInner.length
+    );
+
+    const enclosedSquares = getEnclosedSquares(circuitArray);
+    if (enclosedSquares.length === 0) {
+      return [];
+    }
+
     const points: Square[] = [];
-    if (stackInner.length >= MIN_CIRCUIT_LENGTH) {
-      const circuitArray = stackInner.slice(
-        stackInner.indexOf(alreadyVisitedVertex),
-        stackInner.length
-      );
+    for (const sq of enclosedSquares) {
+      points.push(sq);
+    }
+    for (const sq of circuitArray) {
+      points.push(sq);
+    }
+    return points;
+  }
 
-      // Use the actual board height instead of hard-coding 9 rows.
-      for (let j = 0; j < match.board.height; j++) {
-        const squaresInSameRow: Square[] = [];
-        for (let k = 0; k < circuitArray.length; k++) {
-          if (circuitArray[k].position.y == j) {
-            squaresInSameRow.push(circuitArray[k]);
-          }
-        }
-        squaresInSameRow.sort(function (a: Square, b: Square) {
-          return a.position.x - b.position.x;
-        });
+  function getEnclosedSquares(circuitArray: Square[]): Square[] {
+    const points: Square[] = [];
 
-        for (let k = 1; k < squaresInSameRow.length; k++) {
-          const diff = squaresInSameRow[k].position.x - squaresInSameRow[k - 1].position.x;
-          if (diff != 1) {
-            for (let l = 1; l < diff; l++) {
-              points.push(
-                match.board.getSquareByCoordinates(squaresInSameRow[k].position.x - l, j)
-              );
-            }
-          }
+    // Use the actual board height instead of hard-coding 9 rows.
+    for (let j = 0; j < match.board.height; j++) {
+      const squaresInSameRow: Square[] = [];
+      for (let k = 0; k < circuitArray.length; k++) {
+        if (circuitArray[k].position.y == j) {
+          squaresInSameRow.push(circuitArray[k]);
         }
       }
-      if (points.length > 0) {
-        for (const sq of circuitArray) {
-          points.push(sq);
+      squaresInSameRow.sort(function (a: Square, b: Square) {
+        return a.position.x - b.position.x;
+      });
+
+      for (let k = 1; k < squaresInSameRow.length; k++) {
+        const diff = squaresInSameRow[k].position.x - squaresInSameRow[k - 1].position.x;
+        if (diff != 1) {
+          for (let l = 1; l < diff; l++) {
+            points.push(
+              match.board.getSquareByCoordinates(squaresInSameRow[k].position.x - l, j)
+            );
+          }
         }
       }
     }
-    return points.length > 0 ? points : [];
+
+    return points;
   }
 
   function dfs(theSquareInner: Square | null, theColorInner: PlayerColor) {
-    if (theSquareInner || stack.length > 0) {
-      if (theSquareInner) {
-        stack.push(theSquareInner);
-      } else {
-        theSquareInner = stack[stack.length - 1];
+    if (!theSquareInner && stack.length === 0) {
+      return;
+    }
+
+    if (!theSquareInner) {
+      theSquareInner = stack[stack.length - 1];
+    } else {
+      stack.push(theSquareInner);
+    }
+
+    theSquareInner.dfsVisited = true;
+
+    const vertices = getVertices(theSquareInner, theColorInner);
+
+    for (let i = 0; i < vertices.length; i++) {
+      if (squaresEarningPoints.length > 0) {
+        break;
       }
 
-      theSquareInner.dfsVisited = true;
+      const vertex = vertices[i];
+      const previous = stack[stack.length - 2];
 
-      const vertices = getVertices(theSquareInner, theColorInner);
+      const isBacktrackEdge = !!previous && vertex === previous;
 
-      for (let i = 0; i < vertices.length; i++) {
-        if (squaresEarningPoints.length < 1) {
-          if (vertices[i].dfsVisited && vertices[i] !== stack[stack.length - 2]) {
-            squaresEarningPoints = checkValidity(stack, vertices[i]);
+      if (vertex.dfsVisited && !isBacktrackEdge) {
+        squaresEarningPoints = checkValidity(stack, vertex);
 
-            if (squaresEarningPoints.length === 0 && i === vertices.length - 1) {
-              stack.pop();
-              justPopped = theSquareInner;
-              setPreferredDirection(theSquareInner, stack[stack.length - 1]);
-              dfs(null, theColorInner);
-            }
-          } else if (vertices[i].dfsVisited && vertices[i] === stack[stack.length - 2]) {
-            if (i === vertices.length - 1) {
-              stack.pop();
-              justPopped = theSquareInner;
-              setPreferredDirection(theSquareInner, stack[stack.length - 1]);
-              dfs(null, theColorInner);
-            }
-          } else if (!vertices[i].dfsVisited) {
-            justPopped = undefined;
-            setPreferredDirection(theSquareInner, vertices[i]);
-            dfs(vertices[i], theColorInner);
+        const reachedEndWithoutPoints =
+          squaresEarningPoints.length === 0 && i === vertices.length - 1;
+        if (reachedEndWithoutPoints) {
+          stack.pop();
+          justPopped = theSquareInner;
+          const newTop = stack[stack.length - 1];
+          if (newTop) {
+            setPreferredDirection(theSquareInner, newTop);
           }
+          dfs(null, theColorInner);
         }
+      } else if (vertex.dfsVisited && isBacktrackEdge) {
+        const isLastVertex = i === vertices.length - 1;
+        if (isLastVertex) {
+          stack.pop();
+          justPopped = theSquareInner;
+          const newTop = stack[stack.length - 1];
+          if (newTop) {
+            setPreferredDirection(theSquareInner, newTop);
+          }
+          dfs(null, theColorInner);
+        }
+      } else if (!vertex.dfsVisited) {
+        justPopped = undefined;
+        setPreferredDirection(theSquareInner, vertex);
+        dfs(vertex, theColorInner);
       }
     }
   }

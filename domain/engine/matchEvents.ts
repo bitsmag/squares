@@ -13,7 +13,6 @@ export type ClearedSquare = {
 
 export type MatchDomainEvent =
   | { type: 'COUNTDOWN_TICKED'; match: Match }
-  | { type: 'MATCH_DURATION_EXPIRED'; match: Match }
   | { type: 'MATCH_ENDED'; match: Match }
   | {
       type: 'TICK_PROCESSED';
