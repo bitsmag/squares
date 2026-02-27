@@ -100,10 +100,6 @@ export function sendCountdownEvent(match: Match): void {
   broadcastToMatch(match.id, '/matchSockets', 'countdown', data);
 }
 
-export function sendFatalErrorEvent(match: Match): void {
-  broadcastToMatch(match.id, '/matchSockets', 'fatalError');
-}
-
 function toPrepareMatchDTO(board: Board, players: Match['players']): PrepareMatchDTO {
   return {
     board: {
