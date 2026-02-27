@@ -8,6 +8,12 @@ import type { ClearedSquare, MatchEventPublisher, MatchSpecials } from './matchE
 
 type PlayerPositions = RawPlayerPositions;
 
+type TickResult = {
+  specials: MatchSpecials;
+  clearSquares: ClearedSquare[];
+  clearSpecials: number[];
+};
+
 export class MatchEngine {
   match: Match;
   private publisher: MatchEventPublisher;
@@ -56,42 +62,51 @@ export class MatchEngine {
         this.publisher.publish({ type: 'MATCH_ENDED', match: this.match });
         clearInterval(tickerInterval);
       } else {
-        const movingColors = this.getMovingColorsForTick(tickCount);
-        const playerPositions = this.calculatePlayerPositionsForTick(movingColors);
-        if (!playerPositions) {
-          return;
-        }
-
-        const sanitizedPositions = this.sanitizePlayerPositions(playerPositions);
-        if (!this.applyPlayerPositions(sanitizedPositions)) {
-          return;
-        }
-
-        const playerPoints = this.calculatePlayerPoints();
-        if (!playerPoints) {
-          return;
-        }
-
-        const { clearSquares, clearSpecials } = this.applyPointsAndSpecials(
-          sanitizedPositions,
-          playerPoints
-        );
-
-        const specials = this.applyRandomSpecials();
-        if (!specials) {
+        const result = this.computeTick(tickCount);
+        if (!result) {
           return;
         }
 
         this.publisher.publish({
           type: 'TICK_PROCESSED',
           match: this.match,
-          specials,
-          clearSquares,
-          clearSpecials,
+          specials: result.specials,
+          clearSquares: result.clearSquares,
+          clearSpecials: result.clearSpecials,
         });
       }
     };
     const tickerInterval = setInterval(tick, 250);
+  }
+
+  private computeTick(tickCount: number): TickResult | undefined {
+    const movingColors = this.getMovingColorsForTick(tickCount);
+    const playerPositions = this.calculatePlayerPositionsForTick(movingColors);
+    if (!playerPositions) {
+      return undefined;
+    }
+
+    const sanitizedPositions = this.sanitizePlayerPositions(playerPositions);
+    if (!this.applyPlayerPositions(sanitizedPositions)) {
+      return undefined;
+    }
+
+    const playerPoints = this.calculatePlayerPoints();
+    if (!playerPoints) {
+      return undefined;
+    }
+
+    const { clearSquares, clearSpecials } = this.applyPointsAndSpecials(
+      sanitizedPositions,
+      playerPoints
+    );
+
+    const specials = this.applyRandomSpecials();
+    if (!specials) {
+      return undefined;
+    }
+
+    return { specials, clearSquares, clearSpecials };
   }
 
   private getMovingColorsForTick(tickCount: number): PlayerColor[] {
