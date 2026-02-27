@@ -62,50 +62,37 @@ export class MatchEngine {
         this.publisher.publish({ type: 'MATCH_ENDED', match: this.match });
         clearInterval(tickerInterval);
       } else {
-        const result = this.computeTick(tickCount);
-        if (!result) {
-          return;
-        }
+        try {
+          const result = this.computeTick(tickCount);
 
-        this.publisher.publish({
-          type: 'TICK_PROCESSED',
-          match: this.match,
-          specials: result.specials,
-          clearSquares: result.clearSquares,
-          clearSpecials: result.clearSpecials,
-        });
+          this.publisher.publish({
+            type: 'TICK_PROCESSED',
+            match: this.match,
+            specials: result.specials,
+            clearSquares: result.clearSquares,
+            clearSpecials: result.clearSpecials,
+          });
+        } catch (err) {
+          this.publisher.publish({ type: 'FATAL_ERROR', match: this.match, error: err });
+        }
       }
     };
     const tickerInterval = setInterval(tick, 250);
   }
 
-  private computeTick(tickCount: number): TickResult | undefined {
+  private computeTick(tickCount: number): TickResult {
     const movingColors = this.getMovingColorsForTick(tickCount);
     const playerPositions = this.calculatePlayerPositionsForTick(movingColors);
-    if (!playerPositions) {
-      return undefined;
-    }
-
     const sanitizedPositions = this.sanitizePlayerPositions(playerPositions);
-    if (!this.applyPlayerPositions(sanitizedPositions)) {
-      return undefined;
-    }
+    this.applyPlayerPositions(sanitizedPositions);
 
     const playerPoints = this.calculatePlayerPoints();
-    if (!playerPoints) {
-      return undefined;
-    }
-
     const { clearSquares, clearSpecials } = this.applyPointsAndSpecials(
       sanitizedPositions,
       playerPoints
     );
 
     const specials = this.applyRandomSpecials();
-    if (!specials) {
-      return undefined;
-    }
-
     return { specials, clearSquares, clearSpecials };
   }
 
@@ -128,15 +115,8 @@ export class MatchEngine {
     return doubleSpeedColors;
   }
 
-  private calculatePlayerPositionsForTick(
-    movingColors: PlayerColor[]
-  ): PlayerPositions | undefined {
-    try {
-      return positionCalc.calculateNewPlayerPositions(this.match, movingColors);
-    } catch (err) {
-      this.publisher.publish({ type: 'FATAL_ERROR', match: this.match, error: err });
-      return undefined;
-    }
+  private calculatePlayerPositionsForTick(movingColors: PlayerColor[]): PlayerPositions {
+    return positionCalc.calculateNewPlayerPositions(this.match, movingColors);
   }
 
   private sanitizePlayerPositions(
@@ -153,24 +133,14 @@ export class MatchEngine {
   }
 
   private applyPlayerPositions(sanitizedPositions: Record<PlayerColor, number>): boolean {
-    try {
-      this.match.updatePlayers(sanitizedPositions);
-      this.match.updateBoard(sanitizedPositions);
-      return true;
-    } catch (err) {
-      this.publisher.publish({ type: 'FATAL_ERROR', match: this.match, error: err });
-      return false;
-    }
+    this.match.updatePlayers(sanitizedPositions);
+    this.match.updateBoard(sanitizedPositions);
+    return true;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private calculatePlayerPoints(): any | undefined {
-    try {
-      return circuitsCheck.getPlayerPoints(this.match);
-    } catch (err) {
-      this.publisher.publish({ type: 'FATAL_ERROR', match: this.match, error: err });
-      return undefined;
-    }
+  private calculatePlayerPoints(): any {
+    return circuitsCheck.getPlayerPoints(this.match);
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -181,36 +151,28 @@ export class MatchEngine {
   ): { clearSquares: ClearedSquare[]; clearSpecials: number[] } {
     const clearSpecials: number[] = [];
     (Object.keys(sanitizedPositions) as PlayerColor[]).forEach((color) => {
-      try {
-        const playerPositionSquare = this.match.board.getSquare(sanitizedPositions[color]);
-        if (playerPositionSquare.hasGetPointsSpecial) {
-          for (let i = 0; i < this.match.board.squares.length; i++) {
-            const square = this.match.board.squares[i];
-            if (square.color === color) {
-              playerPoints[color].push(square);
-            }
+      const playerPositionSquare = this.match.board.getSquare(sanitizedPositions[color]);
+      if (playerPositionSquare.hasGetPointsSpecial) {
+        for (let i = 0; i < this.match.board.squares.length; i++) {
+          const square = this.match.board.squares[i];
+          if (square.color === color) {
+            playerPoints[color].push(square);
           }
-          playerPositionSquare.hasGetPointsSpecial = false;
-          clearSpecials.push(playerPositionSquare.id);
         }
-        if (playerPositionSquare.doubleSpeedSpecial) {
-          this.match
-            .getPlayerByColor(color)
-            .startDoubleSpeedSpecial(this.match.board.doubleSpeedDuration);
-          playerPositionSquare.doubleSpeedSpecial = false;
-          clearSpecials.push(playerPositionSquare.id);
-        }
-      } catch (err) {
-        this.publisher.publish({ type: 'FATAL_ERROR', match: this.match, error: err });
+        playerPositionSquare.hasGetPointsSpecial = false;
+        clearSpecials.push(playerPositionSquare.id);
+      }
+      if (playerPositionSquare.doubleSpeedSpecial) {
+        this.match
+          .getPlayerByColor(color)
+          .startDoubleSpeedSpecial(this.match.board.doubleSpeedDuration);
+        playerPositionSquare.doubleSpeedSpecial = false;
+        clearSpecials.push(playerPositionSquare.id);
       }
     });
 
     (Object.keys(sanitizedPositions) as PlayerColor[]).forEach((color) => {
-      try {
-        this.match.getPlayerByColor(color).increaseScore(playerPoints[color].length);
-      } catch (err) {
-        this.publisher.publish({ type: 'FATAL_ERROR', match: this.match, error: err });
-      }
+      this.match.getPlayerByColor(color).increaseScore(playerPoints[color].length);
     });
 
     const clearSquares: ClearedSquare[] = [];
@@ -224,14 +186,9 @@ export class MatchEngine {
     return { clearSquares, clearSpecials };
   }
 
-  private applyRandomSpecials(): MatchSpecials | undefined {
-    try {
-      const specials = randomSpecials.getSpecials(this.match);
-      this.match.updateSpecials(specials);
-      return specials;
-    } catch (err) {
-      this.publisher.publish({ type: 'FATAL_ERROR', match: this.match, error: err });
-      return undefined;
-    }
+  private applyRandomSpecials(): MatchSpecials {
+    const specials = randomSpecials.getSpecials(this.match);
+    this.match.updateSpecials(specials);
+    return specials;
   }
 }
