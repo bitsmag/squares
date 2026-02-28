@@ -1,6 +1,7 @@
 import { MatchEngine } from '../domain/engine/matchEngine';
 import type { MatchEventPublisher } from '../domain/engine/matchEvents';
 import type { MatchesManager } from '../domain/runtime/matchesManager';
+import type { Match } from '../domain/entities/match';
 import { Player } from '../domain/entities/player';
 import type { PlayerColor } from '../domain/valueObjects/valueObjects';
 
@@ -51,7 +52,7 @@ export class LobbyService {
     return { matchId: match.id, playerId: player.id };
   }
 
-  private allocateColorAndPosition(match: import('../domain/entities/match').Match): {
+  private allocateColorAndPosition(match: Match): {
     color: PlayerColor;
     position: number;
   } {
