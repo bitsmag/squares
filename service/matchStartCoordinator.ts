@@ -1,11 +1,13 @@
-import * as matchSocketEmitters from '../transport/match/socket/matchEmitters';
 import type { Match } from '../domain/entities/match';
+import type { MatchEventPublisher } from '../domain/engine/matchEvents';
 
 // Default delay before automatically starting a match (in milliseconds).
 const DEFAULT_MATCH_START_COUNTDOWN_MS = 3000; // 3 seconds
 
 export class MatchStartCoordinator {
   private timers = new Map<string, NodeJS.Timeout>();
+
+  constructor(private readonly eventPublisher: MatchEventPublisher) {}
 
   startMatchWithCountdown(match: Match, durationMs?: number): void {
     const matchId = match.id;
@@ -14,9 +16,8 @@ export class MatchStartCoordinator {
 
     const cb = () => {
       // when timer expires, start with whoever is currently connected
-      matchSocketEmitters.sendPrepareMatchEvent(match);
-      match.active = true;
-      match.engine.startMatch();
+      this.eventPublisher.publish({ type: 'MATCH_PREPARE_REQUESTED', match });
+      this.startMatch(match);
       this.timers.delete(matchId);
     };
 

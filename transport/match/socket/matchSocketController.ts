@@ -57,8 +57,8 @@ export class MatchSocketController {
 
 export function createMatchSocketController(matchesManager: MatchesManager): MatchSocketController {
   const matchPresenceService = new MatchPresenceService();
-  const matchStartCoordinator = new MatchStartCoordinator();
   const eventPublisher = new SocketMatchEventPublisher(matchesManager);
+  const matchStartCoordinator = new MatchStartCoordinator(eventPublisher);
   const matchService = new MatchService(matchesManager, matchPresenceService, matchStartCoordinator, eventPublisher);
   return new MatchSocketController(matchesManager, matchService);
 }

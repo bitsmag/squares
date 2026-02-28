@@ -37,7 +37,7 @@ export function computeTick(match: Match, tickCount: number): TickResult {
 
   // Determine specials collected
   const doubleSpeedSpecials = determineDoubleSpeedSpecial(match, playerPositions);
-  updatePlayerSpecials(match, doubleSpeedSpecials);
+  updatePlayerDoubleSpeedSpecials(match, doubleSpeedSpecials);
   updateBoardRemoveSpecials(match, doubleSpeedSpecials);
 
   // Spawn new specials
@@ -117,7 +117,7 @@ function determineSpecialPoints(match: Match, playerPositions: PlayerPositions):
 }
 
 function determineDoubleSpeedSpecial(match: Match, playerPositions: PlayerPositions): PlayerSquaresByColor {
-  const appliedSquars: PlayerSquaresByColor = {
+  const doubleSpeedSquares: PlayerSquaresByColor = {
     blue: [],
     orange: [],
     green: [],
@@ -131,19 +131,18 @@ function determineDoubleSpeedSpecial(match: Match, playerPositions: PlayerPositi
       return;
     }
     if (playerPositionSquare.doubleSpeedSpecial) {
-      appliedSquars[color].push(playerPositionSquare);
+      doubleSpeedSquares[color].push(playerPositionSquare);
     }
   });
-  return appliedSquars;
+  return doubleSpeedSquares;
 }
 
-function updatePlayerSpecials(match: Match, appliedSquares: PlayerSquaresByColor): void {
-  (Object.keys(appliedSquares) as PlayerColor[]).forEach((color) => {
-    const squares = appliedSquares[color] ?? [];
+function updatePlayerDoubleSpeedSpecials(match: Match, doubleSpeedSquares: PlayerSquaresByColor): void {
+  (Object.keys(doubleSpeedSquares) as PlayerColor[]).forEach((color) => {
+    const squares = doubleSpeedSquares[color] ?? [];
     if (squares.length === 0) {
       return;
     }
-
     const player = match.getPlayerByColor(color);
     player.startDoubleSpeedSpecial(match.board.doubleSpeedDuration);
   });
