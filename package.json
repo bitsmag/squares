@@ -38,7 +38,8 @@
     "dev": "ts-node index.ts",
     "lint": "eslint . --ext .js,.ts",
     "format": "prettier --write \"**/*.{js,ts}\"",
-    "build": "tsc -p tsconfig.json"
+    "build": "tsc -p tsconfig.json",
+    "zip": "npm run build && zip -r ../squares.zip dist views package.json Procfile"
   },
   "repository": {
     "type": "git",
