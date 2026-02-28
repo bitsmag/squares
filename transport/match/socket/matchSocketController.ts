@@ -26,10 +26,7 @@ export class MatchSocketController {
     }
   }
 
-  handleRegisterPlayerAndStartMatchWhenReady(
-    playerInfo: RegisterPlayerAndStartMatchWhenReadyDTO,
-    socketId: string
-  ): void {
+  handleRegisterPlayerAndStartMatchWhenReady(playerInfo: RegisterPlayerAndStartMatchWhenReadyDTO, socketId: string): void {
     try {
       const { matchId, playerId } = playerInfo;
       sessionStore.register(socketId, '/matchSockets', matchId, playerId);

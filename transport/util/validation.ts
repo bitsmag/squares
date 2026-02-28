@@ -1,9 +1,6 @@
 import Joi from 'joi';
 import xss from 'xss';
-import type {
-  CreateMatchLobbyHostRequestDTO,
-  CreateMatchLobbyGuestRequestDTO,
-} from '../../shared/dto/http/createMatchLobbyHttpDtos';
+import type { CreateMatchLobbyHostRequestDTO, CreateMatchLobbyGuestRequestDTO } from '../../shared/dto/http/createMatchLobbyHttpDtos';
 import type { GetMatchRequestDTO } from '../../shared/dto/http/matchHttpDtos';
 import type { RegisterPlayerLobbyDTO } from '../../shared/dto/socket/incoming/createMatchLobbySocketDtos';
 import type { RegisterPlayerAndStartMatchWhenReadyDTO } from '../../shared/dto/socket/incoming/matchSocketDtos';
@@ -62,6 +59,4 @@ export function sanitize<T>(obj: T): T {
 }
 
 export type ValidationErrorDetails = { message: string; path: (string | number)[] };
-export type ValidationResult<T> =
-  | { valid: true; value: T }
-  | { valid: false; errors: ValidationErrorDetails[] };
+export type ValidationResult<T> = { valid: true; value: T } | { valid: false; errors: ValidationErrorDetails[] };

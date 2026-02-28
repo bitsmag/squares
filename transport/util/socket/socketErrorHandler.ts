@@ -17,8 +17,7 @@ function fatalErrorHandler(match: Match | undefined, err: unknown): void {
   }
 
   try {
-    const message =
-      err instanceof Error && typeof err.message === 'string' ? err.message : String(err);
+    const message = err instanceof Error && typeof err.message === 'string' ? err.message : String(err);
     console.warn(message);
   } catch (_e) {
     // ignore

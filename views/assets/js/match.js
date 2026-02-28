@@ -53,8 +53,7 @@ function prepareMatch(data) {
   $('#infoDiv').empty();
   $('#infoDiv').append('<table id="scores"></table><h2 id="countdown">...</h2>');
   for (let i = 0; i < data.players.length; i++) {
-    let div =
-      '<td id="' + data.players[i].playerColor + 'Score"><br/><span class="name underlined">';
+    let div = '<td id="' + data.players[i].playerColor + 'Score"><br/><span class="name underlined">';
     div += data.players[i].playerName;
     div += '</span><br><br>';
     div += '<span class="score">0</span><br/><br/></td>';
@@ -101,11 +100,7 @@ function updateBoard(data) {
 
       $(elementSelector).css('border-color', borderRgb[colors[i]]);
       const animDuration = data.playerStatuses[colors[i]].doubleSpeed ? 0.25 : 0.5;
-      const anim = `${
-        data.playerStatuses[colors[i]].dir
-      } ${animDuration}s 1 ease-in-out, ${elementColor}2${
-        colors[i]
-      } ${animDuration}s 1 ease-in-out`;
+      const anim = `${data.playerStatuses[colors[i]].dir} ${animDuration}s 1 ease-in-out, ${elementColor}2${colors[i]} ${animDuration}s 1 ease-in-out`;
       $(elementSelector).css('animation', anim);
       clearFlipAnimationAfterTimeout(elementSelector, i, animDuration);
     }
@@ -200,9 +195,7 @@ function popParticle(x, y, color) {
         opacity: 1,
       },
       {
-        transform: `translate(-50%, -50%) translate(${x + destinationX}px, ${
-          y + destinationY
-        }px) rotate(${rotation}deg)`,
+        transform: `translate(-50%, -50%) translate(${x + destinationX}px, ${y + destinationY}px) rotate(${rotation}deg)`,
         opacity: 0,
       },
     ],
@@ -238,10 +231,7 @@ function countdown(data) {
 }
 
 function matchEnd() {
-  let congratsDiv =
-    '<div id="congratsDiv" class="form-style-8"><h2>Congratulations ' +
-    playerName +
-    '</h2>';
+  let congratsDiv = '<div id="congratsDiv" class="form-style-8"><h2>Congratulations ' + playerName + '</h2>';
 
   const scores = [];
   $('#scores > td').each(function () {
@@ -257,10 +247,7 @@ function matchEnd() {
     }
   });
 
-  congratsDiv +=
-    '</h2><div id="congratsSpinner"><img src="/img/cup.svg"/><br><span>' +
-    place +
-    '.</span></div><br><a href="/">Start a new match now!</a>';
+  congratsDiv += '</h2><div id="congratsSpinner"><img src="/img/cup.svg"/><br><span>' + place + '.</span></div><br><a href="/">Start a new match now!</a>';
   $('#board').append(congratsDiv);
   $('#timer').html('...');
 }

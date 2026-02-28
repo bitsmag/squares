@@ -6,14 +6,12 @@ import type { ValidationErrorDetails } from '../validation';
 
 type RequestSource = 'body' | 'params' | 'query';
 
-export function validate<
-  P = import('express-serve-static-core').ParamsDictionary,
-  ResBody = any,
-  ReqBody = any,
-  ReqQuery = ParsedQs
->(source: RequestSource, schema: Joi.ObjectSchema<any>): RequestHandler<P, ResBody, ReqBody, ReqQuery> {
+export function validate<P = import('express-serve-static-core').ParamsDictionary, ResBody = any, ReqBody = any, ReqQuery = ParsedQs>(
+  source: RequestSource,
+  schema: Joi.ObjectSchema<any>
+): RequestHandler<P, ResBody, ReqBody, ReqQuery> {
   return (req, _res, next) => {
-    const target = ((req as unknown) as Record<RequestSource, unknown>)[source] ?? {};
+    const target = (req as unknown as Record<RequestSource, unknown>)[source] ?? {};
     const { error, value } = schema.validate(target, {
       abortEarly: false,
       stripUnknown: true,
@@ -42,7 +40,7 @@ export function validate<
       return next(validationError);
     }
 
-    ((req as unknown) as Record<RequestSource, unknown>)[source] = sanitize(value);
+    (req as unknown as Record<RequestSource, unknown>)[source] = sanitize(value);
     return next();
   };
 }

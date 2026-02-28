@@ -5,10 +5,7 @@ import { MatchPresenceService } from './matchPresenceService';
 import { MatchStartCoordinator } from './matchStartCoordinator';
 
 export class MatchService {
-  constructor(
-    private readonly presenceService: MatchPresenceService,
-    private readonly startCoordinator: MatchStartCoordinator
-  ) {}
+  constructor(private readonly presenceService: MatchPresenceService, private readonly startCoordinator: MatchStartCoordinator) {}
 
   startMatchWhenPlayersAreConnected(matchId: string): void {
     const match = manager.getMatch(matchId);
@@ -22,11 +19,7 @@ export class MatchService {
     }
   }
 
-  setDirection(
-    matchId: string,
-    playerId: string,
-      direction: Direction
-  ): void {
+  setDirection(matchId: string, playerId: string, direction: Direction): void {
     const match = manager.getMatch(matchId);
     const player = match.getPlayerById(playerId);
 

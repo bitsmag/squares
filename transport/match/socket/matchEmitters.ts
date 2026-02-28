@@ -3,23 +3,14 @@ import type { Match } from '../../../domain/models/match';
 import type { Board } from '../../../domain/models/board';
 import type { PlayerColor } from '../../../domain/models/colors';
 import { broadcastToMatch } from '../../util/socket/transport';
-import type {
-  PrepareMatchDTO,
-  ClearSquaresDTO,
-  UpdateBoardDTO,
-  UpdateScoreDTO,
-  CountdownDTO,
-} from '../../../shared/dto/matchDtos';
+import type { PrepareMatchDTO, ClearSquaresDTO, UpdateBoardDTO, UpdateScoreDTO, CountdownDTO } from '../../../shared/dto/matchDtos';
 
 export function sendPrepareMatchEvent(match: Match): void {
   const data = toPrepareMatchDTO(match.board, match.players);
   broadcastToMatch(match.id, '/matchSockets', 'prepareMatch', data);
 }
 
-export function sendUpdateBoardEvent(
-  match: Match,
-  specials: { doubleSpeed: number[]; getPoints: number[] }
-): void {
+export function sendUpdateBoardEvent(match: Match, specials: { doubleSpeed: number[]; getPoints: number[] }): void {
   const playerStatuses: UpdateBoardDTO['playerStatuses'] = {
     blue: { pos: null, dir: null, doubleSpeed: null },
     orange: { pos: null, dir: null, doubleSpeed: null },
@@ -34,12 +25,8 @@ export function sendUpdateBoardEvent(
   for (let i = 0; i < activeColors.length; i++) {
     try {
       playerStatuses[activeColors[i]].pos = match.getPlayerByColor(activeColors[i]).position;
-      playerStatuses[activeColors[i]].dir = match
-        .getPlayerByColor(activeColors[i])
-        .activeDirection;
-      playerStatuses[activeColors[i]].doubleSpeed = match
-        .getPlayerByColor(activeColors[i])
-        .doubleSpeedSpecial;
+      playerStatuses[activeColors[i]].dir = match.getPlayerByColor(activeColors[i]).activeDirection;
+      playerStatuses[activeColors[i]].doubleSpeed = match.getPlayerByColor(activeColors[i]).doubleSpeedSpecial;
     } catch (err) {
       socketErrorHandler(match, err);
     }
@@ -53,11 +40,7 @@ export function sendUpdateBoardEvent(
   broadcastToMatch(match.id, '/matchSockets', 'updateBoard', data);
 }
 
-export function sendClearSquaresEvent(
-  match: Match,
-  clearSquares: ClearSquaresDTO['clearSquares'],
-  clearSpecials: number[]
-): void {
+export function sendClearSquaresEvent(match: Match, clearSquares: ClearSquaresDTO['clearSquares'], clearSpecials: number[]): void {
   const data: ClearSquaresDTO = { clearSquares: clearSquares, clearSpecials: clearSpecials };
 
   broadcastToMatch(match.id, '/matchSockets', 'clearSquares', data);

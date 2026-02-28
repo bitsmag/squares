@@ -6,34 +6,14 @@ import type { Direction } from '../../models/direction';
 import type { RandomProvider } from './randomProvider';
 import { DefaultRandomProvider } from './randomProvider';
 
-export type PlayerPositions = Partial<Record<PlayerColor, number>>;
+// Map of player colors to their positions for this tick.
+// Contains an entry for every active player color in the match.
+export type PlayerPositions = Record<PlayerColor, number>;
 
-export function calculateNewPlayerPositions(
-  match: Match,
-  playerList: PlayerColor[],
-  randomProvider: RandomProvider = DefaultRandomProvider
-): PlayerPositions {
-  const activeColors: PlayerColor[] = getActiveColors(match);
-
-  const { currentPos, futurePos, hasPriority } = buildInitialPositions(
-    match,
-    activeColors,
-    playerList
-  );
-
-  const losingColors = resolveCollisions(
-    activeColors,
-    currentPos,
-    futurePos,
-    hasPriority,
-    randomProvider
-  );
-
-  applyLosingColors(losingColors, currentPos, futurePos);
-
-  pruneNonMovingPlayers(futurePos, playerList);
-
-  return futurePos;
+export function calculateNewPlayerPositions(match: Match, movingColors: PlayerColor[], randomProvider: RandomProvider = DefaultRandomProvider): PlayerPositions {
+  const nextPositionCandidates = determineNextPositionCandidates(match, movingColors);
+  const nextPositions = resolvePositionCollisions(match, nextPositionCandidates, randomProvider);
+  return nextPositions;
 }
 
 function getActiveColors(match: Match): PlayerColor[] {
@@ -45,69 +25,78 @@ function getActiveColors(match: Match): PlayerColor[] {
   return colors;
 }
 
-function buildInitialPositions(
-  match: Match,
-  activeColors: PlayerColor[],
-  playerList: PlayerColor[]
-): {
-  currentPos: Partial<Record<PlayerColor, number>>;
-  futurePos: Partial<Record<PlayerColor, number>>;
-  hasPriority: Partial<Record<PlayerColor, boolean>>;
-} {
-  const currentPos: Partial<Record<PlayerColor, number>> = {};
-  const futurePos: Partial<Record<PlayerColor, number>> = {};
-  const hasPriority: Partial<Record<PlayerColor, boolean>> = {};
+function determineNextPositionCandidates(match: Match, movingColors: PlayerColor[]): PlayerPositions {
+  const nextPositions = {} as PlayerPositions;
+
+  const activeColors = getActiveColors(match);
 
   for (let i = 0; i < activeColors.length; i++) {
     const color = activeColors[i];
     const player = match.getPlayerByColor(color);
-    currentPos[color] = player.position;
-    futurePos[color] = calculateFuturePos(
-      player.position,
-      player.activeDirection,
-      match.board,
-      match
-    );
-    if (playerList.indexOf(color) === -1) {
-      futurePos[color] = currentPos[color];
+    nextPositions[color] = calculateFuturePos(player.position, player.activeDirection, match.board, match);
+    if (movingColors.indexOf(color) === -1) {
+      nextPositions[color] = player.position;
     }
-    if (currentPos[color] === futurePos[color]) {
+  }
+
+  return nextPositions;
+}
+
+function getCurrentPositions(match: Match, activeColors: PlayerColor[]): PlayerPositions {
+  const currentPositions = {} as PlayerPositions;
+
+  for (let i = 0; i < activeColors.length; i++) {
+    const color = activeColors[i];
+    const player = match.getPlayerByColor(color);
+    currentPositions[color] = player.position;
+  }
+
+  return currentPositions;
+}
+
+function resolvePositionCollisions(match: Match, nextPositionsCandidates: PlayerPositions, randomProvider: RandomProvider): PlayerPositions {
+  const activeColors = getActiveColors(match);
+  const currentPositions = getCurrentPositions(match, activeColors);
+
+  const sameTargetLosers = findSameTargetCollisionLosers(activeColors, currentPositions, nextPositionsCandidates, randomProvider);
+  const swapLosers = findSwapCollisionLosers(activeColors, currentPositions, nextPositionsCandidates);
+  const losers = dedupeColors([...sameTargetLosers, ...swapLosers]);
+
+  const nextPositions = resetNextPositionForLosers(currentPositions, nextPositionsCandidates, losers);
+  return nextPositions;
+}
+
+function findSameTargetCollisionLosers(
+  activeColors: PlayerColor[],
+  currentPositions: PlayerPositions,
+  nextPositionsCandidates: PlayerPositions,
+  randomProvider: RandomProvider
+): PlayerColor[] {
+  const hasPriority: Partial<Record<PlayerColor, boolean>> = {};
+
+  for (let i = 0; i < activeColors.length; i++) {
+    const color = activeColors[i];
+    if (currentPositions[color] === nextPositionsCandidates[color]) {
       hasPriority[color] = true;
     }
   }
 
-  return { currentPos, futurePos, hasPriority };
-}
-
-function resolveCollisions(
-  activeColors: PlayerColor[],
-  currentPos: Partial<Record<PlayerColor, number>>,
-  futurePos: Partial<Record<PlayerColor, number>>,
-  hasPriority: Partial<Record<PlayerColor, boolean>>,
-  randomProvider: RandomProvider
-): PlayerColor[] {
-  let losingColors: PlayerColor[] = [];
+  const losingColors: PlayerColor[] = [];
 
   // Multiple players attempting to move to the same square
   for (let i = 0; i < activeColors.length; i++) {
     for (let j = 0; j < activeColors.length; j++) {
-      if (i !== j && futurePos[activeColors[i]] === futurePos[activeColors[j]]) {
+      if (i !== j && nextPositionsCandidates[activeColors[i]] === nextPositionsCandidates[activeColors[j]]) {
         if (hasPriority[activeColors[i]]) {
           losingColors.push(activeColors[j]);
         } else if (hasPriority[activeColors[j]]) {
           losingColors.push(activeColors[i]);
         } else {
-          const uniqueRandomNumbers = activeColors.reduce<Record<PlayerColor, number>>(
-            (acc, color) => {
-              acc[color] = randomProvider.next();
-              return acc;
-            },
-            {} as Record<PlayerColor, number>
-          );
-          if (
-            uniqueRandomNumbers[activeColors[i]] ===
-            Math.max(uniqueRandomNumbers[activeColors[i]], uniqueRandomNumbers[activeColors[j]])
-          ) {
+          const uniqueRandomNumbers = activeColors.reduce<Record<PlayerColor, number>>((acc, color) => {
+            acc[color] = randomProvider.next();
+            return acc;
+          }, {} as Record<PlayerColor, number>);
+          if (uniqueRandomNumbers[activeColors[i]] === Math.max(uniqueRandomNumbers[activeColors[i]], uniqueRandomNumbers[activeColors[j]])) {
             losingColors.push(activeColors[j]);
           } else {
             losingColors.push(activeColors[i]);
@@ -117,57 +106,46 @@ function resolveCollisions(
     }
   }
 
+  return losingColors;
+}
+
+function findSwapCollisionLosers(activeColors: PlayerColor[], currentPositions: PlayerPositions, nextPositions: PlayerPositions): PlayerColor[] {
+  const losingColors: PlayerColor[] = [];
+
   // Two players swapping positions
   for (let i = 0; i < activeColors.length; i++) {
     for (let j = 0; j < activeColors.length; j++) {
-      if (
-        i !== j &&
-        futurePos[activeColors[i]] === currentPos[activeColors[j]] &&
-        futurePos[activeColors[j]] === currentPos[activeColors[i]]
-      ) {
+      if (i !== j && nextPositions[activeColors[i]] === currentPositions[activeColors[j]] && nextPositions[activeColors[j]] === currentPositions[activeColors[i]]) {
         losingColors.push(activeColors[i]);
         losingColors.push(activeColors[j]);
       }
     }
   }
 
-  // Deduplicate losing colors
-  losingColors = losingColors.reduce<PlayerColor[]>((a, b) => {
-    if (a.indexOf(b) < 0) a.push(b);
-    return a;
-  }, []);
-
   return losingColors;
 }
 
-function applyLosingColors(
-  losingColors: PlayerColor[],
-  currentPos: Partial<Record<PlayerColor, number>>,
-  futurePos: Partial<Record<PlayerColor, number>>
-): void {
+function dedupeColors(colors: PlayerColor[]): PlayerColor[] {
+  return colors.reduce<PlayerColor[]>((unique, color) => {
+    if (unique.indexOf(color) < 0) {
+      unique.push(color);
+    }
+    return unique;
+  }, []);
+}
+
+function resetNextPositionForLosers(currentPositions: PlayerPositions, nextPositionsCandidates: PlayerPositions, losingColors: PlayerColor[]): PlayerPositions {
+  const updatedPositions = { ...nextPositionsCandidates } as PlayerPositions;
+
   for (let i = 0; i < losingColors.length; i++) {
     const color = losingColors[i];
-    futurePos[color] = currentPos[color];
+    updatedPositions[color] = currentPositions[color];
   }
+
+  return updatedPositions;
 }
 
-function pruneNonMovingPlayers(
-  futurePos: Partial<Record<PlayerColor, number>>,
-  playerList: PlayerColor[]
-): void {
-  (Object.keys(futurePos) as PlayerColor[]).forEach((color) => {
-    if (playerList.indexOf(color) === -1) {
-      delete futurePos[color];
-    }
-  });
-}
-
-function calculateFuturePos(
-  currentPosition: number,
-  activeDirection: Direction | null,
-  board: Board,
-  match: Match
-): number {
+function calculateFuturePos(currentPosition: number, activeDirection: Direction | null, board: Board, match: Match): number {
   const square: Square = board.getSquare(currentPosition);
   if (square) {
     switch (activeDirection) {

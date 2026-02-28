@@ -43,7 +43,9 @@ describe('Hooks', function () {
           var pos = m.getBoard().getStartSquares()[color];
           return new player.Player('p' + index, color, pos, index === 0);
         });
-        players.forEach(function (p) { m.addPlayer(p); });
+        players.forEach(function (p) {
+          m.addPlayer(p);
+        });
 
         var extraPlayer = function () {
           var pos = m.getBoard().getStartSquares()['blue'];

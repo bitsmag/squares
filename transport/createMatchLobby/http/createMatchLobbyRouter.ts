@@ -1,14 +1,8 @@
 import type { Application } from 'express';
 import { schemas } from '../../util/validation';
 import { validate } from '../../util/http/httpValidationMiddleware';
-import {
-  handleCreateMatchLobbyHost,
-  handleCreateMatchLobbyGuest,
-} from './createMatchLobbyController';
-import type {
-  CreateMatchLobbyHostRequestDTO,
-  CreateMatchLobbyGuestRequestDTO,
-} from '../../../shared/dto/http/createMatchLobbyHttpDtos';
+import { handleCreateMatchLobbyHost, handleCreateMatchLobbyGuest } from './createMatchLobbyController';
+import type { CreateMatchLobbyHostRequestDTO, CreateMatchLobbyGuestRequestDTO } from '../../../shared/dto/http/createMatchLobbyHttpDtos';
 
 function createMatchLobbyRouter(app: Application): void {
   app.get<CreateMatchLobbyHostRequestDTO>(

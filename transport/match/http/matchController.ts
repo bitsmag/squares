@@ -4,11 +4,7 @@ import { manager } from '../../../domain/models/matchesManager';
 
 export type GetMatchParams = GetMatchRequestDTO;
 
-export function handleGetMatch(
-  req: Request<GetMatchParams>,
-  res: Response,
-  next: NextFunction
-): void {
+export function handleGetMatch(req: Request<GetMatchParams>, res: Response, next: NextFunction): void {
   try {
     const { matchId, playerId } = req.params;
     const match = manager.getMatch(matchId);

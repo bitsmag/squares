@@ -14,7 +14,7 @@ export function respond(socket: Socket): void {
   );
 
   socket.on('registerPlayerLobby', function (playerInfo: unknown) {
-		controller.handleRegisterPlayerLobby(playerInfo as RegisterPlayerLobbyDTO, socket.id);
+    controller.handleRegisterPlayerLobby(playerInfo as RegisterPlayerLobbyDTO, socket.id);
   });
 
   socket.on('matchStartInitiation', function () {

@@ -19,10 +19,7 @@ function errorHandler(err: unknown, req: Request, res: Response, _next: NextFunc
   console.error('Error (%s):', context, stack ?? err);
 
   const statusCode = isErrorLike(err) && typeof err.status === 'number' ? err.status : 500;
-  const userMessage =
-    isErrorLike(err) && typeof err.userMessage === 'string'
-      ? err.userMessage
-      : 'There was an unknown issue - please try again.';
+  const userMessage = isErrorLike(err) && typeof err.userMessage === 'string' ? err.userMessage : 'There was an unknown issue - please try again.';
 
   if (req.accepts && req.accepts('html')) {
     res.status(statusCode).render('error.html', { errorMessage: userMessage });

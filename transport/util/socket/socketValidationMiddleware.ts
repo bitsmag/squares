@@ -4,10 +4,7 @@ import type { ValidationResult } from '../validation';
 
 type SchemaMap = Record<string, Joi.ObjectSchema>;
 
-function validateSocketPayload<T>(
-  schema: Joi.ObjectSchema<T>,
-  payload: unknown
-): ValidationResult<T> {
+function validateSocketPayload<T>(schema: Joi.ObjectSchema<T>, payload: unknown): ValidationResult<T> {
   const validationResult: Joi.ValidationResult<T> = schema.validate(payload, {
     abortEarly: false,
     stripUnknown: true,

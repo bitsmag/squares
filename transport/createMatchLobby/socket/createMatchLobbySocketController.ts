@@ -50,10 +50,7 @@ export class CreateMatchLobbySocketController {
     try {
       const session = sessionStore.unregister(socketId);
       if (session && session.matchId && session.playerId) {
-        const disconnectionSource = this.createMatchLobbyService.processDisconnectLobby(
-          session.matchId,
-          session.playerId
-        );
+        const disconnectionSource = this.createMatchLobbyService.processDisconnectLobby(session.matchId, session.playerId);
         switch (disconnectionSource.type) {
           case 'HOST_LEFT':
             createMatchLobbyEmitters.sendHostDisconnectedEvent(session.matchId);

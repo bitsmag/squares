@@ -1,7 +1,4 @@
-import type {
-  MatchDomainEvent,
-  MatchEventPublisher,
-} from '../../../domain/engine/matchEvents';
+import type { MatchDomainEvent, MatchEventPublisher } from '../../../domain/engine/matchEvents';
 import * as matchEmitters from './matchEmitters';
 import socketErrorHandler from '../../util/socket/socketErrorHandler';
 import { manager } from '../../../domain/models/matchesManager';
@@ -21,11 +18,7 @@ export class SocketMatchEventPublisher implements MatchEventPublisher {
       }
       case 'TICK_PROCESSED': {
         matchEmitters.sendUpdateBoardEvent(event.match, event.specials);
-        matchEmitters.sendClearSquaresEvent(
-          event.match,
-          event.clearSquares,
-          event.clearSpecials
-        );
+        matchEmitters.sendClearSquaresEvent(event.match, event.clearSquares, event.clearSpecials);
         matchEmitters.sendUpdateScoreEvent(event.match);
         break;
       }

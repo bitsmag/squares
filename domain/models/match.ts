@@ -127,17 +127,13 @@ export class Match {
     this._countdownDuration--;
   }
 
-  updatePlayers(playerPositions: Record<PlayerColor, number>): void {
-    (Object.keys(playerPositions) as PlayerColor[]).forEach((color) => {
-      const player = this.getPlayerByColor(color);
-      player.position = playerPositions[color];
-    });
-  }
-
-  updateBoard(playerPositions: Record<PlayerColor, number>): void {
-    (Object.keys(playerPositions) as PlayerColor[]).forEach((color) => {
-      this.board.getSquare(playerPositions[color]).color = color;
-    });
+  updatePlayer(color: PlayerColor, position: number): void {
+    const player = this.getPlayerByColor(color);
+    player.position = position;
+    const square = this.board.getSquare(position);
+    if (square) {
+      square.color = color;
+    }
   }
 
   updateSpecials(specials: { doubleSpeed: number[]; getPoints: number[] }): void {

@@ -2,8 +2,14 @@ import type { Match } from '../../models/match';
 import type { Square } from '../../models/square';
 import type { PlayerColor } from '../../models/colors';
 
-// Minimum path length (in squares) required to consider a circuit valid for scoring.
-// Previously this was encoded as "stackInner.length > 7".
+// A DFS path through same-colored squares.
+type Path = Square[];
+
+// A closed loop of same-colored squares detected by DFS.
+type Circuit = Square[];
+
+// Minimum path length (in squares) required to consider a circuit candidate.
+// Previously this was encoded as an implicit "stackInner.length > 7" check.
 const MIN_CIRCUIT_LENGTH = 8;
 
 export function getPlayerPoints(match: Match): Record<PlayerColor, Square[]> {
@@ -13,52 +19,57 @@ export function getPlayerPoints(match: Match): Record<PlayerColor, Square[]> {
     green: [],
     red: [],
   };
+
   for (let i = 0; i < match.players.length; i++) {
-    const playerPositionSquare = match.board.getSquare(match.players[i].position);
-    if (playerPositionSquare) {
-      const playerColor = match.players[i].color as PlayerColor;
-      const squaresEarningPoints = getPoints(playerPositionSquare, playerColor, match);
-      playerPoints[playerColor] = squaresEarningPoints;
-    }
+    const player = match.players[i];
+    const positionSquare = match.board.getSquare(player.position);
+    if (!positionSquare) continue;
+
+    const color = player.color as PlayerColor;
+    const scoringSquares = getPointsForPlayer(positionSquare, color, match);
+    playerPoints[color] = scoringSquares;
   }
+
   return playerPoints;
 }
 
-function getPoints(theSquare: Square, theColor: PlayerColor, match: Match): Square[] {
-  const stack: Square[] = [];
+function getPointsForPlayer(startSquare: Square, color: PlayerColor, match: Match): Square[] {
+  const circuit = findCircuit(startSquare, color, match);
+  if (!circuit) {
+    return [];
+  }
+  return computeScoringSquares(circuit, match);
+}
+
+function findCircuit(startSquare: Square, color: PlayerColor, match: Match): Circuit | null {
+  const stack: Path = [];
   let justPopped: Square | undefined;
   let preferredDirection: '' | 'left' | 'right' | 'up' | 'down' = '';
-  let squaresEarningPoints: Square[] = [];
+  let foundCircuit: Circuit | null = null;
 
-  function moveToFront<T>(array: T[], fromIndex: number): void {
-    if (fromIndex <= 0 || fromIndex >= array.length) {
-      return;
-    }
-    const [item] = array.splice(fromIndex, 1);
-    array.unshift(item);
-  }
-
-  function getVertices(s: Square, c: PlayerColor): Square[] {
+  function getVertices(origin: Square): Square[] {
     const vertices: Square[] = [];
-    for (let i = 0; i < s.edgesTo.length; i++) {
-      const edgeSquare = match.board.getSquare(s.edgesTo[i]);
-      if (edgeSquare) {
-        if (edgeSquare.color === c && edgeSquare !== justPopped) {
-          vertices.push(edgeSquare);
-        }
+
+    // Adjacent same-colored squares, excluding the one we just backtracked from.
+    for (let i = 0; i < origin.edgesTo.length; i++) {
+      const edgeSquare = match.board.getSquare(origin.edgesTo[i]);
+      if (edgeSquare && edgeSquare.color === color && edgeSquare !== justPopped) {
+        vertices.push(edgeSquare);
       }
     }
 
+    // Reorder vertices so we prefer continuing along the previous movement direction.
     for (let i = 0; i < vertices.length; i++) {
       if (
-        (s.position.x < vertices[i].position.x && preferredDirection === 'right') ||
-        (s.position.x > vertices[i].position.x && preferredDirection === 'left') ||
-        (s.position.y > vertices[i].position.y && preferredDirection === 'down') ||
-        (s.position.y < vertices[i].position.y && preferredDirection === 'up')
+        (origin.position.x < vertices[i].position.x && preferredDirection === 'right') ||
+        (origin.position.x > vertices[i].position.x && preferredDirection === 'left') ||
+        (origin.position.y > vertices[i].position.y && preferredDirection === 'down') ||
+        (origin.position.y < vertices[i].position.y && preferredDirection === 'up')
       ) {
         moveToFront(vertices, i);
       }
     }
+
     return vertices;
   }
 
@@ -68,133 +79,153 @@ function getPoints(theSquare: Square, theColor: PlayerColor, match: Match): Squa
     }
   }
 
-  function setPreferredDirection(theSquareInner: Square, nextSquare: Square) {
-    if (stack.length > 0) {
-      if (theSquareInner.position.x < nextSquare.position.x) {
-        preferredDirection = 'right';
-      } else if (theSquareInner.position.x > nextSquare.position.x) {
-        preferredDirection = 'left';
-      } else if (theSquareInner.position.y > nextSquare.position.y) {
-        preferredDirection = 'down';
-      } else if (theSquareInner.position.y < nextSquare.position.y) {
-        preferredDirection = 'up';
-      }
+  function setPreferredDirection(from: Square, to: Square) {
+    if (stack.length === 0) return;
+
+    if (from.position.x < to.position.x) {
+      preferredDirection = 'right';
+    } else if (from.position.x > to.position.x) {
+      preferredDirection = 'left';
+    } else if (from.position.y > to.position.y) {
+      preferredDirection = 'down';
+    } else if (from.position.y < to.position.y) {
+      preferredDirection = 'up';
     }
   }
 
-  function checkValidity(stackInner: Square[], alreadyVisitedVertex: Square): Square[] {
-    if (stackInner.length < MIN_CIRCUIT_LENGTH) {
-      return [];
+  function tryCreateCircuit(path: Path, revisitedVertex: Square): Circuit | null {
+    if (path.length < MIN_CIRCUIT_LENGTH) {
+      return null;
     }
 
-    const circuitArray = stackInner.slice(
-      stackInner.indexOf(alreadyVisitedVertex),
-      stackInner.length
-    );
+    const startIndex = path.indexOf(revisitedVertex);
+    if (startIndex === -1) {
+      return null;
+    }
 
-    const enclosedSquares = getEnclosedSquares(circuitArray);
+    const candidate = path.slice(startIndex, path.length);
+    if (candidate.length < MIN_CIRCUIT_LENGTH) {
+      return null;
+    }
+
+    const enclosedSquares = getEnclosedSquaresForMatch(candidate, match);
     if (enclosedSquares.length === 0) {
-      return [];
+      return null;
     }
 
-    const points: Square[] = [];
-    for (const sq of enclosedSquares) {
-      points.push(sq);
-    }
-    for (const sq of circuitArray) {
-      points.push(sq);
-    }
-    return points;
+    return candidate;
   }
 
-  function getEnclosedSquares(circuitArray: Square[]): Square[] {
-    const points: Square[] = [];
-
-    // Use the actual board height instead of hard-coding 9 rows.
-    for (let j = 0; j < match.board.height; j++) {
-      const squaresInSameRow: Square[] = [];
-      for (let k = 0; k < circuitArray.length; k++) {
-        if (circuitArray[k].position.y == j) {
-          squaresInSameRow.push(circuitArray[k]);
-        }
-      }
-      squaresInSameRow.sort(function (a: Square, b: Square) {
-        return a.position.x - b.position.x;
-      });
-
-      for (let k = 1; k < squaresInSameRow.length; k++) {
-        const diff = squaresInSameRow[k].position.x - squaresInSameRow[k - 1].position.x;
-        if (diff != 1) {
-          for (let l = 1; l < diff; l++) {
-            points.push(
-              match.board.getSquareByCoordinates(squaresInSameRow[k].position.x - l, j)
-            );
-          }
-        }
-      }
-    }
-
-    return points;
-  }
-
-  function dfs(theSquareInner: Square | null, theColorInner: PlayerColor) {
-    if (!theSquareInner && stack.length === 0) {
+  function dfs(current: Square | null): void {
+    if (!current && stack.length === 0) {
       return;
     }
 
-    if (!theSquareInner) {
-      theSquareInner = stack[stack.length - 1];
+    if (!current) {
+      current = stack[stack.length - 1];
     } else {
-      stack.push(theSquareInner);
+      stack.push(current);
     }
 
-    theSquareInner.dfsVisited = true;
+    current.dfsVisited = true;
 
-    const vertices = getVertices(theSquareInner, theColorInner);
+    const vertices = getVertices(current);
 
     for (let i = 0; i < vertices.length; i++) {
-      if (squaresEarningPoints.length > 0) {
+      if (foundCircuit) {
         break;
       }
 
       const vertex = vertices[i];
       const previous = stack[stack.length - 2];
-
       const isBacktrackEdge = !!previous && vertex === previous;
 
       if (vertex.dfsVisited && !isBacktrackEdge) {
-        squaresEarningPoints = checkValidity(stack, vertex);
+        const circuit = tryCreateCircuit(stack, vertex);
+        if (circuit) {
+          foundCircuit = circuit;
+          break;
+        }
 
-        const reachedEndWithoutPoints =
-          squaresEarningPoints.length === 0 && i === vertices.length - 1;
-        if (reachedEndWithoutPoints) {
+        const isLastVertex = i === vertices.length - 1;
+        if (isLastVertex) {
           stack.pop();
-          justPopped = theSquareInner;
+          justPopped = current;
           const newTop = stack[stack.length - 1];
           if (newTop) {
-            setPreferredDirection(theSquareInner, newTop);
+            setPreferredDirection(current, newTop);
           }
-          dfs(null, theColorInner);
+          dfs(null);
         }
       } else if (vertex.dfsVisited && isBacktrackEdge) {
         const isLastVertex = i === vertices.length - 1;
         if (isLastVertex) {
           stack.pop();
-          justPopped = theSquareInner;
+          justPopped = current;
           const newTop = stack[stack.length - 1];
           if (newTop) {
-            setPreferredDirection(theSquareInner, newTop);
+            setPreferredDirection(current, newTop);
           }
-          dfs(null, theColorInner);
+          dfs(null);
         }
       } else if (!vertex.dfsVisited) {
         justPopped = undefined;
-        setPreferredDirection(theSquareInner, vertex);
-        dfs(vertex, theColorInner);
+        setPreferredDirection(current, vertex);
+        dfs(vertex);
       }
     }
   }
-  dfs(theSquare, theColor);
+
+  dfs(startSquare);
   setAllSquaresUnvisited();
-  return squaresEarningPoints;
+  return foundCircuit;
+}
+
+function computeScoringSquares(circuit: Circuit, match: Match): Square[] {
+  const enclosedSquares = getEnclosedSquaresForMatch(circuit, match);
+  const scoringSquares: Square[] = [];
+
+  for (const sq of enclosedSquares) {
+    scoringSquares.push(sq);
+  }
+  for (const sq of circuit) {
+    scoringSquares.push(sq);
+  }
+
+  return scoringSquares;
+}
+
+function getEnclosedSquaresForMatch(circuit: Circuit, match: Match): Square[] {
+  const enclosed: Square[] = [];
+
+  // Use the actual board height instead of hard-coding the number of rows.
+  for (let row = 0; row < match.board.height; row++) {
+    const squaresInSameRow: Square[] = [];
+    for (let i = 0; i < circuit.length; i++) {
+      if (circuit[i].position.y === row) {
+        squaresInSameRow.push(circuit[i]);
+      }
+    }
+
+    squaresInSameRow.sort((a, b) => a.position.x - b.position.x);
+
+    for (let i = 1; i < squaresInSameRow.length; i++) {
+      const diff = squaresInSameRow[i].position.x - squaresInSameRow[i - 1].position.x;
+      if (diff !== 1) {
+        for (let offset = 1; offset < diff; offset++) {
+          enclosed.push(match.board.getSquareByCoordinates(squaresInSameRow[i].position.x - offset, row));
+        }
+      }
+    }
+  }
+
+  return enclosed;
+}
+
+function moveToFront<T>(array: T[], fromIndex: number): void {
+  if (fromIndex <= 0 || fromIndex >= array.length) {
+    return;
+  }
+  const [item] = array.splice(fromIndex, 1);
+  array.unshift(item);
 }

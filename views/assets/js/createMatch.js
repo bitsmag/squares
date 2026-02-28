@@ -35,24 +35,16 @@ createMatchSockets.on('connect', function () {
       }
 
       if ($('#redPlayerName').is(':empty')) {
-        $('#redPlayerName').html(
-          '<span style="font-size:small; font-weight: lighter">Waiting for player...</span>'
-        );
+        $('#redPlayerName').html('<span style="font-size:small; font-weight: lighter">Waiting for player...</span>');
       }
       if ($('#bluePlayerName').is(':empty')) {
-        $('#bluePlayerName').html(
-          '<span style="font-size:small; font-weight: lighter">Waiting for player...</span>'
-        );
+        $('#bluePlayerName').html('<span style="font-size:small; font-weight: lighter">Waiting for player...</span>');
       }
       if ($('#greenPlayerName').is(':empty')) {
-        $('#greenPlayerName').html(
-          '<span style="font-size:small; font-weight: lighter">Waiting for player...</span>'
-        );
+        $('#greenPlayerName').html('<span style="font-size:small; font-weight: lighter">Waiting for player...</span>');
       }
       if ($('#orangePlayerName').is(':empty')) {
-        $('#orangePlayerName').html(
-          '<span style="font-size:small; font-weight: lighter">Waiting for player...</span>'
-        );
+        $('#orangePlayerName').html('<span style="font-size:small; font-weight: lighter">Waiting for player...</span>');
       }
     }
   });
@@ -64,9 +56,7 @@ createMatchSockets.on('connect', function () {
       '<div class="alert-soft-red"><strong>The lobby has been closed by the host.</strong></div><div class="alert-link"><a href="/">Start a new match now!</a></div>'
     );
 
-    $('#connectionList').append(
-      $('<li class="warning">The host disconnected from this match. The match was canceled!</li>')
-    );
+    $('#connectionList').append($('<li class="warning">The host disconnected from this match. The match was canceled!</li>'));
     $('#connectionList').append($('<br>'));
     $('#connectionList').append($('<a href="/">Start a new match now!</a>'));
   });
@@ -94,24 +84,16 @@ createMatchSockets.on('connect', function () {
     }
 
     if ($('#redPlayerName').is(':empty')) {
-      $('#redPlayerName').html(
-        '<span style="font-size:small; font-weight: lighter">Waiting for player...</span>'
-      );
+      $('#redPlayerName').html('<span style="font-size:small; font-weight: lighter">Waiting for player...</span>');
     }
     if ($('#bluePlayerName').is(':empty')) {
-      $('#bluePlayerName').html(
-        '<span style="font-size:small; font-weight: lighter">Waiting for player...</span>'
-      );
+      $('#bluePlayerName').html('<span style="font-size:small; font-weight: lighter">Waiting for player...</span>');
     }
     if ($('#greenPlayerName').is(':empty')) {
-      $('#greenPlayerName').html(
-        '<span style="font-size:small; font-weight: lighter">Waiting for player...</span>'
-      );
+      $('#greenPlayerName').html('<span style="font-size:small; font-weight: lighter">Waiting for player...</span>');
     }
     if ($('#orangePlayerName').is(':empty')) {
-      $('#orangePlayerName').html(
-        '<span style="font-size:small; font-weight: lighter">Waiting for player...</span>'
-      );
+      $('#orangePlayerName').html('<span style="font-size:small; font-weight: lighter">Waiting for player...</span>');
     }
   });
 

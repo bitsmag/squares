@@ -6,12 +6,7 @@ export function initTransport(io: SocketIOServer): void {
   ioInstance = io;
 }
 
-export function sendToSocketId(
-  namespace: string,
-  socketId: string,
-  event: string,
-  payload?: unknown
-): void {
+export function sendToSocketId(namespace: string, socketId: string, event: string, payload?: unknown): void {
   try {
     const io = ioInstance;
     if (!io) {
@@ -30,12 +25,7 @@ export function sendToSocketId(
   }
 }
 
-export function broadcastToMatch(
-  matchId: string,
-  namespace: string,
-  event: string,
-  payload?: unknown
-): void {
+export function broadcastToMatch(matchId: string, namespace: string, event: string, payload?: unknown): void {
   const socketIds = sessionStore.getSocketIdsForMatch(matchId, namespace);
   for (const id of socketIds) {
     sendToSocketId(namespace, id, event, payload);

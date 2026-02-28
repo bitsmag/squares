@@ -4,12 +4,7 @@ export class SocketSessionStore {
   private sessions = new Map<string, Session>();
   private playerToSocket = new Map<string, string>();
 
-  register(
-    socketId: string,
-    namespace: string,
-    matchId?: string,
-    playerId?: string
-  ): void {
+  register(socketId: string, namespace: string, matchId?: string, playerId?: string): void {
     this.sessions.set(socketId, { namespace, matchId, playerId });
     if (playerId) this.playerToSocket.set(playerId, socketId);
   }

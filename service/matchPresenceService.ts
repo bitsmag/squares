@@ -5,11 +5,7 @@ export class MatchPresenceService {
     return sessionStore.getConnectedPlayers(matchId, namespace);
   }
 
-  areAllPlayersConnected(
-    matchId: string,
-    expectedCount: number,
-    namespace = '/matchSockets'
-  ): boolean {
+  areAllPlayersConnected(matchId: string, expectedCount: number, namespace = '/matchSockets'): boolean {
     const connected = this.getConnectedPlayers(matchId, namespace).length;
     return connected >= expectedCount;
   }
