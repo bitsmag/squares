@@ -5,9 +5,12 @@ import path from 'path';
 import nunjucks from 'nunjucks';
 import helmet from 'helmet';
 import { initTransport } from './transport/util/socket/transport';
-
-import * as createMatchSockets from './transport/createMatchLobby/socket/createMatchLobbyListeners';
-import * as matchSockets from './transport/match/socket/matchListeners';
+import { MatchesManager } from './domain/models/matchesManager';
+import { initSocketErrorHandler } from './transport/util/socket/socketErrorHandler';
+import { createCreateMatchLobbySocketController } from './transport/createMatchLobby/socket/createMatchLobbySocketController';
+import { createCreateMatchLobbyListeners } from './transport/createMatchLobby/socket/createMatchLobbyListeners';
+import { createMatchSocketController } from './transport/match/socket/matchSocketController';
+import { createMatchListeners } from './transport/match/socket/matchListeners';
 import createMatchLobbyRouter from './transport/createMatchLobby/http/createMatchLobbyRouter';
 import matchRouter from './transport/match/http/matchRouter';
 import errorHandler from './transport/util/http/httpErrorHandler';
@@ -16,6 +19,17 @@ const app = express();
 const httpServer = createServer(app);
 const io = new SocketIOServer(httpServer);
 initTransport(io);
+
+// Application-wide single instance of the matches manager
+const matchesManager = new MatchesManager();
+initSocketErrorHandler(matchesManager);
+
+// Socket controllers & listeners wired with injected dependencies
+const createMatchLobbySocketController = createCreateMatchLobbySocketController(matchesManager);
+const respondCreateMatchSockets = createCreateMatchLobbyListeners(createMatchLobbySocketController);
+
+const matchSocketController = createMatchSocketController(matchesManager);
+const respondMatchSockets = createMatchListeners(matchSocketController);
 // Use project root for assets so compiled dist build can find original files
 const projectRoot = process.cwd();
 const viewsPath = path.join(projectRoot, 'views');
@@ -71,11 +85,11 @@ app.set('port', port);
 
 // Sockets
 io.of('/createMatchSockets').on('connection', (socket: Socket) => {
-  createMatchSockets.respond(socket);
+  respondCreateMatchSockets(socket);
 });
 
 io.of('/matchSockets').on('connection', (socket: Socket) => {
-  matchSockets.respond(socket);
+  respondMatchSockets(socket);
 });
 
 // Routes
@@ -83,8 +97,8 @@ app.get('/', function (_req: Request, res: Response) {
   res.sendFile(path.join(viewsPath, 'index.html'));
 });
 
-createMatchLobbyRouter(app);
-matchRouter(app);
+createMatchLobbyRouter(app, matchesManager);
+matchRouter(app, matchesManager);
 
 app.use((req: Request, res: Response) => {
   res.status(404).sendFile(path.join(viewsPath, '404.html'));

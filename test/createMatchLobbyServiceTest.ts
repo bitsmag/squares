@@ -1,10 +1,10 @@
 import { expect } from 'chai';
 import { CreateMatchLobbyService, DisconnectionSource } from '../service/createMatchLobbyService';
-import { manager } from '../domain/models/matchesManager';
+import { MatchesManager } from '../domain/models/matchesManager';
 import type { Match } from '../domain/models/match';
 import type { MatchDomainEvent, MatchEventPublisher } from '../domain/engine/matchEvents';
 
-function getMatchesSnapshot(): Match[] {
+function getMatchesSnapshot(manager: MatchesManager): Match[] {
   return manager.getMatches().slice();
 }
 
@@ -17,12 +17,13 @@ describe('CreateMatchLobbyService', () => {
     }
   }
 
+  const manager = new MatchesManager();
   const publisher = new TestMatchEventPublisher();
-  const service: CreateMatchLobbyService = new CreateMatchLobbyService(publisher);
+  const service: CreateMatchLobbyService = new CreateMatchLobbyService(manager, publisher);
 
   afterEach(() => {
     // Clean up all matches created during a test to keep global manager state isolated
-    const matches = getMatchesSnapshot();
+    const matches = getMatchesSnapshot(manager);
     matches.forEach((m) => {
       try {
         manager.destroyMatch(m);

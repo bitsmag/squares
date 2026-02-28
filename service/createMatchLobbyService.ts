@@ -1,4 +1,4 @@
-import { manager } from '../domain/models/matchesManager';
+import type { MatchesManager } from '../domain/models/matchesManager';
 import { Player } from '../domain/models/player';
 import { MatchEngine } from '../domain/engine/matchEngine';
 import type { MatchEventPublisher } from '../domain/engine/matchEvents';
@@ -7,15 +7,18 @@ import type { PlayerColor } from '../domain/models/colors';
 export type DisconnectionSource = { type: 'HOST_LEFT' } | { type: 'GUEST_LEFT' } | { type: 'LOBBY_CLOSED' };
 
 export class CreateMatchLobbyService {
-  constructor(private readonly eventPublisher: MatchEventPublisher) {}
+  constructor(
+    private readonly matchesManager: MatchesManager,
+    private readonly eventPublisher: MatchEventPublisher
+  ) {}
 
   processMatchStartInitiation(matchId: string): void {
-    const match = manager.getMatch(matchId);
+    const match = this.matchesManager.getMatch(matchId);
     match.startInitiated = true;
   }
 
   processDisconnectLobby(matchId: string, playerId: string): DisconnectionSource {
-    const match = manager.getMatch(matchId);
+    const match = this.matchesManager.getMatch(matchId);
     if (match.startInitiated) {
       // when match start is initiated players get redirected to match and a new connection gets established, not to worry...
       return { type: 'LOBBY_CLOSED' };
@@ -24,7 +27,7 @@ export class CreateMatchLobbyService {
       const player = match.getPlayerById(playerId);
       if (player.host) {
         match.removePlayer(player);
-        manager.destroyMatch(match);
+        this.matchesManager.destroyMatch(match);
         return { type: 'HOST_LEFT' };
       } else {
         match.removePlayer(player);
@@ -34,7 +37,7 @@ export class CreateMatchLobbyService {
   }
 
   processCreateMatchLobbyHost(playerName: string): { matchId: string; playerId: string } {
-    const match = manager.createMatch();
+    const match = this.matchesManager.createMatch();
     const engine = new MatchEngine(match, this.eventPublisher);
     match.engine = engine;
     const { color, position } = this.allocateColorAndPosition(match);
@@ -44,7 +47,7 @@ export class CreateMatchLobbyService {
   }
 
   processCreateMatchLobbyGuest(matchId: string, playerName: string): { matchId: string; playerId: string } {
-    const match = manager.getMatch(matchId);
+    const match = this.matchesManager.getMatch(matchId);
     const { color, position } = this.allocateColorAndPosition(match);
     const player = new Player(playerName, color, position, false);
     match.addPlayer(player);

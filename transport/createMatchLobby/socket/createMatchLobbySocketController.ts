@@ -2,23 +2,21 @@ import type { RegisterPlayerLobbyDTO } from '../../../shared/dto/socket/incoming
 import { CreateMatchLobbyService } from '../../../service/createMatchLobbyService';
 import { SocketMatchEventPublisher } from '../../match/socket/matchEventPublisher';
 import { sessionStore } from '../../util/socket/socketSessionStore';
-import { manager } from '../../../domain/models/matchesManager';
+import type { MatchesManager } from '../../../domain/models/matchesManager';
 import type { Match } from '../../../domain/models/match';
 import socketErrorHandler from '../../util/socket/socketErrorHandler';
 import * as createMatchLobbyEmitters from './createMatchLobbyEmitters';
 
-const matchEventPublisher = new SocketMatchEventPublisher();
-const createMatchLobbyService = new CreateMatchLobbyService(matchEventPublisher);
-
 export class CreateMatchLobbySocketController {
-  private createMatchLobbyService = createMatchLobbyService;
-
-  constructor() {}
+  constructor(
+    private readonly matchesManager: MatchesManager,
+    private readonly createMatchLobbyService: CreateMatchLobbyService
+  ) {}
 
   private resolveMatch(socketId: string): Match | undefined {
     try {
       const matchId = sessionStore.getMatchIdForSocket(socketId);
-      return matchId ? manager.getMatch(matchId) : undefined;
+      return matchId ? this.matchesManager.getMatch(matchId) : undefined;
     } catch {
       return undefined;
     }
@@ -28,7 +26,7 @@ export class CreateMatchLobbySocketController {
     try {
       const { matchId, playerId } = playerInfo;
       sessionStore.register(socketId, '/createMatchSockets', matchId, playerId);
-      createMatchLobbyEmitters.sendPlayerConnectedEvent(manager.getMatch(matchId));
+      createMatchLobbyEmitters.sendPlayerConnectedEvent(this.matchesManager.getMatch(matchId));
     } catch (err) {
       socketErrorHandler(this.resolveMatch(socketId), err);
     }
@@ -40,7 +38,9 @@ export class CreateMatchLobbySocketController {
       if (!session || !session.matchId) return;
       const matchId = session.matchId;
       this.createMatchLobbyService.processMatchStartInitiation(matchId);
-      createMatchLobbyEmitters.sendMatchStartInitiationEvent(manager.getMatch(matchId));
+      createMatchLobbyEmitters.sendMatchStartInitiationEvent(
+        this.matchesManager.getMatch(matchId)
+      );
     } catch (err) {
       socketErrorHandler(this.resolveMatch(socketId), err);
     }
@@ -56,7 +56,9 @@ export class CreateMatchLobbySocketController {
             createMatchLobbyEmitters.sendHostDisconnectedEvent(session.matchId);
             break;
           case 'GUEST_LEFT':
-            createMatchLobbyEmitters.sendPlayerDisconnectedEvent(manager.getMatch(session.matchId));
+            createMatchLobbyEmitters.sendPlayerDisconnectedEvent(
+              this.matchesManager.getMatch(session.matchId)
+            );
             break;
           case 'LOBBY_CLOSED':
             // nothing to do
@@ -69,4 +71,10 @@ export class CreateMatchLobbySocketController {
   }
 }
 
-export const createMatchLobbySocketController = new CreateMatchLobbySocketController();
+export function createCreateMatchLobbySocketController(
+  matchesManager: MatchesManager
+): CreateMatchLobbySocketController {
+  const matchEventPublisher = new SocketMatchEventPublisher(matchesManager);
+  const createMatchLobbyService = new CreateMatchLobbyService(matchesManager, matchEventPublisher);
+  return new CreateMatchLobbySocketController(matchesManager, createMatchLobbyService);
+}

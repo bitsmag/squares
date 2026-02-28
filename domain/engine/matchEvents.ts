@@ -12,6 +12,7 @@ export type ClearedSquare = {
 };
 
 export type MatchDomainEvent =
+  | { type: 'MATCH_PREPARE_REQUESTED'; match: Match }
   | { type: 'COUNTDOWN_TICKED'; match: Match }
   | { type: 'MATCH_ENDED'; match: Match }
   | {

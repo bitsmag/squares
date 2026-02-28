@@ -1,6 +1,12 @@
 import type { Match } from '../../../domain/models/match';
-import { manager } from '../../../domain/models/matchesManager';
+import type { MatchesManager } from '../../../domain/models/matchesManager';
 import { broadcastToMatch } from './transport';
+
+let matchesManager: MatchesManager | null = null;
+
+export function initSocketErrorHandler(manager: MatchesManager): void {
+  matchesManager = manager;
+}
 
 // Centralized socket error handler — emits a `fatalError` event to all players and destroys the match.
 function fatalErrorHandler(match: Match | undefined, err: unknown): void {
@@ -11,7 +17,9 @@ function fatalErrorHandler(match: Match | undefined, err: unknown): void {
   }
 
   try {
-    if (match) manager.destroyMatch(match);
+    if (match && matchesManager) {
+      matchesManager.destroyMatch(match);
+    }
   } catch (_e) {
     // ignore
   }

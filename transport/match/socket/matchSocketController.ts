@@ -6,21 +6,19 @@ import { MatchService } from '../../../service/matchService';
 import { MatchPresenceService } from '../../../service/matchPresenceService';
 import { MatchStartCoordinator } from '../../../service/matchStartCoordinator';
 import { sessionStore } from '../../util/socket/socketSessionStore';
-import { manager } from '../../../domain/models/matchesManager';
-
-const matchPresenceService = new MatchPresenceService();
-const matchStartCoordinator = new MatchStartCoordinator();
-const matchService = new MatchService(matchPresenceService, matchStartCoordinator);
+import type { MatchesManager } from '../../../domain/models/matchesManager';
+import { SocketMatchEventPublisher } from './matchEventPublisher';
 
 export class MatchSocketController {
-  private matchService = matchService;
-
-  constructor() {}
+  constructor(
+    private readonly matchesManager: MatchesManager,
+    private readonly matchService: MatchService
+  ) {}
 
   private resolveMatch(socketId: string): Match | undefined {
     try {
       const matchId = sessionStore.getMatchIdForSocket(socketId);
-      return matchId ? manager.getMatch(matchId) : undefined;
+      return matchId ? this.matchesManager.getMatch(matchId) : undefined;
     } catch {
       return undefined;
     }
@@ -60,4 +58,15 @@ export class MatchSocketController {
   }
 }
 
-export const matchSocketController = new MatchSocketController();
+export function createMatchSocketController(matchesManager: MatchesManager): MatchSocketController {
+  const matchPresenceService = new MatchPresenceService();
+  const matchStartCoordinator = new MatchStartCoordinator();
+  const eventPublisher = new SocketMatchEventPublisher(matchesManager);
+  const matchService = new MatchService(
+    matchesManager,
+    matchPresenceService,
+    matchStartCoordinator,
+    eventPublisher
+  );
+  return new MatchSocketController(matchesManager, matchService);
+}
