@@ -84,7 +84,7 @@ export function rlReset(_req: RlResetRequest): RlResetResponse {
   };
   sessions.set(sessionId, session);
 
-  const obs = buildObservation(session);
+  const obs = buildObservationFromMatch(match, agentColor);
   return { sessionId, obs };
 }
 
@@ -96,7 +96,7 @@ export function rlStep(req: RlStepRequest): RlStepResponse {
 
   if (session.done) {
     return {
-      obs: buildObservation(session),
+      obs: buildObservationFromMatch(session.match, session.agentColor),
       reward: 0,
       done: true,
       info: {},
@@ -134,12 +134,10 @@ export function rlStep(req: RlStepRequest): RlStepResponse {
   const done = match.duration <= 0 || !match.active;
   session.done = done;
 
-  const obs = buildObservation(session);
+  const obs = buildObservationFromMatch(match, agentColor);
   return { obs, reward, done, info: {} };
 }
-
-function buildObservation(session: RlSession): RlObservation {
-  const { match, agentColor } = session;
+export function buildObservationFromMatch(match: Match, agentColor: PlayerColor): RlObservation {
   const { board } = match;
   const agent = match.getPlayerByColor(agentColor);
 
