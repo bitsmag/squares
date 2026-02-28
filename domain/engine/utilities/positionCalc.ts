@@ -149,7 +149,7 @@ function resetNextPositionForLosers(currentPositions: PlayerPositions, nextPosit
   return updatedPositions;
 }
 
-function calculateFuturePos(currentPosition: number, activeDirection: Direction | null, board: Board, match: Match): number {
+function calculateFuturePos(currentPosition: number, activeDirection: Direction | null, board: Board): number {
   const square: Square = board.getSquare(currentPosition);
   if (square) {
     switch (activeDirection) {

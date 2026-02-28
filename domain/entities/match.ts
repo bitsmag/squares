@@ -145,14 +145,8 @@ export class Match {
     }
   }
 
-  isNameInUse(name: string): boolean | undefined {
-    let nameInUse: boolean | undefined;
-    for (let i = 0; i < this.players.length; i++) {
-      if (this.players[i].name === name) {
-        nameInUse = true;
-      }
-    }
-    return nameInUse;
+  isNameInUse(name: string): boolean {
+  return this.players.some((p) => p.name === name);
   }
 
   destroy(): void {

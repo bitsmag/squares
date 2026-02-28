@@ -4,6 +4,10 @@ import type { MatchEventPublisher } from './matchEvents';
 import type { ClockProvider, ClockHandle } from './utilities/clockProvider';
 import { DefaultClockProvider } from './utilities/clockProvider';
 
+const COUNTDOWN_INTERVAL_MS = 1000;
+const DURATION_INTERVAL_MS = 1000;
+const TICK_INTERVAL_MS = 250;
+
 export class MatchEngine {
   private readonly match: Match;
   private readonly publisher: MatchEventPublisher;
@@ -39,7 +43,7 @@ export class MatchEngine {
       if (this.match.countdownDuration === 0) {
         this.clearCountdown();
       }
-    }, 1000);
+    }, COUNTDOWN_INTERVAL_MS);
   }
 
   private startDurationTimer(): void {
@@ -56,7 +60,7 @@ export class MatchEngine {
         this.clearDurationTimer();
         this.match.active = false;
       }
-    }, 1000);
+    }, DURATION_INTERVAL_MS);
   }
 
   private startTicker(): void {
@@ -87,7 +91,7 @@ export class MatchEngine {
         this.clearTicker();
         this.publisher.publish({ type: 'FATAL_ERROR', match: this.match, error: err });
       }
-    }, 250);
+    }, TICK_INTERVAL_MS);
   }
 
   private clearCountdown(): void {
