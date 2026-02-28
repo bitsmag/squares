@@ -12,173 +12,213 @@ type Circuit = Square[];
 // Previously this was encoded as an implicit "stackInner.length > 7" check.
 const MIN_CIRCUIT_LENGTH = 8;
 
-export function getPlayerPoints(match: Match): Record<PlayerColor, Square[]> {
-  const playerPoints: Record<PlayerColor, Square[]> = {
+type PlayerCircuits = Record<PlayerColor, Circuit | null>;
+type PlayerScoringSquares = Record<PlayerColor, Square[]>;
+
+type DirectionPreference = '' | 'left' | 'right' | 'up' | 'down';
+
+interface CircuitSearchContext {
+  match: Match;
+  color: PlayerColor;
+  stack: Path;
+  justPopped?: Square;
+  preferredDirection: DirectionPreference;
+  foundCircuit: Circuit | null;
+}
+
+export function getPlayerScoringSquares(match: Match): PlayerScoringSquares {
+  const circuits = detectPlayerCircuits(match);
+  const scoringSquares = computePlayerScoringSquaresFromCircuits(circuits, match);
+  return scoringSquares;
+}
+
+function detectPlayerCircuits(match: Match): PlayerCircuits {
+  const circuits: PlayerCircuits = {
+    blue: null,
+    orange: null,
+    green: null,
+    red: null,
+  };
+
+  for (let i = 0; i < match.players.length; i++) {
+    const player = match.players[i];
+    const color = player.color as PlayerColor;
+    const startSquare = match.board.getSquare(player.position);
+    if (!startSquare) {
+      circuits[color] = null;
+      continue;
+    }
+
+    circuits[color] = findCircuitFromSquare(match, startSquare, color);
+  }
+
+  return circuits;
+}
+
+function computePlayerScoringSquaresFromCircuits(circuits: PlayerCircuits, match: Match): PlayerScoringSquares {
+  const scoring: PlayerScoringSquares = {
     blue: [],
     orange: [],
     green: [],
     red: [],
   };
 
-  for (let i = 0; i < match.players.length; i++) {
-    const player = match.players[i];
-    const positionSquare = match.board.getSquare(player.position);
-    if (!positionSquare) continue;
+  (Object.keys(scoring) as PlayerColor[]).forEach((color) => {
+    const circuit = circuits[color];
+    scoring[color] = circuit ? computeScoringSquares(circuit, match) : [];
+  });
 
-    const color = player.color as PlayerColor;
-    const scoringSquares = getPointsForPlayer(positionSquare, color, match);
-    playerPoints[color] = scoringSquares;
-  }
-
-  return playerPoints;
+  return scoring;
 }
 
-function getPointsForPlayer(startSquare: Square, color: PlayerColor, match: Match): Square[] {
-  const circuit = findCircuit(startSquare, color, match);
-  if (!circuit) {
-    return [];
-  }
-  return computeScoringSquares(circuit, match);
+function findCircuitFromSquare(match: Match, startSquare: Square, color: PlayerColor): Circuit | null {
+  return withDfsVisitedReset(match, () => {
+    const context: CircuitSearchContext = {
+      match,
+      color,
+      stack: [],
+      preferredDirection: '',
+      foundCircuit: null,
+    };
+
+    dfs(context, startSquare);
+    return context.foundCircuit;
+  });
 }
 
-function findCircuit(startSquare: Square, color: PlayerColor, match: Match): Circuit | null {
-  const stack: Path = [];
-  let justPopped: Square | undefined;
-  let preferredDirection: '' | 'left' | 'right' | 'up' | 'down' = '';
-  let foundCircuit: Circuit | null = null;
+function withDfsVisitedReset<T>(match: Match, fn: () => T): T {
+  for (let i = 0; i < match.board.squares.length; i++) {
+    match.board.squares[i].dfsVisited = false;
+  }
+  return fn();
+}
 
-  function getVertices(origin: Square): Square[] {
-    const vertices: Square[] = [];
+function dfs(context: CircuitSearchContext, current: Square | null): void {
+  const { stack } = context;
 
-    // Adjacent same-colored squares, excluding the one we just backtracked from.
-    for (let i = 0; i < origin.edgesTo.length; i++) {
-      const edgeSquare = match.board.getSquare(origin.edgesTo[i]);
-      if (edgeSquare && edgeSquare.color === color && edgeSquare !== justPopped) {
-        vertices.push(edgeSquare);
-      }
-    }
-
-    // Reorder vertices so we prefer continuing along the previous movement direction.
-    for (let i = 0; i < vertices.length; i++) {
-      if (
-        (origin.position.x < vertices[i].position.x && preferredDirection === 'right') ||
-        (origin.position.x > vertices[i].position.x && preferredDirection === 'left') ||
-        (origin.position.y > vertices[i].position.y && preferredDirection === 'down') ||
-        (origin.position.y < vertices[i].position.y && preferredDirection === 'up')
-      ) {
-        moveToFront(vertices, i);
-      }
-    }
-
-    return vertices;
+  if (!current && stack.length === 0) {
+    return;
   }
 
-  function setAllSquaresUnvisited() {
-    for (let i = 0; i < match.board.squares.length; i++) {
-      match.board.squares[i].dfsVisited = false;
-    }
+  if (!current) {
+    current = stack[stack.length - 1];
+  } else {
+    stack.push(current);
   }
 
-  function setPreferredDirection(from: Square, to: Square) {
-    if (stack.length === 0) return;
+  current.dfsVisited = true;
 
-    if (from.position.x < to.position.x) {
-      preferredDirection = 'right';
-    } else if (from.position.x > to.position.x) {
-      preferredDirection = 'left';
-    } else if (from.position.y > to.position.y) {
-      preferredDirection = 'down';
-    } else if (from.position.y < to.position.y) {
-      preferredDirection = 'up';
-    }
-  }
+  const vertices = getNextVertices(context, current);
 
-  function tryCreateCircuit(path: Path, revisitedVertex: Square): Circuit | null {
-    if (path.length < MIN_CIRCUIT_LENGTH) {
-      return null;
+  for (let i = 0; i < vertices.length; i++) {
+    if (context.foundCircuit) {
+      break;
     }
 
-    const startIndex = path.indexOf(revisitedVertex);
-    if (startIndex === -1) {
-      return null;
-    }
+    const vertex = vertices[i];
+    const previous = stack[stack.length - 2];
+    const isBacktrackEdge = !!previous && vertex === previous;
 
-    const candidate = path.slice(startIndex, path.length);
-    if (candidate.length < MIN_CIRCUIT_LENGTH) {
-      return null;
-    }
-
-    const enclosedSquares = getEnclosedSquaresForMatch(candidate, match);
-    if (enclosedSquares.length === 0) {
-      return null;
-    }
-
-    return candidate;
-  }
-
-  function dfs(current: Square | null): void {
-    if (!current && stack.length === 0) {
-      return;
-    }
-
-    if (!current) {
-      current = stack[stack.length - 1];
-    } else {
-      stack.push(current);
-    }
-
-    current.dfsVisited = true;
-
-    const vertices = getVertices(current);
-
-    for (let i = 0; i < vertices.length; i++) {
-      if (foundCircuit) {
+    if (vertex.dfsVisited && !isBacktrackEdge) {
+      const circuit = tryCreateCircuitCandidate(context, vertex);
+      if (circuit) {
+        context.foundCircuit = circuit;
         break;
       }
 
-      const vertex = vertices[i];
-      const previous = stack[stack.length - 2];
-      const isBacktrackEdge = !!previous && vertex === previous;
-
-      if (vertex.dfsVisited && !isBacktrackEdge) {
-        const circuit = tryCreateCircuit(stack, vertex);
-        if (circuit) {
-          foundCircuit = circuit;
-          break;
+      const isLastVertex = i === vertices.length - 1;
+      if (isLastVertex) {
+        stack.pop();
+        context.justPopped = current;
+        const newTop = stack[stack.length - 1];
+        if (newTop) {
+          setPreferredDirection(context, current, newTop);
         }
-
-        const isLastVertex = i === vertices.length - 1;
-        if (isLastVertex) {
-          stack.pop();
-          justPopped = current;
-          const newTop = stack[stack.length - 1];
-          if (newTop) {
-            setPreferredDirection(current, newTop);
-          }
-          dfs(null);
-        }
-      } else if (vertex.dfsVisited && isBacktrackEdge) {
-        const isLastVertex = i === vertices.length - 1;
-        if (isLastVertex) {
-          stack.pop();
-          justPopped = current;
-          const newTop = stack[stack.length - 1];
-          if (newTop) {
-            setPreferredDirection(current, newTop);
-          }
-          dfs(null);
-        }
-      } else if (!vertex.dfsVisited) {
-        justPopped = undefined;
-        setPreferredDirection(current, vertex);
-        dfs(vertex);
+        dfs(context, null);
       }
+    } else if (vertex.dfsVisited && isBacktrackEdge) {
+      const isLastVertex = i === vertices.length - 1;
+      if (isLastVertex) {
+        stack.pop();
+        context.justPopped = current;
+        const newTop = stack[stack.length - 1];
+        if (newTop) {
+          setPreferredDirection(context, current, newTop);
+        }
+        dfs(context, null);
+      }
+    } else if (!vertex.dfsVisited) {
+      context.justPopped = undefined;
+      setPreferredDirection(context, current, vertex);
+      dfs(context, vertex);
+    }
+  }
+}
+
+function getNextVertices(context: CircuitSearchContext, origin: Square): Square[] {
+  const { match, color, justPopped, preferredDirection } = context;
+  const vertices: Square[] = [];
+
+  // Adjacent same-colored squares, excluding the one we just backtracked from.
+  for (let i = 0; i < origin.edgesTo.length; i++) {
+    const edgeSquare = match.board.getSquare(origin.edgesTo[i]);
+    if (edgeSquare && edgeSquare.color === color && edgeSquare !== justPopped) {
+      vertices.push(edgeSquare);
     }
   }
 
-  dfs(startSquare);
-  setAllSquaresUnvisited();
-  return foundCircuit;
+  // Reorder vertices so we prefer continuing along the previous movement direction.
+  for (let i = 0; i < vertices.length; i++) {
+    if (
+      (origin.position.x < vertices[i].position.x && preferredDirection === 'right') ||
+      (origin.position.x > vertices[i].position.x && preferredDirection === 'left') ||
+      (origin.position.y > vertices[i].position.y && preferredDirection === 'down') ||
+      (origin.position.y < vertices[i].position.y && preferredDirection === 'up')
+    ) {
+      moveToFront(vertices, i);
+    }
+  }
+
+  return vertices;
+}
+
+function setPreferredDirection(context: CircuitSearchContext, from: Square, to: Square): void {
+  if (context.stack.length === 0) return;
+
+  if (from.position.x < to.position.x) {
+    context.preferredDirection = 'right';
+  } else if (from.position.x > to.position.x) {
+    context.preferredDirection = 'left';
+  } else if (from.position.y > to.position.y) {
+    context.preferredDirection = 'down';
+  } else if (from.position.y < to.position.y) {
+    context.preferredDirection = 'up';
+  }
+}
+
+function tryCreateCircuitCandidate(context: CircuitSearchContext, revisitedVertex: Square): Circuit | null {
+  const path = context.stack;
+
+  if (path.length < MIN_CIRCUIT_LENGTH) {
+    return null;
+  }
+
+  const startIndex = path.indexOf(revisitedVertex);
+  if (startIndex === -1) {
+    return null;
+  }
+
+  const candidate = path.slice(startIndex, path.length);
+  if (candidate.length < MIN_CIRCUIT_LENGTH) {
+    return null;
+  }
+
+  const enclosedSquares = getEnclosedSquaresForMatch(candidate, context.match);
+  if (enclosedSquares.length === 0) {
+    return null;
+  }
+
+  return candidate;
 }
 
 function computeScoringSquares(circuit: Circuit, match: Match): Square[] {

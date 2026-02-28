@@ -87,7 +87,7 @@ function updatePlayerPositionsAndBoard(match: Match, playerPositions: PlayerPosi
 }
 
 function determineCircuitPoints(match: Match): PlayerSquaresByColor {
-  return circuitsCheck.getPlayerPoints(match);
+  return circuitsCheck.getPlayerScoringSquares(match);
 }
 
 function determineSpecialPoints(match: Match, playerPositions: PlayerPositions): PlayerSquaresByColor {
