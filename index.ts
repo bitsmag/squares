@@ -4,21 +4,21 @@ import { Server as SocketIOServer, Socket } from 'socket.io';
 import path from 'path';
 import nunjucks from 'nunjucks';
 import helmet from 'helmet';
-import { initTransport } from './transport/util/socket/transport';
-import { MatchesManager } from './domain/models/matchesManager';
-import { initSocketErrorHandler } from './transport/util/socket/socketErrorHandler';
-import { createCreateMatchLobbySocketController } from './transport/createMatchLobby/socket/createMatchLobbySocketController';
-import { createCreateMatchLobbyListeners } from './transport/createMatchLobby/socket/createMatchLobbyListeners';
+import { initSocketMessaging } from './transport/utilities/socket/socketMessaging';
+import { MatchesManager } from './domain/runtime/matchesManager';
+import { initSocketErrorHandler } from './transport/utilities/socket/socketErrorHandler';
+import { createCreateMatchLobbySocketController } from './transport/lobby/socket/lobbySocketController';
+import { createCreateMatchLobbyListeners } from './transport/lobby/socket/lobbyListeners';
 import { createMatchSocketController } from './transport/match/socket/matchSocketController';
 import { createMatchListeners } from './transport/match/socket/matchListeners';
-import createMatchLobbyRouter from './transport/createMatchLobby/http/createMatchLobbyRouter';
+import createMatchLobbyRouter from './transport/lobby/http/createMatchLobbyRouter';
 import matchRouter from './transport/match/http/matchRouter';
-import errorHandler from './transport/util/http/httpErrorHandler';
+import errorHandler from './transport/utilities/http/httpErrorHandler';
 
 const app = express();
 const httpServer = createServer(app);
 const io = new SocketIOServer(httpServer);
-initTransport(io);
+initSocketMessaging(io);
 
 // Application-wide single instance of the matches manager
 const matchesManager = new MatchesManager();

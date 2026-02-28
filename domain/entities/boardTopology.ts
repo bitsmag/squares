@@ -1,7 +1,7 @@
 import * as squareModule from './square';
 import type { Square } from './square';
 import { Board } from './board';
-import type { PlayerColor } from './colors';
+import type { PlayerColor } from '../valueObjects/colors';
 
 export type BoardSettings = {
   width: number;

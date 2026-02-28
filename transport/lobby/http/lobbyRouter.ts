@@ -1,7 +1,7 @@
 import type { Application } from 'express';
 import { schemas } from '../../utilities/validation';
 import { validate } from '../../utilities/http/httpValidationMiddleware';
-import { createCreateMatchLobbyController } from './createMatchLobbyController';
+import { createCreateMatchLobbyController } from './lobbyController';
 import type {
   CreateMatchLobbyHostRequestDTO,
   CreateMatchLobbyGuestRequestDTO,

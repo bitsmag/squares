@@ -1,4 +1,4 @@
-import type { PlayerColor, SquareColor } from '../../domain/models/colors';
+import type { PlayerColor, SquareColor } from '../../../../domain/valueObjects/colors';
 
 // Shared DTOs for match socket events
 

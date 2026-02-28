@@ -1,5 +1,5 @@
 import { Socket } from 'socket.io';
-import type { CreateMatchLobbySocketController } from './createMatchLobbySocketController';
+import type { CreateMatchLobbySocketController } from './lobbySocketController';
 import { socketValidationMiddleware } from '../../utilities/socket/socketValidationMiddleware';
 import { schemas } from '../../utilities/validation';
 import type { RegisterPlayerLobbyDTO } from '../../../shared/dto/socket/incoming/lobbySocketDtos';

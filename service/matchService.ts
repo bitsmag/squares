@@ -1,5 +1,5 @@
-import type { MatchesManager } from '../domain/models/matchesManager';
-import type { Direction } from '../domain/models/direction';
+import type { MatchesManager } from '../domain/runtime/matchesManager';
+import type { Direction } from '../domain/valueObjects/direction';
 import type { MatchEventPublisher } from '../domain/engine/matchEvents';
 import { MatchPresenceService } from './matchPresenceService';
 import { MatchStartCoordinator } from './matchStartCoordinator';

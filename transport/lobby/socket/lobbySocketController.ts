@@ -5,7 +5,7 @@ import { sessionStore } from '../../utilities/socket/socketSessionStore';
 import type { MatchesManager } from '../../../domain/runtime/matchesManager';
 import type { Match } from '../../../domain/entities/match';
 import socketErrorHandler from '../../utilities/socket/socketErrorHandler';
-import * as createMatchLobbyEmitters from './createMatchLobbyEmitters';
+import * as createMatchLobbyEmitters from './lobbyEmitters';
 
 export class CreateMatchLobbySocketController {
   constructor(

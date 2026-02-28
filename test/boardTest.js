@@ -1,7 +1,7 @@
 var assert = require('chai').assert;
 var expect = require('chai').expect;
 
-var board = require('../domain/models/board.ts');
+var board = require('../domain/entities/board.ts');
 
 describe('Board', function () {
   describe('#getSquare01', function () {

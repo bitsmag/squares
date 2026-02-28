@@ -1,5 +1,5 @@
 import * as matchSocketEmitters from '../transport/match/socket/matchEmitters';
-import type { Match } from '../domain/models/match';
+import type { Match } from '../domain/entities/match';
 
 // Default delay before automatically starting a match (in milliseconds).
 const DEFAULT_MATCH_START_COUNTDOWN_MS = 3000; // 3 seconds

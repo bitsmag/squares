@@ -1,8 +1,8 @@
-import type { MatchesManager } from '../domain/models/matchesManager';
-import { Player } from '../domain/models/player';
 import { MatchEngine } from '../domain/engine/matchEngine';
 import type { MatchEventPublisher } from '../domain/engine/matchEvents';
-import type { PlayerColor } from '../domain/models/colors';
+import type { MatchesManager } from '../domain/runtime/matchesManager';
+import { Player } from '../domain/entities/player';
+import type { PlayerColor } from '../domain/valueObjects/colors';
 
 export type DisconnectionSource = { type: 'HOST_LEFT' } | { type: 'GUEST_LEFT' } | { type: 'LOBBY_CLOSED' };
 
@@ -54,7 +54,7 @@ export class CreateMatchLobbyService {
     return { matchId: match.id, playerId: player.id };
   }
 
-  private allocateColorAndPosition(match: import('../domain/models/match').Match): {
+  private allocateColorAndPosition(match: import('../domain/entities/match').Match): {
     color: PlayerColor;
     position: number;
   } {

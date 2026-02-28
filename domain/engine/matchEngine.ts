@@ -1,5 +1,5 @@
 import { computeTick } from './tickRules';
-import type { Match } from '../models/match';
+import type { Match } from '../entities/match';
 import type { MatchEventPublisher } from './matchEvents';
 import type { ClockProvider, ClockHandle } from './utilities/clockProvider';
 import { DefaultClockProvider } from './utilities/clockProvider';

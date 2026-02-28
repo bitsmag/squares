@@ -1,7 +1,7 @@
 import { Socket } from 'socket.io';
 import type { MatchSocketController } from './matchSocketController';
-import { socketValidationMiddleware } from '../../util/socket/socketValidationMiddleware';
-import { schemas } from '../../util/validation';
+import { socketValidationMiddleware } from '../../utilities/socket/socketValidationMiddleware';
+import { schemas } from '../../utilities/validation';
 import type { RegisterPlayerAndStartMatchWhenReadyDTO } from '../../../shared/dto/socket/incoming/matchSocketDtos';
 
 export function createMatchListeners(controller: MatchSocketController) {

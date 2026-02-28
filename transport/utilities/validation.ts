@@ -1,8 +1,8 @@
 import Joi from 'joi';
 import xss from 'xss';
-import type { CreateMatchLobbyHostRequestDTO, CreateMatchLobbyGuestRequestDTO } from '../../shared/dto/http/createMatchLobbyHttpDtos';
+import type { CreateMatchLobbyHostRequestDTO, CreateMatchLobbyGuestRequestDTO } from '../../shared/dto/http/lobbyHttpDtos';
 import type { GetMatchRequestDTO } from '../../shared/dto/http/matchHttpDtos';
-import type { RegisterPlayerLobbyDTO } from '../../shared/dto/socket/incoming/createMatchLobbySocketDtos';
+import type { RegisterPlayerLobbyDTO } from '../../shared/dto/socket/incoming/lobbySocketDtos';
 import type { RegisterPlayerAndStartMatchWhenReadyDTO } from '../../shared/dto/socket/incoming/matchSocketDtos';
 
 export type CreateMatchLobbyHostParams = CreateMatchLobbyHostRequestDTO;

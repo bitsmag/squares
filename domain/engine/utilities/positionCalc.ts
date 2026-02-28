@@ -1,8 +1,8 @@
-import type { Match } from '../../models/match';
-import type { Board } from '../../models/board';
-import type { Square } from '../../models/square';
-import type { PlayerColor } from '../../models/colors';
-import type { Direction } from '../../models/direction';
+import type { Match } from '../../entities/match';
+import type { Board } from '../../entities/board';
+import type { Square } from '../../entities/square';
+import type { PlayerColor } from '../../valueObjects/colors';
+import type { Direction } from '../../valueObjects/direction';
 import type { RandomProvider } from './randomProvider';
 import { DefaultRandomProvider } from './randomProvider';
 

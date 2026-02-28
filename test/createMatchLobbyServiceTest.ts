@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import { CreateMatchLobbyService, DisconnectionSource } from '../service/createMatchLobbyService';
-import { MatchesManager } from '../domain/models/matchesManager';
-import type { Match } from '../domain/models/match';
+import { MatchesManager } from '../domain/runtime/matchesManager';
+import type { Match } from '../domain/entities/match';
 import type { MatchDomainEvent, MatchEventPublisher } from '../domain/engine/matchEvents';
 
 function getMatchesSnapshot(manager: MatchesManager): Match[] {

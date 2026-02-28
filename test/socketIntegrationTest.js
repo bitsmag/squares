@@ -2,10 +2,10 @@ const expect = require('chai').expect;
 const http = require('http');
 const ioServer = require('socket.io');
 const ioClient = require('socket.io-client');
-const matchesManager = require('../domain/models/matchesManager.ts');
-const matchMod = require('../domain/models/match.ts');
-const playerMod = require('../domain/models/player.ts');
-const createMatchSockets = require('../transport/createMatchLobby/socket/createMatchLobbyListeners.ts');
+const matchesManager = require('../domain/runtime/matchesManager.ts');
+const matchMod = require('../domain/entities/match.ts');
+const playerMod = require('../domain/entities/player.ts');
+const createMatchSockets = require('../transport/lobby/socket/lobbyListeners.ts');
 const matchSockets = require('../transport/match/socket/matchListeners.ts');
 
 // NOTE: This integration test targets the legacy socket flow and is

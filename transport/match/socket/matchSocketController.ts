@@ -1,12 +1,12 @@
-import socketErrorHandler from '../../util/socket/socketErrorHandler';
+import socketErrorHandler from '../../utilities/socket/socketErrorHandler';
 import type { RegisterPlayerAndStartMatchWhenReadyDTO } from '../../../shared/dto/socket/incoming/matchSocketDtos';
-import type { Match } from '../../../domain/models/match';
-import type { Direction } from '../../../domain/models/direction';
+import type { Match } from '../../../domain/entities/match';
+import type { Direction } from '../../../domain/valueObjects/direction';
 import { MatchService } from '../../../service/matchService';
 import { MatchPresenceService } from '../../../service/matchPresenceService';
 import { MatchStartCoordinator } from '../../../service/matchStartCoordinator';
-import { sessionStore } from '../../util/socket/socketSessionStore';
-import type { MatchesManager } from '../../../domain/models/matchesManager';
+import { sessionStore } from '../../utilities/socket/socketSessionStore';
+import type { MatchesManager } from '../../../domain/runtime/matchesManager';
 import { SocketMatchEventPublisher } from './matchEventPublisher';
 
 export class MatchSocketController {

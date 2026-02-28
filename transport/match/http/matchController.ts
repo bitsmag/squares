@@ -1,6 +1,6 @@
 import type { NextFunction, Request, Response } from 'express';
 import type { GetMatchRequestDTO, MatchAppDataDTO } from '../../../shared/dto/http/matchHttpDtos';
-import type { MatchesManager } from '../../../domain/models/matchesManager';
+import type { MatchesManager } from '../../../domain/runtime/matchesManager';
 
 export type GetMatchParams = GetMatchRequestDTO;
 

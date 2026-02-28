@@ -1,6 +1,6 @@
 var expect = require('chai').expect;
-var matchMod = require('../domain/models/match.ts');
-var playerMod = require('../domain/models/player.ts');
+var matchMod = require('../domain/entities/match.ts');
+var playerMod = require('../domain/entities/player.ts');
 var positionCalc = require('../domain/engine/utilities/positionCalc.ts');
 
 describe('PositionCalc', function () {

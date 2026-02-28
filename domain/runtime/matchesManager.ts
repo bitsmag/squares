@@ -1,4 +1,4 @@
-import { Match } from './match';
+import { Match } from '../entities/match';
 
 export class MatchesManager {
   matches: Match[];
@@ -58,4 +58,3 @@ export class MatchesManager {
     return matchId;
   }
 }
-

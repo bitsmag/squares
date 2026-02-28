@@ -1,9 +1,9 @@
 import type { Application } from 'express';
-import { schemas } from '../../util/validation';
-import { validate } from '../../util/http/httpValidationMiddleware';
+import { schemas } from '../../utilities/validation';
+import { validate } from '../../utilities/http/httpValidationMiddleware';
 import { createHandleGetMatch } from './matchController';
 import type { GetMatchRequestDTO } from '../../../shared/dto/http/matchHttpDtos';
-import type { MatchesManager } from '../../../domain/models/matchesManager';
+import type { MatchesManager } from '../../../domain/runtime/matchesManager';
 
 function matchRouter(app: Application, matchesManager: MatchesManager): void {
   const handleGetMatch = createHandleGetMatch(matchesManager);

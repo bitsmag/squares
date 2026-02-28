@@ -1,7 +1,7 @@
 import type { MatchDomainEvent, MatchEventPublisher } from '../../../domain/engine/matchEvents';
 import * as matchEmitters from './matchEmitters';
-import socketErrorHandler from '../../util/socket/socketErrorHandler';
-import type { MatchesManager } from '../../../domain/models/matchesManager';
+import socketErrorHandler from '../../utilities/socket/socketErrorHandler';
+import type { MatchesManager } from '../../../domain/runtime/matchesManager';
 
 export class SocketMatchEventPublisher implements MatchEventPublisher {
   constructor(private readonly matchesManager: MatchesManager) {}

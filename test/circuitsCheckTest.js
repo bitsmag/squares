@@ -1,8 +1,8 @@
 var expect = require('chai').expect;
 
 // NOTE: Tests load the TypeScript sources directly (mocha is run with ts-node in this project).
-var matchMod = require('../domain/models/match.ts');
-var playerMod = require('../domain/models/player.ts');
+var matchMod = require('../domain/entities/match.ts');
+var playerMod = require('../domain/entities/player.ts');
 var circuitsCheck = require('../domain/engine/utilities/circuitsCheck.ts');
 
 describe('circuitsCheck.getPlayerPoints', function () {

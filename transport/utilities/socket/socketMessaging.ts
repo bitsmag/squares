@@ -2,7 +2,7 @@ import type { Server as SocketIOServer } from 'socket.io';
 import { sessionStore } from './socketSessionStore';
 
 let ioInstance: SocketIOServer | null = null;
-export function initTransport(io: SocketIOServer): void {
+export function initSocketMessaging(io: SocketIOServer): void {
   ioInstance = io;
 }
 
@@ -32,4 +32,4 @@ export function broadcastToMatch(matchId: string, namespace: string, event: stri
   }
 }
 
-export default { initTransport, sendToSocketId, broadcastToMatch };
+export default { initSocketMessaging, sendToSocketId, broadcastToMatch };

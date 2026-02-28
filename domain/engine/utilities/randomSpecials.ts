@@ -1,4 +1,4 @@
-import type { Match } from '../../models/match';
+import type { Match } from '../../entities/match';
 
 // Probabilities for spawning specials per tick.
 const DOUBLE_SPEED_PROBABILITY = 0.02; // 2%

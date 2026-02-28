@@ -1,6 +1,6 @@
-import type { Match } from '../../../domain/models/match';
-import type { MatchesManager } from '../../../domain/models/matchesManager';
-import { broadcastToMatch } from './transport';
+import type { Match } from '../../../domain/entities/match';
+import type { MatchesManager } from '../../../domain/runtime/matchesManager';
+import { broadcastToMatch } from './socketMessaging';
 
 let matchesManager: MatchesManager | null = null;
 

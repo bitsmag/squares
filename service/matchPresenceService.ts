@@ -1,4 +1,4 @@
-import { sessionStore } from '../transport/util/socket/socketSessionStore';
+import { sessionStore } from '../transport/utilities/socket/socketSessionStore';
 
 export class MatchPresenceService {
   getConnectedPlayers(matchId: string, namespace = '/matchSockets'): string[] {
