@@ -32,7 +32,7 @@ function determineNextPositionCandidates(match: Match, movingColors: PlayerColor
   for (let i = 0; i < activeColors.length; i++) {
     const color = activeColors[i];
     const player = match.getPlayerByColor(color);
-    nextPositions[color] = calculateFuturePos(player.position, player.activeDirection, match.board, match);
+    nextPositions[color] = calculateFuturePos(player.position, player.activeDirection, match.board);
     if (movingColors.indexOf(color) === -1) {
       nextPositions[color] = player.position;
     }

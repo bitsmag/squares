@@ -43,18 +43,17 @@ export class MatchesManager {
   }
 
   private createUniqueId(): string {
-    let timestamp: string;
-    let matchId = '';
-    let unique = false;
+    const MATCH_ID_PREFIX = 'm';
+    const MATCH_ID_LENGTH = 4;
 
-    while (!unique) {
-      timestamp = Date.now().toString();
-      matchId = 'x' + timestamp.substring(timestamp.length - 4);
+    while (true) {
+      const randomPart = Math.random().toString(36).slice(-MATCH_ID_LENGTH);
+      const id = MATCH_ID_PREFIX + randomPart;
 
-      const duplicate = this.matches.some((m) => m.id === matchId);
-      unique = !duplicate;
+      const duplicate = this.matches.some((m) => m.id === id);
+      if (!duplicate) {
+        return id;
+      }
     }
-
-    return matchId;
   }
 }
