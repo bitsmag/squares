@@ -72,17 +72,12 @@ export class Player {
     this._score += points;
   }
 
-  startDoubleSpeedSpecial(_duration?: number): void {
+  startDoubleSpeedSpecial(duration: number): void {
     if (!this.doubleSpeedSpecial) {
       this.doubleSpeedSpecial = true;
-      const duration = _duration || this.getDefaultDoubleSpeedDuration();
       setTimeout(() => {
         this.doubleSpeedSpecial = false;
       }, duration);
     }
-  }
-
-  private getDefaultDoubleSpeedDuration(): number {
-    return 5000;
   }
 }
