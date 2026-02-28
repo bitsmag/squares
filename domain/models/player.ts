@@ -1,6 +1,8 @@
 import { randomUUID } from 'crypto';
 import type { PlayerColor } from './colors';
 import type { Direction } from './direction';
+import type { DoubleSpeedTimerProvider } from './utilities/doubleSpeedTimerProvider';
+import { DefaultDoubleSpeedTimerProvider } from './utilities/doubleSpeedTimerProvider';
 
 export class Player {
   private _id: string;
@@ -12,7 +14,15 @@ export class Player {
   private _doubleSpeedSpecial: boolean;
   private _host: boolean;
 
-  constructor(name: string, color: PlayerColor, position: number, host: boolean) {
+  private readonly doubleSpeedTimer: DoubleSpeedTimerProvider;
+
+  constructor(
+    name: string,
+    color: PlayerColor,
+    position: number,
+    host: boolean,
+    doubleSpeedTimer: DoubleSpeedTimerProvider = DefaultDoubleSpeedTimerProvider
+  ) {
     this._id = randomUUID();
     this._name = name;
     this._color = color;
@@ -21,6 +31,7 @@ export class Player {
     this._score = 0;
     this._doubleSpeedSpecial = false;
     this._host = host;
+    this.doubleSpeedTimer = doubleSpeedTimer;
   }
 
   // Accessors
@@ -75,7 +86,7 @@ export class Player {
   startDoubleSpeedSpecial(duration: number): void {
     if (!this.doubleSpeedSpecial) {
       this.doubleSpeedSpecial = true;
-      setTimeout(() => {
+      this.doubleSpeedTimer.scheduleDisable(() => {
         this.doubleSpeedSpecial = false;
       }, duration);
     }
