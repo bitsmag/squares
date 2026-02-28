@@ -13,6 +13,7 @@ import { createLobbyListeners } from './transport/lobby/socket/lobbyListeners';
 import { createMatchListeners } from './transport/match/socket/matchListeners';
 import lobbyRouter from './transport/lobby/http/lobbyRouter';
 import matchRouter from './transport/match/http/matchRouter';
+import { createRlRouter } from './RL/rlRouter';
 import errorHandler from './transport/utilities/http/httpErrorHandler';
 
 const app = express();
@@ -99,6 +100,9 @@ app.get('/', function (_req: Request, res: Response) {
 
 lobbyRouter(app, matchesManager);
 matchRouter(app, matchesManager);
+
+// RL HTTP API for headless training
+app.use('/rl', createRlRouter());
 
 app.use((req: Request, res: Response) => {
   res.status(404).sendFile(path.join(viewsPath, '404.html'));
