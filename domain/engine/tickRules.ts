@@ -2,7 +2,7 @@ import * as positionCalc from './utilities/positionCalc';
 import * as circuitsCheck from './utilities/circuitsCheck';
 import * as randomSpecials from './utilities/randomSpecials';
 import type { Match } from '../entities/match';
-import type { PlayerColor } from '../valueObjects/colors';
+import type { PlayerColor } from '../valueObjects/valueObjects';
 import type { ClearedSquare, MatchSpecials } from './matchEvents';
 import type { PlayerPositions } from './utilities/positionCalc';
 import type { Square } from '../entities/square';

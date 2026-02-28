@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { CreateMatchLobbyService, DisconnectionSource } from '../service/createMatchLobbyService';
+import { LobbyService, DisconnectionSource } from '../service/lobbyService';
 import { MatchesManager } from '../domain/runtime/matchesManager';
 import type { Match } from '../domain/entities/match';
 import type { MatchDomainEvent, MatchEventPublisher } from '../domain/engine/matchEvents';
@@ -19,7 +19,7 @@ describe('CreateMatchLobbyService', () => {
 
   const manager = new MatchesManager();
   const publisher = new TestMatchEventPublisher();
-  const service: CreateMatchLobbyService = new CreateMatchLobbyService(manager, publisher);
+  const service: LobbyService = new LobbyService(manager, publisher);
 
   afterEach(() => {
     // Clean up all matches created during a test to keep global manager state isolated
@@ -43,7 +43,7 @@ describe('CreateMatchLobbyService', () => {
   });
 
   it('processDisconnectLobby returns LOBBY_CLOSED when start is already initiated', () => {
-    const { matchId, playerId } = service.processCreateMatchLobbyHost('host');
+    const { matchId, playerId } = service.processLobbyHost('host');
     const match = manager.getMatch(matchId);
     match.startInitiated = true;
 
@@ -56,8 +56,8 @@ describe('CreateMatchLobbyService', () => {
   });
 
   it('processDisconnectLobby removes host and destroys match when host leaves before start', () => {
-    const { matchId, playerId: hostId } = service.processCreateMatchLobbyHost('host');
-    const { playerId: guestId } = service.processCreateMatchLobbyGuest(matchId, 'guest');
+    const { matchId, playerId: hostId } = service.processLobbyHost('host');
+    const { playerId: guestId } = service.processLobbyGuest(matchId, 'guest');
 
     const result: DisconnectionSource = service.processDisconnectLobby(matchId, hostId);
 
@@ -67,8 +67,8 @@ describe('CreateMatchLobbyService', () => {
   });
 
   it('processDisconnectLobby removes guest but keeps match when guest leaves before start', () => {
-    const { matchId, playerId: hostId } = service.processCreateMatchLobbyHost('host');
-    const { playerId: guestId } = service.processCreateMatchLobbyGuest(matchId, 'guest');
+    const { matchId, playerId: hostId } = service.processLobbyHost('host');
+    const { playerId: guestId } = service.processLobbyGuest(matchId, 'guest');
 
     const result: DisconnectionSource = service.processDisconnectLobby(matchId, guestId);
 
@@ -79,7 +79,7 @@ describe('CreateMatchLobbyService', () => {
   });
 
   it('processCreateMatchLobbyHost creates a match with a single host player', () => {
-    const { matchId, playerId } = service.processCreateMatchLobbyHost('host');
+    const { matchId, playerId } = service.processLobbyHost('host');
 
     const match = manager.getMatch(matchId);
     const player = match.getPlayerById(playerId);
@@ -90,9 +90,9 @@ describe('CreateMatchLobbyService', () => {
   });
 
   it('processCreateMatchLobbyGuest adds a guest player to an existing match', () => {
-    const { matchId } = service.processCreateMatchLobbyHost('host');
+    const { matchId } = service.processLobbyHost('host');
 
-    const { playerId } = service.processCreateMatchLobbyGuest(matchId, 'guest');
+    const { playerId } = service.processLobbyGuest(matchId, 'guest');
 
     const match = manager.getMatch(matchId);
     const guestPlayer = match.getPlayerById(playerId);

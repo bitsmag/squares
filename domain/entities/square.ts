@@ -1,4 +1,4 @@
-import type { SquareColor } from '../valueObjects/colors';
+import type { SquareColor } from '../valueObjects/valueObjects';
 
 export class Square {
   private _id: number;

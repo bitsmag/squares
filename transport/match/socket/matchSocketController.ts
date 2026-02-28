@@ -1,7 +1,7 @@
 import socketErrorHandler from '../../utilities/socket/socketErrorHandler';
-import type { RegisterPlayerAndStartMatchWhenReadyDTO } from '../../../shared/dto/socket/incoming/matchSocketDtos';
+import type { RegisterPlayerAndStartMatchWhenReadyDTO } from '../../../shared/dto/socket/matchSocketDtos';
 import type { Match } from '../../../domain/entities/match';
-import type { Direction } from '../../../domain/valueObjects/direction';
+import type { Direction } from '../../../domain/valueObjects/valueObjects';
 import { MatchService } from '../../../service/matchService';
 import { MatchPresenceService } from '../../../service/matchPresenceService';
 import { MatchStartCoordinator } from '../../../service/matchStartCoordinator';

@@ -1,26 +1,26 @@
 import type { Application } from 'express';
 import { schemas } from '../../utilities/validation';
 import { validate } from '../../utilities/http/httpValidationMiddleware';
-import { createCreateMatchLobbyController } from './lobbyController';
+import { createLobbyController } from './lobbyController';
 import type {
-  CreateMatchLobbyHostRequestDTO,
-  CreateMatchLobbyGuestRequestDTO,
+  LobbyHostRequestDTO,
+  LobbyGuestRequestDTO,
 } from '../../../shared/dto/http/lobbyHttpDtos';
 import type { MatchesManager } from '../../../domain/runtime/matchesManager';
 
-function createMatchLobbyRouter(app: Application, matchesManager: MatchesManager): void {
-  const { handleCreateMatchLobbyHost, handleCreateMatchLobbyGuest } =
-    createCreateMatchLobbyController(matchesManager);
+function lobbyRouter(app: Application, matchesManager: MatchesManager): void {
+  const { handleLobbyHost: handleLobbyHost, handleLobbyGuest: handleLobbyGuest } =
+    createLobbyController(matchesManager);
 
-  app.get<CreateMatchLobbyHostRequestDTO>(
-    '/createMatchLobby/:playerName',
-    validate<CreateMatchLobbyHostRequestDTO>('params', schemas.createMatchLobbyHostParams),
-    handleCreateMatchLobbyHost
+  app.get<LobbyHostRequestDTO>(
+    '/lobby/create-match/:playerName',
+    validate<LobbyHostRequestDTO>('params', schemas.lobbyHostParams),
+    handleLobbyHost
   );
-  app.get<CreateMatchLobbyGuestRequestDTO>(
-    '/createMatchLobby/:playerName/:matchId',
-    validate<CreateMatchLobbyGuestRequestDTO>('params', schemas.createMatchLobbyGuestParams),
-    handleCreateMatchLobbyGuest
+  app.get<LobbyGuestRequestDTO>(
+    '/lobby/join-match/:matchId/:playerName',
+    validate<LobbyGuestRequestDTO>('params', schemas.lobbyGuestParams),
+    handleLobbyGuest
   );
 }
-export default createMatchLobbyRouter;
+export default lobbyRouter;

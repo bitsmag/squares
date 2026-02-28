@@ -1,5 +1,5 @@
 import type { Match } from '../entities/match';
-import type { PlayerColor } from '../valueObjects/colors';
+import type { PlayerColor } from '../valueObjects/valueObjects';
 
 export type MatchSpecials = {
   doubleSpeed: number[];

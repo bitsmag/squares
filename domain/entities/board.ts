@@ -1,5 +1,5 @@
 import type { Square } from './square';
-import type { PlayerColor } from '../valueObjects/colors';
+import type { PlayerColor } from '../valueObjects/valueObjects';
 import type { BoardSettings } from './boardTopology';
 
 export class Board {

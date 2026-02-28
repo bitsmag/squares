@@ -2,7 +2,7 @@ import type { Board } from './board';
 import { createDefaultBoard } from './boardTopology';
 import type { MatchEngine } from '../engine/matchEngine';
 import type { Player } from './player';
-import type { PlayerColor } from '../valueObjects/colors';
+import type { PlayerColor } from '../valueObjects/valueObjects';
 
 export class Match {
   private _id: string;

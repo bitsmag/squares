@@ -2,11 +2,11 @@ import { MatchEngine } from '../domain/engine/matchEngine';
 import type { MatchEventPublisher } from '../domain/engine/matchEvents';
 import type { MatchesManager } from '../domain/runtime/matchesManager';
 import { Player } from '../domain/entities/player';
-import type { PlayerColor } from '../domain/valueObjects/colors';
+import type { PlayerColor } from '../domain/valueObjects/valueObjects';
 
 export type DisconnectionSource = { type: 'HOST_LEFT' } | { type: 'GUEST_LEFT' } | { type: 'LOBBY_CLOSED' };
 
-export class CreateMatchLobbyService {
+export class LobbyService {
   constructor(
     private readonly matchesManager: MatchesManager,
     private readonly eventPublisher: MatchEventPublisher
@@ -36,7 +36,7 @@ export class CreateMatchLobbyService {
     }
   }
 
-  processCreateMatchLobbyHost(playerName: string): { matchId: string; playerId: string } {
+  processLobbyHost(playerName: string): { matchId: string; playerId: string } {
     const match = this.matchesManager.createMatch();
     const engine = new MatchEngine(match, this.eventPublisher);
     match.engine = engine;
@@ -46,7 +46,7 @@ export class CreateMatchLobbyService {
     return { matchId: match.id, playerId: player.id };
   }
 
-  processCreateMatchLobbyGuest(matchId: string, playerName: string): { matchId: string; playerId: string } {
+  processLobbyGuest(matchId: string, playerName: string): { matchId: string; playerId: string } {
     const match = this.matchesManager.getMatch(matchId);
     const { color, position } = this.allocateColorAndPosition(match);
     const player = new Player(playerName, color, position, false);

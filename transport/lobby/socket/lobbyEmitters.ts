@@ -1,23 +1,23 @@
 import type { Match } from '../../../domain/entities/match';
 import { broadcastToMatch } from '../../utilities/socket/socketMessaging';
-import type { LobbyPlayersDTO } from '../../../shared/dto/socket/outgoing/lobbyDtos';
+import type { LobbyPlayersDTO } from '../../../shared/dto/socket/lobbySocketDtos';
 
 export function sendPlayerConnectedEvent(match: Match): void {
   const data = toLobbyPlayersDTO(match);
-  broadcastToMatch(match.id, '/createMatchSockets', 'playerConnected', data);
+  broadcastToMatch(match.id, '/lobbySockets', 'playerConnected', data);
 }
 
 export function sendPlayerDisconnectedEvent(match: Match): void {
   const data = toLobbyPlayersDTO(match);
-  broadcastToMatch(match.id, '/createMatchSockets', 'playerDisconnected', data);
+  broadcastToMatch(match.id, '/lobbySockets', 'playerDisconnected', data);
 }
 
 export function sendHostDisconnectedEvent(matchId: string): void {
-  broadcastToMatch(matchId, '/createMatchSockets', 'hostDisconnected');
+  broadcastToMatch(matchId, '/lobbySockets', 'hostDisconnected');
 }
 
 export function sendMatchStartInitiationEvent(match: Match): void {
-  broadcastToMatch(match.id, '/createMatchSockets', 'matchStartInitiation');
+  broadcastToMatch(match.id, '/lobbySockets', 'matchStartInitiation');
 }
 
 function toLobbyPlayersDTO(match: Match): LobbyPlayersDTO {

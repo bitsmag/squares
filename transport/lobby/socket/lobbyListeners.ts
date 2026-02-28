@@ -1,10 +1,10 @@
 import { Socket } from 'socket.io';
-import type { CreateMatchLobbySocketController } from './lobbySocketController';
+import type { LobbySocketController } from './lobbySocketController';
 import { socketValidationMiddleware } from '../../utilities/socket/socketValidationMiddleware';
 import { schemas } from '../../utilities/validation';
-import type { RegisterPlayerLobbyDTO } from '../../../shared/dto/socket/incoming/lobbySocketDtos';
+import type { RegisterPlayerLobbyDTO } from '../../../shared/dto/socket/lobbySocketDtos';
 
-export function createCreateMatchLobbyListeners(controller: CreateMatchLobbySocketController) {
+export function createLobbyListeners(controller: LobbySocketController) {
   return function respond(socket: Socket): void {
     socket.use(
       socketValidationMiddleware({

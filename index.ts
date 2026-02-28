@@ -7,11 +7,11 @@ import helmet from 'helmet';
 import { initSocketMessaging } from './transport/utilities/socket/socketMessaging';
 import { MatchesManager } from './domain/runtime/matchesManager';
 import { initSocketErrorHandler } from './transport/utilities/socket/socketErrorHandler';
-import { createCreateMatchLobbySocketController } from './transport/lobby/socket/lobbySocketController';
-import { createCreateMatchLobbyListeners } from './transport/lobby/socket/lobbyListeners';
+import { createLobbySocketController } from './transport/lobby/socket/lobbySocketController';
 import { createMatchSocketController } from './transport/match/socket/matchSocketController';
+import { createLobbyListeners } from './transport/lobby/socket/lobbyListeners';
 import { createMatchListeners } from './transport/match/socket/matchListeners';
-import createMatchLobbyRouter from './transport/lobby/http/createMatchLobbyRouter';
+import lobbyRouter from './transport/lobby/http/lobbyRouter';
 import matchRouter from './transport/match/http/matchRouter';
 import errorHandler from './transport/utilities/http/httpErrorHandler';
 
@@ -25,8 +25,8 @@ const matchesManager = new MatchesManager();
 initSocketErrorHandler(matchesManager);
 
 // Socket controllers & listeners wired with injected dependencies
-const createMatchLobbySocketController = createCreateMatchLobbySocketController(matchesManager);
-const respondCreateMatchSockets = createCreateMatchLobbyListeners(createMatchLobbySocketController);
+const lobbySocketController = createLobbySocketController(matchesManager);
+const respondLobbySockets = createLobbyListeners(lobbySocketController);
 
 const matchSocketController = createMatchSocketController(matchesManager);
 const respondMatchSockets = createMatchListeners(matchSocketController);
@@ -84,8 +84,8 @@ const port = Number(process.env.PORT) || 3000;
 app.set('port', port);
 
 // Sockets
-io.of('/createMatchSockets').on('connection', (socket: Socket) => {
-  respondCreateMatchSockets(socket);
+io.of('/lobbySockets').on('connection', (socket: Socket) => {
+  respondLobbySockets(socket);
 });
 
 io.of('/matchSockets').on('connection', (socket: Socket) => {
@@ -97,7 +97,7 @@ app.get('/', function (_req: Request, res: Response) {
   res.sendFile(path.join(viewsPath, 'index.html'));
 });
 
-createMatchLobbyRouter(app, matchesManager);
+lobbyRouter(app, matchesManager);
 matchRouter(app, matchesManager);
 
 app.use((req: Request, res: Response) => {

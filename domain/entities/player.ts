@@ -1,6 +1,5 @@
 import { randomUUID } from 'crypto';
-import type { PlayerColor } from '../valueObjects/colors';
-import type { Direction } from '../valueObjects/direction';
+import type { PlayerColor, Direction } from '../valueObjects/valueObjects';
 import type { DoubleSpeedTimerProvider } from '../runtime/doubleSpeedTimerProvider';
 import { DefaultDoubleSpeedTimerProvider } from '../runtime/doubleSpeedTimerProvider';
 

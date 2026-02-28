@@ -1,13 +1,13 @@
-export interface CreateMatchLobbyHostRequestDTO {
+export interface LobbyHostRequestDTO {
   playerName: string;
 }
 
-export interface CreateMatchLobbyGuestRequestDTO {
+export interface LobbyGuestRequestDTO {
   playerName: string;
   matchId: string;
 }
 
-export interface CreateMatchLobbyAppDataDTO {
+export interface LobbyAppDataDTO {
   matchId: string;
   playerId: string;
   playerName: string;

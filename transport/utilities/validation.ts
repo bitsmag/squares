@@ -1,12 +1,12 @@
 import Joi from 'joi';
 import xss from 'xss';
-import type { CreateMatchLobbyHostRequestDTO, CreateMatchLobbyGuestRequestDTO } from '../../shared/dto/http/lobbyHttpDtos';
+import type { LobbyHostRequestDTO, LobbyGuestRequestDTO } from '../../shared/dto/http/lobbyHttpDtos';
 import type { GetMatchRequestDTO } from '../../shared/dto/http/matchHttpDtos';
-import type { RegisterPlayerLobbyDTO } from '../../shared/dto/socket/incoming/lobbySocketDtos';
-import type { RegisterPlayerAndStartMatchWhenReadyDTO } from '../../shared/dto/socket/incoming/matchSocketDtos';
+import type { RegisterPlayerLobbyDTO } from '../../shared/dto/socket/lobbySocketDtos';
+import type { RegisterPlayerAndStartMatchWhenReadyDTO } from '../../shared/dto/socket/matchSocketDtos';
 
-export type CreateMatchLobbyHostParams = CreateMatchLobbyHostRequestDTO;
-export type CreateMatchLobbyGuestParams = CreateMatchLobbyGuestRequestDTO;
+export type LobbyHostParams = LobbyHostRequestDTO;
+export type LobbyGuestParams = LobbyGuestRequestDTO;
 export type MatchRouteParams = GetMatchRequestDTO;
 export type RegisterPlayerLobbyParams = RegisterPlayerLobbyDTO;
 export type RegisterPlayerAndStartMatchWhenReadyParams = RegisterPlayerAndStartMatchWhenReadyDTO;
@@ -14,12 +14,12 @@ export type MatchStartInitiationParams = { matchId: string };
 
 // Shared schemas
 export const schemas = {
-  createMatchLobbyHostParams: Joi.object<CreateMatchLobbyHostParams>({
+  lobbyHostParams: Joi.object<LobbyHostParams>({
     playerName: Joi.string().alphanum().min(1).max(12).required(),
   }),
-  createMatchLobbyGuestParams: Joi.object<CreateMatchLobbyGuestParams>({
-    playerName: Joi.string().alphanum().min(1).max(12).required(),
+  lobbyGuestParams: Joi.object<LobbyGuestParams>({
     matchId: Joi.string().alphanum().min(1).required(),
+    playerName: Joi.string().alphanum().min(1).max(12).required(),
   }),
   matchRouteParams: Joi.object<MatchRouteParams>({
     matchId: Joi.string().alphanum().min(1).required(),

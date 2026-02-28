@@ -2,18 +2,18 @@ const { matchId, playerId, playerName, isHost, lobbyMessage } = window.APP_DATA;
 
 /*CLICKHANDLER*/
 $('#initiateMatchStartBtn').click(function () {
-  createMatchSockets.emit('matchStartInitiation', { matchId });
-  createMatchSockets.disconnect();
+  lobbySockets.emit('matchStartInitiation', { matchId });
+  lobbySockets.disconnect();
   window.location.replace('/match/' + matchId + '/' + playerId);
 });
 
 /*SOCKETS*/
 
-const createMatchSockets = io.connect('/createMatchSockets');
-createMatchSockets.on('connect', function () {
-  createMatchSockets.emit('registerPlayerLobby', { matchId, playerId, playerName, isHost });
+const lobbySockets = io.connect('/lobbySockets');
+lobbySockets.on('connect', function () {
+  lobbySockets.emit('registerPlayerLobby', { matchId, playerId, playerName, isHost });
 
-  createMatchSockets.on('playerConnected', function (connectedPlayers) {
+  lobbySockets.on('playerConnected', function (connectedPlayers) {
     $('#playerTable').find('[id$="PlayerName"], [id$="PlayerStatus"]').empty();
 
     for (let i = 0; i < connectedPlayers.players.length; i++) {
@@ -49,7 +49,7 @@ createMatchSockets.on('connect', function () {
     }
   });
 
-  createMatchSockets.on('hostDisconnected', function () {
+  lobbySockets.on('hostDisconnected', function () {
     $('#lobbyMessage').remove();
     $('#playerTable').remove();
     $('#cancelMessage').html(
@@ -61,7 +61,7 @@ createMatchSockets.on('connect', function () {
     $('#connectionList').append($('<a href="/">Start a new match now!</a>'));
   });
 
-  createMatchSockets.on('playerDisconnected', function (connectedPlayers) {
+  lobbySockets.on('playerDisconnected', function (connectedPlayers) {
     $('#playerTable').find('[id$="PlayerName"], [id$="PlayerStatus"]').empty();
 
     for (let i = 0; i < connectedPlayers.players.length; i++) {
@@ -97,13 +97,13 @@ createMatchSockets.on('connect', function () {
     }
   });
 
-  createMatchSockets.on('matchStartInitiation', function () {
-    createMatchSockets.disconnect();
+  lobbySockets.on('matchStartInitiation', function () {
+    lobbySockets.disconnect();
     window.location.replace('/match/' + matchId + '/' + playerId);
   });
 
-  createMatchSockets.on('fatalError', function () {
-    createMatchSockets.disconnect();
+  lobbySockets.on('fatalError', function () {
+    lobbySockets.disconnect();
     alert('There went something horribly wrong. Please start a new match.');
   });
 });

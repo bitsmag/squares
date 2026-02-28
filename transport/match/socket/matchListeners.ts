@@ -2,7 +2,7 @@ import { Socket } from 'socket.io';
 import type { MatchSocketController } from './matchSocketController';
 import { socketValidationMiddleware } from '../../utilities/socket/socketValidationMiddleware';
 import { schemas } from '../../utilities/validation';
-import type { RegisterPlayerAndStartMatchWhenReadyDTO } from '../../../shared/dto/socket/incoming/matchSocketDtos';
+import type { RegisterPlayerAndStartMatchWhenReadyDTO } from '../../../shared/dto/socket/matchSocketDtos';
 
 export function createMatchListeners(controller: MatchSocketController) {
   return function respond(socket: Socket): void {

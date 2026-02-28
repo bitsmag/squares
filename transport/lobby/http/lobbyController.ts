@@ -1,30 +1,30 @@
 import type { NextFunction, Request, Response } from 'express';
-import { CreateMatchLobbyService } from '../../../service/createMatchLobbyService';
+import { LobbyService } from '../../../service/lobbyService';
 import { SocketMatchEventPublisher } from '../../match/socket/matchEventPublisher';
 import type {
-  CreateMatchLobbyHostRequestDTO,
-  CreateMatchLobbyGuestRequestDTO,
-  CreateMatchLobbyAppDataDTO,
+  LobbyHostRequestDTO,
+  LobbyGuestRequestDTO,
+  LobbyAppDataDTO,
 } from '../../../shared/dto/http/lobbyHttpDtos';
 import type { MatchesManager } from '../../../domain/runtime/matchesManager';
 
-export type CreateMatchLobbyParams = CreateMatchLobbyHostRequestDTO;
-export type CreateMatchLobbyGuestParams = CreateMatchLobbyGuestRequestDTO;
+export type LobbyParams = LobbyHostRequestDTO;
+export type LobbyGuestParams = LobbyGuestRequestDTO;
 
-export function createCreateMatchLobbyController(matchesManager: MatchesManager) {
+export function createLobbyController(matchesManager: MatchesManager) {
   const matchEventPublisher = new SocketMatchEventPublisher(matchesManager);
-  const createMatchLobbyService = new CreateMatchLobbyService(matchesManager, matchEventPublisher);
+  const lobbyService = new LobbyService(matchesManager, matchEventPublisher);
 
-  function handleCreateMatchLobbyHost(
-    req: Request<CreateMatchLobbyParams>,
+  function handleLobbyHost(
+    req: Request<LobbyParams>,
     res: Response,
     next: NextFunction
   ): void {
     try {
-      const { matchId, playerId } = createMatchLobbyService.processCreateMatchLobbyHost(
+      const { matchId, playerId } = lobbyService.processLobbyHost(
         req.params.playerName
       );
-      const appData: CreateMatchLobbyAppDataDTO = {
+      const appData: LobbyAppDataDTO = {
         matchId,
         playerId,
         playerName: req.params.playerName,
@@ -34,34 +34,34 @@ export function createCreateMatchLobbyController(matchesManager: MatchesManager)
           matchId +
           ')',
       };
-      res.render('createMatch.html', { appData });
+      res.render('lobby.html', { appData });
     } catch (err) {
       next(err);
     }
   }
 
-  function handleCreateMatchLobbyGuest(
-    req: Request<CreateMatchLobbyGuestParams>,
+  function handleLobbyGuest(
+    req: Request<LobbyGuestParams>,
     res: Response,
     next: NextFunction
   ): void {
     try {
-      const { matchId, playerId } = createMatchLobbyService.processCreateMatchLobbyGuest(
+      const { matchId, playerId } = lobbyService.processLobbyGuest(
         req.params.matchId,
         req.params.playerName
       );
-      const appData: CreateMatchLobbyAppDataDTO = {
+      const appData: LobbyAppDataDTO = {
         matchId,
         playerId,
         playerName: req.params.playerName,
         isHost: false,
         lobbyMessage: 'You have joined the match! \n\n Waiting for the host to start the game.',
       };
-      res.render('createMatch.html', { appData });
+      res.render('lobby.html', { appData });
     } catch (err) {
       next(err);
     }
   }
 
-  return { handleCreateMatchLobbyHost, handleCreateMatchLobbyGuest };
+  return { handleLobbyHost: handleLobbyHost, handleLobbyGuest: handleLobbyGuest };
 }

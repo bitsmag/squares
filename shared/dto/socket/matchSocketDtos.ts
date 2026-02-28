@@ -1,6 +1,13 @@
-import type { PlayerColor, SquareColor } from '../../../../domain/valueObjects/colors';
+import type { PlayerColor, SquareColor } from '../../../domain/valueObjects/valueObjects';
 
-// Shared DTOs for match socket events
+// Incoming match socket DTOs
+
+export interface RegisterPlayerAndStartMatchWhenReadyDTO {
+  matchId: string;
+  playerId: string;
+}
+
+// Outgoing match socket DTOs
 
 export interface SquareDTO {
   id: number;

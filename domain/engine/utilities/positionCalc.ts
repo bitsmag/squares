@@ -1,8 +1,7 @@
 import type { Match } from '../../entities/match';
 import type { Board } from '../../entities/board';
 import type { Square } from '../../entities/square';
-import type { PlayerColor } from '../../valueObjects/colors';
-import type { Direction } from '../../valueObjects/direction';
+import type { PlayerColor, Direction } from '../../valueObjects/valueObjects';
 import type { RandomProvider } from './randomProvider';
 import { DefaultRandomProvider } from './randomProvider';
 
@@ -72,7 +71,12 @@ function findSameTargetCollisionLosers(
   nextPositionsCandidates: PlayerPositions,
   randomProvider: RandomProvider
 ): PlayerColor[] {
-  const hasPriority: Partial<Record<PlayerColor, boolean>> = {};
+  const hasPriority: Record<PlayerColor, boolean> = {
+    blue: false,
+    orange: false,
+    green: false,
+    red: false,
+  };
 
   for (let i = 0; i < activeColors.length; i++) {
     const color = activeColors[i];

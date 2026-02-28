@@ -1,9 +1,9 @@
 import socketErrorHandler from '../../utilities/socket/socketErrorHandler';
 import type { Match } from '../../../domain/entities/match';
 import type { Board } from '../../../domain/entities/board';
-import type { PlayerColor } from '../../../domain/valueObjects/colors';
+import type { PlayerColor } from '../../../domain/valueObjects/valueObjects';
 import { broadcastToMatch } from '../../utilities/socket/socketMessaging';
-import type { PrepareMatchDTO, ClearSquaresDTO, UpdateBoardDTO, UpdateScoreDTO, CountdownDTO } from '../../../shared/dto/socket/outgoing/matchDtos';
+import type { PrepareMatchDTO, ClearSquaresDTO, UpdateBoardDTO, UpdateScoreDTO, CountdownDTO } from '../../../shared/dto/socket/matchSocketDtos';
 
 export function sendPrepareMatchEvent(match: Match): void {
   const data = toPrepareMatchDTO(match.board, match.players);

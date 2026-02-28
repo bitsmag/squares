@@ -1,6 +1,6 @@
 import type { Match } from '../../entities/match';
 import type { Square } from '../../entities/square';
-import type { PlayerColor } from '../../valueObjects/colors';
+import type { PlayerColor } from '../../valueObjects/valueObjects';
 
 // A DFS path through same-colored squares.
 type Path = Square[];
