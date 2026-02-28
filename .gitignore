@@ -12,3 +12,9 @@ tags
 node_modules/
 
 models/tags
+
+# Local Python virtual environment
+.venv/
+
+# Python bytecode caches
+__pycache__/
