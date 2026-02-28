@@ -1,11 +1,11 @@
-import * as positionCalc from './positionCalc';
-import * as circuitsCheck from './circuitsCheck';
-import * as randomSpecials from './randomSpecials';
-import type { Match } from '../../models/match';
-import type { PlayerColor } from '../../models/colors';
-import type { ClearedSquare, MatchSpecials } from '../matchEvents';
-import type { PlayerPositions } from './positionCalc';
-import type { Square } from '../../models/square';
+import * as positionCalc from './utilities/positionCalc';
+import * as circuitsCheck from './utilities/circuitsCheck';
+import * as randomSpecials from './utilities/randomSpecials';
+import type { Match } from '../models/match';
+import type { PlayerColor } from '../models/colors';
+import type { ClearedSquare, MatchSpecials } from './matchEvents';
+import type { PlayerPositions } from './utilities/positionCalc';
+import type { Square } from '../models/square';
 
 export type TickResult = {
   specials: MatchSpecials;

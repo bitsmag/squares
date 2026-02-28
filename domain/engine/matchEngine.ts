@@ -1,4 +1,4 @@
-import { computeTick } from './utilities/tickRules';
+import { computeTick } from './tickRules';
 import type { Match } from '../models/match';
 import type { MatchEventPublisher } from './matchEvents';
 import type { ClockProvider, ClockHandle } from './utilities/clockProvider';
