@@ -7,10 +7,6 @@ import type { MatchesManager } from '../../../domain/runtime/matchesManager';
 
 function matchRouter(app: Application, matchesManager: MatchesManager): void {
   const handleGetMatch = createHandleGetMatch(matchesManager);
-  app.get<GetMatchRequestDTO>(
-    '/match/:matchId/:playerId',
-    validate<GetMatchRequestDTO>('params', schemas.matchRouteParams),
-    handleGetMatch
-  );
+  app.get<GetMatchRequestDTO>('/match/:matchId/:playerId', validate<GetMatchRequestDTO>('params', schemas.matchRouteParams), handleGetMatch);
 }
 export default matchRouter;

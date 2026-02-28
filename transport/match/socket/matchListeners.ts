@@ -13,10 +13,7 @@ export function createMatchListeners(controller: MatchSocketController) {
     );
 
     socket.on('registerPlayerAndStartMatchWhenReady', function (playerInfo: unknown) {
-      controller.handleRegisterPlayerAndStartMatchWhenReady(
-        playerInfo as RegisterPlayerAndStartMatchWhenReadyDTO,
-        socket.id
-      );
+      controller.handleRegisterPlayerAndStartMatchWhenReady(playerInfo as RegisterPlayerAndStartMatchWhenReadyDTO, socket.id);
     });
 
     socket.on('disconnect', function () {

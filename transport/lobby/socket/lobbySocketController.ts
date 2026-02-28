@@ -8,10 +8,7 @@ import socketErrorHandler from '../../utilities/socket/socketErrorHandler';
 import * as lobbyEmitters from './lobbyEmitters';
 
 export class LobbySocketController {
-  constructor(
-    private readonly matchesManager: MatchesManager,
-    private readonly lobbyService: LobbyService
-  ) {}
+  constructor(private readonly matchesManager: MatchesManager, private readonly lobbyService: LobbyService) {}
 
   private resolveMatch(socketId: string): Match | undefined {
     try {
@@ -38,9 +35,7 @@ export class LobbySocketController {
       if (!session || !session.matchId) return;
       const matchId = session.matchId;
       this.lobbyService.processMatchStartInitiation(matchId);
-      lobbyEmitters.sendMatchStartInitiationEvent(
-        this.matchesManager.getMatch(matchId)
-      );
+      lobbyEmitters.sendMatchStartInitiationEvent(this.matchesManager.getMatch(matchId));
     } catch (err) {
       socketErrorHandler(this.resolveMatch(socketId), err);
     }
@@ -56,9 +51,7 @@ export class LobbySocketController {
             lobbyEmitters.sendHostDisconnectedEvent(session.matchId);
             break;
           case 'GUEST_LEFT':
-            lobbyEmitters.sendPlayerDisconnectedEvent(
-              this.matchesManager.getMatch(session.matchId)
-            );
+            lobbyEmitters.sendPlayerDisconnectedEvent(this.matchesManager.getMatch(session.matchId));
             break;
           case 'LOBBY_CLOSED':
             // nothing to do
@@ -71,9 +64,7 @@ export class LobbySocketController {
   }
 }
 
-export function createLobbySocketController(
-  matchesManager: MatchesManager
-): LobbySocketController {
+export function createLobbySocketController(matchesManager: MatchesManager): LobbySocketController {
   const matchEventPublisher = new SocketMatchEventPublisher(matchesManager);
   const lobbyService = new LobbyService(matchesManager, matchEventPublisher);
   return new LobbySocketController(matchesManager, lobbyService);

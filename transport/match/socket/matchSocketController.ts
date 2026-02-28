@@ -10,10 +10,7 @@ import type { MatchesManager } from '../../../domain/runtime/matchesManager';
 import { SocketMatchEventPublisher } from './matchEventPublisher';
 
 export class MatchSocketController {
-  constructor(
-    private readonly matchesManager: MatchesManager,
-    private readonly matchService: MatchService
-  ) {}
+  constructor(private readonly matchesManager: MatchesManager, private readonly matchService: MatchService) {}
 
   private resolveMatch(socketId: string): Match | undefined {
     try {
@@ -62,11 +59,6 @@ export function createMatchSocketController(matchesManager: MatchesManager): Mat
   const matchPresenceService = new MatchPresenceService();
   const matchStartCoordinator = new MatchStartCoordinator();
   const eventPublisher = new SocketMatchEventPublisher(matchesManager);
-  const matchService = new MatchService(
-    matchesManager,
-    matchPresenceService,
-    matchStartCoordinator,
-    eventPublisher
-  );
+  const matchService = new MatchService(matchesManager, matchPresenceService, matchStartCoordinator, eventPublisher);
   return new MatchSocketController(matchesManager, matchService);
 }

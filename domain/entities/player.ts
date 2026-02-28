@@ -15,13 +15,7 @@ export class Player {
 
   private readonly doubleSpeedTimer: DoubleSpeedTimerProvider;
 
-  constructor(
-    name: string,
-    color: PlayerColor,
-    position: number,
-    host: boolean,
-    doubleSpeedTimer: DoubleSpeedTimerProvider = DefaultDoubleSpeedTimerProvider
-  ) {
+  constructor(name: string, color: PlayerColor, position: number, host: boolean, doubleSpeedTimer: DoubleSpeedTimerProvider = DefaultDoubleSpeedTimerProvider) {
     this._id = randomUUID();
     this._name = name;
     this._color = color;

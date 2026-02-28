@@ -7,10 +7,7 @@ import type { PlayerColor } from '../domain/valueObjects/valueObjects';
 export type DisconnectionSource = { type: 'HOST_LEFT' } | { type: 'GUEST_LEFT' } | { type: 'LOBBY_CLOSED' };
 
 export class LobbyService {
-  constructor(
-    private readonly matchesManager: MatchesManager,
-    private readonly eventPublisher: MatchEventPublisher
-  ) {}
+  constructor(private readonly matchesManager: MatchesManager, private readonly eventPublisher: MatchEventPublisher) {}
 
   processMatchStartInitiation(matchId: string): void {
     const match = this.matchesManager.getMatch(matchId);
