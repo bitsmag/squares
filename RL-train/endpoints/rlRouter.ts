@@ -4,9 +4,9 @@ import { rlReset, rlStep } from './rlEnv';
 export function createRlRouter(): Router {
 	const router = Router();
 
-	router.post('/reset', (req: Request, res: Response) => {
+	router.post('/reset', async (req: Request, res: Response) => {
 		try {
-			const result = rlReset(req.body || {});
+			const result = await rlReset(req.body || {});
 			res.json(result);
 		} catch (err) {
 			res.status(500).json({ error: 'rlResetFailed' });

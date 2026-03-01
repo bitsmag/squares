@@ -66,10 +66,11 @@ type RlSession = {
 
 const sessions = new Map<SessionId, RlSession>();
 
+
 const DEFAULT_BOT_SERVER_URL = 'http://localhost:8000/act';
 const BOT_SERVER_URL = process.env.BOT_SERVER_URL ?? DEFAULT_BOT_SERVER_URL;
 
-export function rlReset(_req: RlResetRequest): RlResetResponse {
+export async function rlReset(_req: RlResetRequest): Promise<RlResetResponse> {
 	const sessionId: SessionId = generateSessionId();
 	const match = new Match(sessionId);
 
@@ -78,17 +79,24 @@ export function rlReset(_req: RlResetRequest): RlResetResponse {
 	const agent = new Player('agent', agentColor, startSquares[agentColor], true);
 	match.addPlayer(agent);
 
-	const opponentConfigs: { name: string; color: PlayerColor }[] = [
-		{ name: 'bot_orange', color: 'orange' },
-		{ name: 'bot_green', color: 'green' },
-		{ name: 'bot_red', color: 'red' },
-	];
+	// Only add bot opponents if the external bot server appears to be reachable.
+	// This keeps the environment usable even when the bot process is not running.
+	const obsForAgent = buildObservationFromMatch(match, agentColor);
+	const botServerAvailable = await isBotServerAvailable(obsForAgent);
 
-	opponentConfigs.forEach(({ name, color }) => {
-		const startPos = startSquares[color];
-		const bot = new Player(name, color, startPos, false);
-		match.addPlayer(bot);
-	});
+	if (botServerAvailable) {
+		const opponentConfigs: { name: string; color: PlayerColor }[] = [
+			{ name: 'bot_orange', color: 'orange' },
+			{ name: 'bot_green', color: 'green' },
+			{ name: 'bot_red', color: 'red' },
+		];
+
+		opponentConfigs.forEach(({ name, color }) => {
+			const startPos = startSquares[color];
+			const bot = new Player(name, color, startPos, false);
+			match.addPlayer(bot);
+		});
+	}
 
 	match.active = true;
 	match.startInitiated = true;
@@ -222,6 +230,15 @@ function generateSessionId(): SessionId {
 }
 
 type BotResponse = { action?: unknown };
+
+async function isBotServerAvailable(obs: RlObservation): Promise<boolean> {
+	try {
+		await postToBotServer(obs);
+		return true;
+	} catch {
+		return false;
+	}
+}
 
 function postToBotServer(body: RlObservation): Promise<BotResponse> {
 	return new Promise((resolve, reject) => {

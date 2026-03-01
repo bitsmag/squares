@@ -32,7 +32,7 @@ curl -X POST http://localhost:3000/rl/reset \
 ```bash
 curl -X POST http://localhost:3000/rl/step \
    -H "Content-Type: application/json" \
-   -d '{"sessionId":"984d7d14-12c5-4613-aeab-bcfb1a7cc0f3","action":2}' \
+   -d '{"sessionId":"aa97d8b8-8989-4e4e-b406-68b19fe862a3","action":2}' \
    | jq
 ```
 
@@ -100,5 +100,4 @@ jq -r '
 
 ## Notes
 
-- The training environment can play the agent **against multiple bot opponents**. Opponent behavior comes from an external bot server (see `../bot-server`), but this is an implementation detail of `rlEnv.ts` and is not required if you just want single-agent training.
-- All RL-specific terminology and logic lives in this directory; the domain/game engine does not depend on these files.
+- The training environment can play the agent **against multiple bot opponents**. Opponent behavior comes from an external bot server (see `../bot-server`). If the bot-server is not running the model trains without opponents. 
