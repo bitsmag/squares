@@ -3,9 +3,7 @@ import type { Match } from '../entities/match';
 import type { MatchEventPublisher } from './matchEvents';
 import type { ClockProvider, ClockHandle } from './utilities/clockProvider';
 import { DefaultClockProvider } from './utilities/clockProvider';
-import type { Player } from '../entities/player';
-import type { PlayerColor } from '../valueObjects/valueObjects';
-import { getBotAction } from '../../RL/policyClient';
+import { updateBotDirections } from './utilities/botService';
 
 const COUNTDOWN_INTERVAL_MS = 1000;
 const DURATION_INTERVAL_MS = 1000;
@@ -19,7 +17,6 @@ export class MatchEngine {
   private countdownHandle: ClockHandle | null = null;
   private durationHandle: ClockHandle | null = null;
   private tickerHandle: ClockHandle | null = null;
-  private botDecisionInProgress = false;
 
   constructor(match: Match, publisher: MatchEventPublisher, clock: ClockProvider = DefaultClockProvider) {
     this.match = match;
@@ -83,9 +80,9 @@ export class MatchEngine {
       try {
         // Trigger asynchronous bot direction updates; do not await here so
         // the game loop stays on its regular tick schedule.
-        this.updateBotDirections().catch(() => {
+        updateBotDirections(this.match).catch(() => {
           // Errors are swallowed here; bots will simply keep their last
-          // direction if the policy server is unavailable.
+          // direction if the bot server is unavailable.
         });
 
         const result = computeTick(this.match, tickCount);
@@ -103,30 +100,6 @@ export class MatchEngine {
         this.publisher.publish({ type: 'FATAL_ERROR', match: this.match, error: err });
       }
     }, TICK_INTERVAL_MS);
-  }
-
-  private async updateBotDirections(): Promise<void> {
-    if (this.botDecisionInProgress) {
-      return;
-    }
-    this.botDecisionInProgress = true;
-
-    try {
-      const bots = this.match.players.filter((p) => isBotPlayer(p));
-      const tasks = bots.map(async (player) => {
-        const dir = await getBotAction(this.match, player.color as PlayerColor);
-        if (!this.match.active) {
-          return;
-        }
-        if (dir !== null) {
-          player.activeDirection = dir;
-        }
-      });
-
-      await Promise.all(tasks);
-    } finally {
-      this.botDecisionInProgress = false;
-    }
   }
 
   private clearCountdown(): void {
@@ -150,11 +123,3 @@ export class MatchEngine {
     }
   }
 }
-
-function isBotPlayer(player: Player): boolean {
-  // Simple convention-based bot detection: any player whose name starts
-  // with "bot" (case-insensitive) is treated as a bot controlled by the
-  // policy server.
-  return player.name.toLowerCase().startsWith('bot');
-}
-

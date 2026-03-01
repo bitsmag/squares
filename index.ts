@@ -13,7 +13,7 @@ import { createLobbyListeners } from './transport/lobby/socket/lobbyListeners';
 import { createMatchListeners } from './transport/match/socket/matchListeners';
 import lobbyRouter from './transport/lobby/http/lobbyRouter';
 import matchRouter from './transport/match/http/matchRouter';
-import { createRlRouter } from './RL/rlRouter';
+import { createRlRouter } from './RL-train/endpoints/rlRouter';
 import errorHandler from './transport/utilities/http/httpErrorHandler';
 
 const app = express();
