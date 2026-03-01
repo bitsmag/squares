@@ -1,6 +1,6 @@
 import { Match } from '../../domain/entities/match';
 import { Player } from '../../domain/entities/player';
-import type { PlayerColor, Direction } from '../../domain/valueObjects/valueObjects';
+import type { PlayerColor, Direction, SquareColor } from '../../domain/valueObjects/valueObjects';
 import { computeTick } from '../../domain/engine/tickRules';
 import http from 'http';
 import https from 'https';
@@ -12,7 +12,7 @@ export interface RlBoardSquare {
 	id: number;
 	x: number;
 	y: number;
-	color: import('../../domain/valueObjects/valueObjects').SquareColor;
+	color: SquareColor;
 	doubleSpeedSpecial: boolean;
 	getPointsSpecial: boolean;
 }
@@ -135,6 +135,12 @@ export async function rlStep(req: RlStepRequest): Promise<RlStepResponse> {
 	const { match, agentColor } = session;
 	const agent = match.getPlayerByColor(agentColor);
 
+	// Snapshot board colors before the tick for reward shaping
+	const boardBeforeById = new Map<number, SquareColor>();
+	match.board.squares.forEach((sq) => {
+		boardBeforeById.set(sq.id, sq.color);
+	});
+
 	const action = req.action;
 	const dir: Direction | null =
 		action === 1 ? 'left' :
@@ -176,15 +182,35 @@ export async function rlStep(req: RlStepRequest): Promise<RlStepResponse> {
 	}
 	updateDoubleSpeedStates(session);
 
+	// Reward shaping: reward painting new territory and lightly penalize idle steps,
+	// on top of the base score-delta reward from the engine.
+	let newlyClaimedSquares = 0;
+	match.board.squares.forEach((sq) => {
+		const prevColor = boardBeforeById.get(sq.id);
+		if (sq.color === agentColor && prevColor !== agentColor) {
+			newlyClaimedSquares += 1;
+		}
+	});
+
 	const newScore = agent.score;
-	const reward = newScore - session.lastScore;
+	const baseReward = newScore - session.lastScore;
 	session.lastScore = newScore;
+
+	const NEW_SQUARE_BONUS = 0.05;
+	const IDLE_PENALTY = -0.01;
+	let shapedReward = baseReward;
+
+	if (newlyClaimedSquares > 0) {
+		shapedReward += NEW_SQUARE_BONUS * newlyClaimedSquares;
+	} else if (baseReward === 0) {
+		shapedReward += IDLE_PENALTY;
+	}
 
 	const done = match.duration <= 0 || !match.active;
 	session.done = done;
 
 	const obs = buildObservationFromMatch(match, agentColor);
-	return { obs, reward, done, info: {} };
+	return { obs, reward: shapedReward, done, info: {} };
 }
 
 export function buildObservationFromMatch(match: Match, agentColor: PlayerColor): RlObservation {

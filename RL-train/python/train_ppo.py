@@ -31,9 +31,11 @@ def main() -> None:
 	# MultiInputPolicy because our observation is a Dict("board", "status")
 	if os.path.exists(model_path):
 		# Continue training from an existing checkpoint
+		print(f"[train_ppo] Continuing training from existing model at '{model_path}'")
 		model = PPO.load(model_path, env=env)
 	else:
 		# Start a new model from scratch
+		print("[train_ppo] No existing model found; starting from scratch")
 		model = PPO(
 			"MultiInputPolicy",
 			env,
@@ -42,7 +44,7 @@ def main() -> None:
 		)
 
 	# Adjust timesteps as needed
-	model.learn(total_timesteps=400_000)
+	model.learn(total_timesteps=600_000)
 
 	# Save (or overwrite) the trained policy
 	model.save(model_path.replace(".zip", ""))
