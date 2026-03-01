@@ -13,9 +13,9 @@ export function createRlRouter(): Router {
     }
   });
 
-  router.post('/step', (req: Request, res: Response) => {
+  router.post('/step', async (req: Request, res: Response) => {
     try {
-      const result = rlStep(req.body);
+      const result = await rlStep(req.body);
       res.json(result);
     } catch (err) {
       res.status(500).json({ error: 'rlStepFailed' });

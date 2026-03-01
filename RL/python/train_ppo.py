@@ -32,13 +32,14 @@ def main() -> None:
         "MultiInputPolicy",
         env,
         verbose=1,
+        ent_coef=0.015  
     )
 
     # Adjust timesteps as needed
-    model.learn(total_timesteps=100_000)
+    model.learn(total_timesteps=400_000)
 
     # Save the trained policy
-    model.save("ppo_squares")
+    model.save("ppo_squares2")
 
     env.close()
 

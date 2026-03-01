@@ -49,3 +49,14 @@ python3.11 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
 python train_ppo.py
+
+
+
+
+
+
+To run the server which serves the bot decisions at runtime to the nodebackend, in RL/python:
+
+source .venv/bin/activate
+pip install -r requirements.txt
+uvicorn policy_server:app --host 0.0.0.0 --port 8000

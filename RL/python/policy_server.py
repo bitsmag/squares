@@ -20,7 +20,7 @@ class ObservationModel(BaseModel):
 app = FastAPI()
 
 # Load trained policy once at startup
-MODEL_PATH = "ppo_squares.zip"
+MODEL_PATH = "ppo_squares2.zip"
 model = PPO.load(MODEL_PATH)
 
 # Dummy env instance to reuse the encoding logic
@@ -41,7 +41,7 @@ def act(obs: ObservationModel) -> Dict[str, int]:
     """
     raw_obs: Dict[str, Any] = obs.model_dump()
     encoded_obs = _encode_obs_from_raw(raw_obs)
-    action, _ = model.predict(encoded_obs, deterministic=True)
+    action, _ = model.predict(encoded_obs, deterministic=False)
     return {"action": int(action)}
 
 

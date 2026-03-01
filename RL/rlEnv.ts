@@ -2,6 +2,9 @@ import { Match } from '../domain/entities/match';
 import { Player } from '../domain/entities/player';
 import type { PlayerColor, Direction } from '../domain/valueObjects/valueObjects';
 import { computeTick } from '../domain/engine/tickRules';
+import http from 'http';
+import https from 'https';
+import { URL } from 'url';
 
 export type SessionId = string;
 
@@ -63,6 +66,9 @@ type RlSession = {
 
 const sessions = new Map<SessionId, RlSession>();
 
+const DEFAULT_POLICY_URL = 'http://localhost:8000/act';
+const POLICY_URL = process.env.POLICY_BASE_URL ?? DEFAULT_POLICY_URL;
+
 export function rlReset(_req: RlResetRequest): RlResetResponse {
   const sessionId: SessionId = generateSessionId();
   const match = new Match(sessionId);
@@ -71,6 +77,21 @@ export function rlReset(_req: RlResetRequest): RlResetResponse {
   const startSquares = match.board.startSquares;
   const agent = new Player('agent', agentColor, startSquares[agentColor], true);
   match.addPlayer(agent);
+
+  // Add three opponent bots for training only. Their directions will be
+  // controlled by the external policy server via rlStep.
+  const opponentConfigs: { name: string; color: PlayerColor }[] = [
+    { name: 'bot_orange', color: 'orange' },
+    { name: 'bot_green', color: 'green' },
+    { name: 'bot_red', color: 'red' },
+  ];
+
+  opponentConfigs.forEach(({ name, color }) => {
+    const startPos = startSquares[color];
+    const bot = new Player(name, color, startPos, false);
+    match.addPlayer(bot);
+  });
+
   match.active = true;
   match.startInitiated = true;
 
@@ -88,7 +109,7 @@ export function rlReset(_req: RlResetRequest): RlResetResponse {
   return { sessionId, obs };
 }
 
-export function rlStep(req: RlStepRequest): RlStepResponse {
+export async function rlStep(req: RlStepRequest): Promise<RlStepResponse> {
   const session = sessions.get(req.sessionId);
   if (!session) {
     throw new Error('rlSessionNotFound');
@@ -116,6 +137,32 @@ export function rlStep(req: RlStepRequest): RlStepResponse {
 
   agent.activeDirection = dir;
 
+  // Training-time opponents: for each non-agent player, query the
+  // external policy server with an observation where that player is
+  // treated as the agent. This enables self-play against a fixed policy
+  // snapshot during training.
+  const opponentTasks = match.players
+    .filter((player) => player.color !== agentColor)
+    .map(async (player) => {
+      const obsForOpponent = buildObservationFromMatch(match, player.color as PlayerColor);
+      const opponentAction = await getPolicyAction(obsForOpponent);
+
+      if (opponentAction === null) {
+        return; // keep last direction on failure
+      }
+
+      const newDir: Direction | null =
+        opponentAction === 1 ? 'left' :
+        opponentAction === 2 ? 'up' :
+        opponentAction === 3 ? 'right' :
+        opponentAction === 4 ? 'down' :
+        player.activeDirection;
+
+      player.activeDirection = newDir;
+    });
+
+  await Promise.all(opponentTasks);
+
   session.tickCount += 1;
   computeTick(match, session.tickCount);
 
@@ -137,6 +184,7 @@ export function rlStep(req: RlStepRequest): RlStepResponse {
   const obs = buildObservationFromMatch(match, agentColor);
   return { obs, reward, done, info: {} };
 }
+
 export function buildObservationFromMatch(match: Match, agentColor: PlayerColor): RlObservation {
   const { board } = match;
   const agent = match.getPlayerByColor(agentColor);
@@ -181,4 +229,67 @@ function generateSessionId(): SessionId {
     return (crypto as Crypto).randomUUID();
   }
   return Math.random().toString(36).slice(2);
+}
+
+type PolicyResponse = { action?: unknown };
+
+function postToPolicyServer(body: RlObservation): Promise<PolicyResponse> {
+  return new Promise((resolve, reject) => {
+    try {
+      const urlObj = new URL(POLICY_URL);
+      const isHttps = urlObj.protocol === 'https:';
+      const client = isHttps ? https : http;
+
+      const data = JSON.stringify(body ?? {});
+
+      const options: http.RequestOptions = {
+        hostname: urlObj.hostname,
+        port: urlObj.port ? Number(urlObj.port) : isHttps ? 443 : 80,
+        path: urlObj.pathname + (urlObj.search || ''),
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Content-Length': Buffer.byteLength(data),
+        },
+      };
+
+      const req = client.request(options, (res) => {
+        let raw = '';
+        res.setEncoding('utf8');
+        res.on('data', (chunk) => {
+          raw += chunk;
+        });
+        res.on('end', () => {
+          if (res.statusCode && res.statusCode >= 200 && res.statusCode < 300) {
+            try {
+              const parsed = raw.length ? JSON.parse(raw) : {};
+              resolve(parsed as PolicyResponse);
+            } catch (err) {
+              reject(err);
+            }
+          } else {
+            reject(new Error(`Policy server responded with status ${res.statusCode}`));
+          }
+        });
+      });
+
+      req.on('error', (err) => {
+        reject(err);
+      });
+
+      req.write(data);
+      req.end();
+    } catch (err) {
+      reject(err);
+    }
+  });
+}
+
+async function getPolicyAction(obs: RlObservation): Promise<number | null> {
+  try {
+    const response = await postToPolicyServer(obs);
+    return typeof response.action === 'number' ? response.action : null;
+  } catch {
+    return null;
+  }
 }
