@@ -1,0 +1,30 @@
+version: "3.9"
+
+services:
+  node-app:
+    build: .
+    image: squares-main
+    container_name: squares-main
+    environment:
+      # Public HTTP port for the Node server
+      PORT: "3000"
+      # Internal URL for the bot server inside the Compose / ECS network
+      BOT_SERVER_URL: "http://bot-server:8000/act"
+    ports:
+      # Expose the game server on localhost:3000
+      - "3000:3000"
+    depends_on:
+      - bot-server
+
+  bot-server:
+    build: ./bot-server
+    image: squares-bot-server
+    container_name: squares-bot-server
+    # No env vars required; model path is configured in bot_server.py
+    # The PPO model is baked into the image via bot-server/Dockerfile (COPY models ./models).
+    expose:
+      - "8000"
+
+networks:
+  default:
+    name: squares-network

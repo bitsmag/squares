@@ -95,9 +95,26 @@ jq -r '
    python train_ppo.py
    ```
 
-   - The script uses the environment variable `SQUARES_BASE_URL` (optional) to point at the Node server. If unset, it defaults to `http://localhost:3000`.
    - A model file such as `ppo_squares2.zip` will be written next to `train_ppo.py`.
 
 ## Notes
 
 - The training environment can play the agent **against multiple bot opponents**. Opponent behavior comes from an external bot server (see `../bot-server`). If the bot-server is not running the model trains without opponents. 
+
+## Environment Variables 
+
+### Python
+- `SQUARES_BASE_URL` (optional)
+   - Base URL of the Squares Node server for the headless RL API.
+   - Used by `train_ppo.py` to point the Gym environment at the correct server.
+   - Defaults to `http://localhost:3000`.
+- `SQUARES_MODEL_PATH` (optional)
+   - Filesystem path for reading/writing the PPO model checkpoint.
+   - Used by `train_ppo.py`.
+   - Defaults to `ppo_squares2.zip` in the current working directory.
+
+### Node
+- `BOT_SERVER_URL` (optional)
+   - URL for the external bot server used as opponents during RL training (this is also the one used for bot decisions in real matches)
+   - Used by `endpoints/rlEnv.ts`.
+   - Defaults to `http://localhost:8000/act`.

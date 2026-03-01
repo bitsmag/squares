@@ -1,0 +1,50 @@
+{
+  "family": "squares-task",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "runtimePlatform": {
+    "cpuArchitecture": "ARM64",
+    "operatingSystemFamily": "LINUX"
+  },
+  "cpu": "512",
+  "memory": "1024",
+  "executionRoleArn": "arn:aws:iam::421939066732:role/ecsTaskExecutionRole",
+  "containerDefinitions": [
+    {
+      "name": "main",
+      "image": "421939066732.dkr.ecr.eu-central-1.amazonaws.com/squares/main:latest",
+      "essential": true,
+      "portMappings": [
+        { "containerPort": 3000, "protocol": "tcp" }
+      ],
+      "environment": [
+        { "name": "PORT", "value": "3000" },
+        { "name": "BOT_SERVER_URL", "value": "http://127.0.0.1:8000/act" }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/squares",
+          "awslogs-region": "eu-central-1",
+          "awslogs-stream-prefix": "main"
+        }
+      }
+    },
+    {
+      "name": "bot-server",
+      "image": "421939066732.dkr.ecr.eu-central-1.amazonaws.com/squares/bot-server:latest",
+      "essential": true,
+      "portMappings": [
+        { "containerPort": 8000, "protocol": "tcp" }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/squares",
+          "awslogs-region": "eu-central-1",
+          "awslogs-stream-prefix": "bot"
+        }
+      }
+    }
+  ]
+}
