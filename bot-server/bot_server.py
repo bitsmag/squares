@@ -17,7 +17,7 @@ class ObservationModel(BaseModel):
 
 app = FastAPI()
 
-MODEL_PATH = "models/ppo_squares3.zip"
+MODEL_PATH = "models/ppo_squares5.zip"
 model = PPO.load(MODEL_PATH)
 
 

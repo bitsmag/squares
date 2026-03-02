@@ -84,11 +84,12 @@ aws ecs register-task-definition \
 
 In any case:
 
+```bash
 # Roll out the new revision to the running service
 aws ecs update-service \
   --cluster squares-cluster \
   --service squares-service \
-  --task-definition squares-task
+  --force-new-deployment
 ```
 
 After the service has finished deploying, the game is available via the [ALB DNS](http://squares-alb-1556325320.eu-central-1.elb.amazonaws.com)

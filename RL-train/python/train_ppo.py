@@ -23,7 +23,7 @@ def make_env(base_url: str = "http://localhost:3000"):
 def main() -> None:
 	# Ensure the Node server is running on the given base_url/port.
 	base_url = os.environ.get("SQUARES_BASE_URL", "http://localhost:3000")
-	model_path = os.environ.get("SQUARES_MODEL_PATH", "ppo_squares3.zip")
+	model_path = os.environ.get("SQUARES_MODEL_PATH", "ppo_squares4.zip")
 
 	# Simple single-process vectorized env
 	env = DummyVecEnv([make_env(base_url)])
@@ -44,7 +44,7 @@ def main() -> None:
 		)
 
 	# Adjust timesteps as needed
-	model.learn(total_timesteps=900_000)
+	model.learn(total_timesteps=4_000_000)
 
 	# Save (or overwrite) the trained policy
 	model.save(model_path.replace(".zip", ""))
