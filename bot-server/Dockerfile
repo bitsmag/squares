@@ -21,4 +21,4 @@ COPY models ./models
 EXPOSE 8000
 
 # Run uvicorn with reduced logging: warning level, no per-request access logs
-CMD ["uvicorn", "bot_server:app", "--host", "0.0.0.0", "--port", "8000", "--log-level", "warning", "--access-log", "false"]
+CMD ["uvicorn", "bot_server:app", "--host", "0.0.0.0", "--port", "8000", "--log-level", "warning", "--no-access-log"]

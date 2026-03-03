@@ -57,9 +57,18 @@ class SquaresEnv(gym.Env):
 
 	def _post(self, path: str, payload: Dict[str, Any]) -> Dict[str, Any]:
 		url = f"{self.base_url}{path}"
-		r = requests.post(url, json=payload, timeout=5.0)
-		r.raise_for_status()
-		return r.json()
+		# Be a bit robust to transient connection issues (e.g. bot/server restarts)
+		last_err: Exception | None = None
+		for _ in range(3):
+			try:
+				r = requests.post(url, json=payload, timeout=15.0)
+				r.raise_for_status()
+				return r.json()
+			except RequestException as e:
+				last_err = e
+				time.sleep(0.5)
+		# If we get here, all retries failed
+		raise RuntimeError(f"SquaresEnv backend {url} unreachable after retries") from last_err
 
 	def _backend_reset(self) -> Dict[str, Any]:
 		data = self._post("/rl/reset", {})

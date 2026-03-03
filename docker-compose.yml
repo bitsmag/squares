@@ -6,7 +6,7 @@ services:
     image: squares-main
     container_name: squares-main
     env_file:
-      - ./node-app.env
+      - ./.env
     ports:
       # Expose the game server on localhost:3000
       - "3000:3000"
@@ -18,7 +18,7 @@ services:
     image: squares-bot-server
     container_name: squares-bot-server
     env_file:
-      - ./bot-server.env
+      - ./bot-server/.env
     # The PPO models are baked into the image via bot-server/Dockerfile (COPY models ./models).
     expose:
       - "8000"

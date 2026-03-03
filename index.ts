@@ -16,6 +16,17 @@ import matchRouter from './transport/match/http/matchRouter';
 import { createRlRouter } from './RL-train/endpoints/rlRouter';
 import errorHandler from './transport/utilities/http/httpErrorHandler';
 
+// Log unexpected errors that might otherwise crash the process
+process.on('unhandledRejection', (reason, promise) => {
+  // eslint-disable-next-line no-console
+  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+});
+
+process.on('uncaughtException', (err) => {
+  console.error('Uncaught Exception:', err);
+  process.exit(1); // let Docker/systemd restart the process
+});
+
 const app = express();
 const httpServer = createServer(app);
 const io = new SocketIOServer(httpServer);

@@ -105,7 +105,7 @@ def main() -> None:
 	# Adjust timesteps as needed; also save periodic snapshots and TensorBoard logs.
 	save_freq = int(os.environ.get("SQUARES_SNAPSHOT_FREQ", "200000"))
 	callback = SnapshotCallback(save_freq=save_freq, model_base=model_base, vecnorm_path=vecnorm_path)
-	model.learn(total_timesteps=3_000_000, callback=callback, tb_log_name=model_base)
+	model.learn(total_timesteps=2_500_000, callback=callback, tb_log_name=model_base)
 
 	# Save (or overwrite) the trained policy and normalisation stats
 	model.save(model_base)

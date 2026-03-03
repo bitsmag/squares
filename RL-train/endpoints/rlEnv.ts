@@ -71,6 +71,14 @@ const sessions = new Map<SessionId, RlSession>();
 const DEFAULT_BOT_SERVER_URL = 'http://localhost:8000/act';
 const BOT_SERVER_URL = process.env.BOT_SERVER_URL ?? DEFAULT_BOT_SERVER_URL;
 
+// Probability [0,1] that a training episode will include bot opponents
+// when the external bot server is reachable. The remaining episodes are solo.
+const opponentProbRaw = process.env.RL_TRAIN_OPPONENT_PROB;
+const RL_TRAIN_OPPONENT_PROB =
+	opponentProbRaw !== undefined
+		? Math.min(Math.max(Number(opponentProbRaw), 0), 1)
+		: 0.5;
+
 export async function rlReset(_req: RlResetRequest): Promise<RlResetResponse> {
 	const sessionId: SessionId = generateSessionId();
 	const match = new Match(sessionId);
@@ -80,12 +88,15 @@ export async function rlReset(_req: RlResetRequest): Promise<RlResetResponse> {
 	const agent = new Player('agent', agentColor, startSquares[agentColor], true);
 	match.addPlayer(agent);
 
-	// Only add bot opponents if the external bot server appears to be reachable.
-	// This keeps the environment usable even when the bot process is not running.
+	// Only add bot opponents if the external bot server appears to be reachable
+	// and this episode is sampled to include opponents based on RL_TRAIN_OPPONENT_PROB.
+	// This keeps the environment usable even when the bot process is not running
+	// and allows mixing solo and vs-opponent episodes during training.
 	const obsForAgent = buildObservationFromMatch(match, agentColor);
 	const botServerAvailable = await isBotServerAvailable(obsForAgent);
+	const spawnOpponents = botServerAvailable && Math.random() < RL_TRAIN_OPPONENT_PROB;
 
-	if (botServerAvailable) {
+	if (spawnOpponents) {
 		const opponentConfigs: { name: string; color: PlayerColor }[] = [
 			{ name: 'bot_orange', color: 'orange' },
 			// { name: 'bot_green', color: 'green' },
@@ -198,8 +209,8 @@ export async function rlStep(req: RlStepRequest): Promise<RlStepResponse> {
 	session.lastScore = newScore;
 
 	const NEW_SQUARE_BONUS = 0.1;
-	const IDLE_PENALTY = -0.06;
-	const DOUBLE_SPEED_BONUS = 0.5;
+	const IDLE_PENALTY = -0.1;
+	const DOUBLE_SPEED_BONUS = 1.0
 	let shapedReward = baseReward;
 
 	if (newlyClaimedSquares > 0) {

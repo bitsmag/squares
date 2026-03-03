@@ -4,8 +4,16 @@
     "**/dist": true,
     "**/.nyc_output": true,
     "**/coverage": true,
-    "**/.*": true,
     "**/package-lock.json": true,
     "**/tsconfig.json": true,
+    "**/.nycrc.json": true,
+    "**/.gitignore.json": true,
+    "**/.eslintignore": true,
+    "**/.eslintrc.json": true,
+    "**/.jshintrc": true,
+    "**/.prettierrc": true,
+    "**/bot-server/.venv": true,
+    "**/RL-train/python/__pycache__": true,
+    "**/RL-train/python/.venv": true,
   }
 }
