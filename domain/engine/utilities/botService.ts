@@ -16,12 +16,29 @@ export function isBotPlayer(player: Player): boolean {
   return player.name.toLowerCase().startsWith('bot');
 }
 
+function getBotIdForPlayer(player: Player): string {
+  const name = player.name.toLowerCase();
+  if (!name.startsWith('bot')) {
+    return '1';
+  }
+
+  const suffix = name.slice(3).trim();
+  const idNum = Number.parseInt(suffix, 10);
+  if (!Number.isNaN(idNum) && idNum >= 1 && idNum <= 4) {
+    return String(idNum);
+  }
+
+  // Fallback to bot "1" for any unsupported or missing suffix
+  return '1';
+}
+
 export async function updateBotDirections(match: Match): Promise<void> {
   const bots = match.players.filter((p) => isBotPlayer(p));
   if (bots.length === 0) return;
 
   const tasks = bots.map(async (player) => {
-    const dir = await getBotAction(match, player.color as PlayerColor);
+    const botId = getBotIdForPlayer(player);
+    const dir = await getBotAction(match, player.color as PlayerColor, botId);
     if (!match.active) return;
     if (dir !== null) {
       player.activeDirection = dir;
@@ -31,10 +48,10 @@ export async function updateBotDirections(match: Match): Promise<void> {
   await Promise.all(tasks);
 }
 
-async function getBotAction(match: Match, color: PlayerColor): Promise<Direction | null> {
+async function getBotAction(match: Match, color: PlayerColor, botId: string): Promise<Direction | null> {
   const obs = buildObservationForPlayer(match, color);
   try {
-    const response = await postToBotServer(obs);
+    const response = await postToBotServer(obs, botId);
     const action = typeof response.action === 'number' ? response.action : 0;
 
     switch (action) {
@@ -93,7 +110,7 @@ function buildObservationForPlayer(match: Match, agentColor: PlayerColor) {
   };
 }
 
-function postToBotServer(body: unknown): Promise<BotServerResponse> {
+function postToBotServer(body: unknown, botId: string): Promise<BotServerResponse> {
   return new Promise((resolve, reject) => {
     try {
       const urlObj = new URL(BOT_SERVER_URL);
@@ -105,7 +122,10 @@ function postToBotServer(body: unknown): Promise<BotServerResponse> {
       const options: http.RequestOptions = {
         hostname: urlObj.hostname,
         port: urlObj.port ? Number(urlObj.port) : isHttps ? 443 : 80,
-        path: urlObj.pathname + (urlObj.search || ''),
+        path:
+          urlObj.pathname.replace(/\/+$/, '') +
+          `/${botId}` +
+          (urlObj.search || ''),
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
