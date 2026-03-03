@@ -95,8 +95,12 @@ jq -r '
    python train_ppo.py
    ```
 
-   - A model file such as `ppo_squares2.zip` will be written next to `train_ppo.py`.
+   - A model file such as `ppo_squares.zip` will be written next to `train_ppo.py`.
 
+   ```bash
+   tensorboard --logdir ./tb_logs
+   ```
+   
 ## Notes
 
 - The training environment can play the agent **against multiple bot opponents**. Opponent behavior comes from an external bot server (see `../bot-server`). If the bot-server is not running the model trains without opponents. 

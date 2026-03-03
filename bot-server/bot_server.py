@@ -1,11 +1,15 @@
 from __future__ import annotations
 
-from typing import Any, Dict
+from typing import Any, Dict, Optional
+
+import os
+import pickle
 
 import numpy as np
 from fastapi import FastAPI
 from pydantic import BaseModel
 from stable_baselines3 import PPO
+from stable_baselines3.common.vec_env import VecNormalize
 
 
 class ObservationModel(BaseModel):
@@ -17,8 +21,31 @@ class ObservationModel(BaseModel):
 
 app = FastAPI()
 
-MODEL_PATH = "models/ppo_squares5.zip"
+MODEL_PATH = os.environ.get("BOT_MODEL_PATH", "models/ppo_squares.zip")
+MODEL_BASE = os.path.splitext(MODEL_PATH)[0]
+VECNORM_PATH = os.environ.get("BOT_VECNORM_PATH", f"{MODEL_BASE}_vecnormalize.pkl")
+
 model = PPO.load(MODEL_PATH)
+
+
+def _load_vecnormalize(path: str) -> Optional[VecNormalize]:
+	"""Load VecNormalize stats if available, otherwise return None."""
+	if not os.path.exists(path):
+		return None
+	try:
+		with open(path, "rb") as f:
+			vecnorm = pickle.load(f)
+		if not isinstance(vecnorm, VecNormalize):
+			return None
+		# Do not update stats or rewards at runtime
+		vecnorm.training = False
+		vecnorm.norm_reward = False
+		return vecnorm
+	except Exception:
+		return None
+
+
+VECNORM: Optional[VecNormalize] = _load_vecnormalize(VECNORM_PATH)
 
 
 def _encode_obs(raw_obs: Dict[str, Any]) -> Dict[str, np.ndarray]:
@@ -61,7 +88,7 @@ def _encode_obs(raw_obs: Dict[str, Any]) -> Dict[str, np.ndarray]:
 			board[6, y, x] = 1.0
 
 	agent = raw_obs["agent"]
-	pos = float(agent["pos"])
+	pos = int(agent["pos"])
 	dir_str = agent["dir"]
 	double_speed = 1.0 if agent["doubleSpeed"] else 0.0
 	score = float(agent["score"])
@@ -75,9 +102,43 @@ def _encode_obs(raw_obs: Dict[str, Any]) -> Dict[str, np.ndarray]:
 	}
 	dir_idx = float(dir_idx_map.get(dir_str, 0))
 
-	status = np.array([pos, dir_idx, double_speed, score], dtype=np.float32)
+	width = board_shape[2]
+	x = float(pos % width)
+	y = float(pos // width)
+
+	status = np.array([x, y, dir_idx, double_speed, score], dtype=np.float32)
+
+	if VECNORM is not None:
+		try:
+			obs_dict = {"board": board, "status": status}
+			obs_dict = _apply_vecnormalize(VECNORM, obs_dict)
+			board = obs_dict["board"]
+			status = obs_dict["status"]
+		except Exception:
+			pass
 
 	return {"board": board, "status": status}
+
+
+def _apply_vecnormalize(vecnorm: VecNormalize, obs: Dict[str, np.ndarray]) -> Dict[str, np.ndarray]:
+	"""Apply VecNormalize-style observation normalization to a single dict obs."""
+	normalized: Dict[str, np.ndarray] = {}
+	# VecNormalize stores per-key RunningMeanStd objects in obs_rms
+	for key, value in obs.items():
+		rms = getattr(vecnorm, "obs_rms", {}).get(key)  # type: ignore[union-attr]
+		if rms is None:
+			normalized[key] = value
+			continue
+
+		mean = rms.mean
+		var = rms.var
+		eps = getattr(vecnorm, "epsilon", 1e-8)
+		clip = getattr(vecnorm, "clip_obs", np.inf)
+
+		norm = (value - mean) / np.sqrt(var + eps)
+		normalized[key] = np.clip(norm, -clip, clip)
+
+	return normalized
 
 
 @app.post("/act")

@@ -134,6 +134,7 @@ export async function rlStep(req: RlStepRequest): Promise<RlStepResponse> {
 
 	const { match, agentColor } = session;
 	const agent = match.getPlayerByColor(agentColor);
+	const hadDoubleSpeedBefore = agent.doubleSpeedSpecial;
 
 	// Snapshot board colors before the tick for reward shaping
 	const boardBeforeById = new Map<number, SquareColor>();
@@ -196,14 +197,20 @@ export async function rlStep(req: RlStepRequest): Promise<RlStepResponse> {
 	const baseReward = newScore - session.lastScore;
 	session.lastScore = newScore;
 
-	const NEW_SQUARE_BONUS = 0.05;
-	const IDLE_PENALTY = -0.01;
+	const NEW_SQUARE_BONUS = 0.1;
+	const IDLE_PENALTY = -0.06;
+	const DOUBLE_SPEED_BONUS = 0.5;
 	let shapedReward = baseReward;
 
 	if (newlyClaimedSquares > 0) {
 		shapedReward += NEW_SQUARE_BONUS * newlyClaimedSquares;
 	} else if (baseReward === 0) {
 		shapedReward += IDLE_PENALTY;
+	}
+
+	// Bonus when the agent picks up a new double-speed special.
+	if (!hadDoubleSpeedBefore && agent.doubleSpeedSpecial) {
+		shapedReward += DOUBLE_SPEED_BONUS;
 	}
 
 	const done = match.duration <= 0 || !match.active;

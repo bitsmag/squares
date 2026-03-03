@@ -24,7 +24,7 @@ class SquaresEnv(gym.Env):
 		# Actions: 0 = keep direction, 1 = left, 2 = up, 3 = right, 4 = down
 		self.action_space = spaces.Discrete(5)
 
-		# Observation: board (7 channels, 9x9) + status vector (4 scalars)
+		# Observation: board (7 channels, 9x9) + status vector (5 scalars)
 		# Channels:
 		#   0..4: one-hot of color ['', agent, other1, other2, other3]
 		#   5: doubleSpeedSpecial mask
@@ -34,11 +34,11 @@ class SquaresEnv(gym.Env):
 			low=0.0, high=1.0, shape=self.board_shape, dtype=np.float32
 		)
 
-		# status: [pos (0..80), dir_idx (0..4), doubleSpeed (0/1), score]
+		# status: [x (0..8), y (0..8), dir_idx (0..4), doubleSpeed (0/1), score]
 		# dir_idx: 0=none, 1=left, 2=up, 3=right, 4=down
 		self.obs_status_space = spaces.Box(
-			low=np.array([0, 0, 0, 0], dtype=np.float32),
-			high=np.array([80, 4, 1, np.inf], dtype=np.float32),
+			low=np.array([0, 0, 0, 0, 0], dtype=np.float32),
+			high=np.array([8, 8, 4, 1, np.inf], dtype=np.float32),
 			dtype=np.float32,
 		)
 
@@ -114,7 +114,7 @@ class SquaresEnv(gym.Env):
 
 		# status vector
 		agent = raw_obs["agent"]
-		pos = float(agent["pos"])
+		pos = int(agent["pos"])
 		dir_str = agent["dir"]
 		double_speed = 1.0 if agent["doubleSpeed"] else 0.0
 		score = float(agent["score"])
@@ -128,7 +128,11 @@ class SquaresEnv(gym.Env):
 		}
 		dir_idx = float(dir_idx_map.get(dir_str, 0))
 
-		status = np.array([pos, dir_idx, double_speed, score], dtype=np.float32)
+		width = self.board_shape[2]
+		x = float(pos % width)
+		y = float(pos // width)
+
+		status = np.array([x, y, dir_idx, double_speed, score], dtype=np.float32)
 
 		return {"board": board, "status": status}
 
