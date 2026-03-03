@@ -1,8 +1,10 @@
 import json
+import time
 from typing import Any, Dict, Tuple
 
 import numpy as np
 import requests
+from requests.exceptions import RequestException
 import gymnasium as gym
 from gymnasium import spaces
 

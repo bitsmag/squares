@@ -95,7 +95,7 @@ def main() -> None:
 			gamma=0.995,        # slightly longer horizon
 			gae_lambda=0.95,
 			clip_range=0.2,
-			ent_coef=0.02,      # a bit more exploration
+			ent_coef=0.04,      # a bit more exploration
 			vf_coef=0.5,
 			max_grad_norm=0.5,
 			verbose=1,

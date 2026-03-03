@@ -61,6 +61,7 @@ type RlSession = {
 	agentColor: PlayerColor;
 	tickCount: number;
 	lastScore: number;
+	idleStreak: number;
 	done: boolean;
 	doubleSpeedTicksByColor: Partial<Record<PlayerColor, number>>;
 };
@@ -119,6 +120,7 @@ export async function rlReset(_req: RlResetRequest): Promise<RlResetResponse> {
 		agentColor,
 		tickCount: 0,
 		lastScore: 0,
+		idleStreak: 0,
 		done: false,
 		doubleSpeedTicksByColor: {},
 	};
@@ -209,14 +211,25 @@ export async function rlStep(req: RlStepRequest): Promise<RlStepResponse> {
 	session.lastScore = newScore;
 
 	const NEW_SQUARE_BONUS = 0.1;
-	const IDLE_PENALTY = -0.1;
-	const DOUBLE_SPEED_BONUS = 1.0
+	const IDLE_PENALTY = -0.05;
+	const MAX_IDLE_PENALTY = -0.5;
+	const DOUBLE_SPEED_BONUS = 1.0;
 	let shapedReward = baseReward;
 
 	if (newlyClaimedSquares > 0) {
 		shapedReward += NEW_SQUARE_BONUS * newlyClaimedSquares;
+		// Reset idle streak when we make territorial progress.
+		session.idleStreak = 0;
 	} else if (baseReward === 0) {
-		shapedReward += IDLE_PENALTY;
+		// No score change and no new squares: increment idle streak and
+		// apply an increasingly strong penalty, capped at MAX_IDLE_PENALTY.
+		session.idleStreak += 1;
+		const penalty = Math.max(IDLE_PENALTY * session.idleStreak, MAX_IDLE_PENALTY);
+		shapedReward += penalty;
+	} else {
+		// Score changed (e.g. loop or special) even if no new squares were counted;
+		// treat this as non-idle and reset the streak.
+		session.idleStreak = 0;
 	}
 
 	// Bonus when the agent picks up a new double-speed special.
