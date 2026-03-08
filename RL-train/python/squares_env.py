@@ -52,7 +52,6 @@ class SquaresEnv(gym.Env):
 		)
 
 		self._session_id: str | None = None
-		self._last_score: float = 0.0
 		self._last_raw_obs: Dict[str, Any] | None = None
 
 	# ---- HTTP helpers ----
@@ -161,7 +160,6 @@ class SquaresEnv(gym.Env):
 		super().reset(seed=seed)
 		raw_obs = self._backend_reset()
 		self._last_raw_obs = raw_obs
-		self._last_score = float(raw_obs["agent"]["score"])
 		obs = self._encode_obs(raw_obs)
 		info: Dict[str, Any] = {}
 		return obs, info
@@ -180,7 +178,6 @@ class SquaresEnv(gym.Env):
 			# This may still raise if the backend remains down, in which case training will stop.
 			raw_obs = self._backend_reset()
 			self._last_raw_obs = raw_obs
-			self._last_score = float(raw_obs["agent"]["score"])
 			obs = self._encode_obs(raw_obs)
 			terminated = True
 			truncated = True
@@ -191,8 +188,6 @@ class SquaresEnv(gym.Env):
 		self._last_raw_obs = raw_obs
 
 		# Backend reward is already score delta; we trust it here.
-		self._last_score = float(raw_obs["agent"]["score"])
-
 		obs = self._encode_obs(raw_obs)
 		terminated = done
 		truncated = False  # could use a max_steps cap if desired

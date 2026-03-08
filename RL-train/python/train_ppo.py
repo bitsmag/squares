@@ -62,6 +62,36 @@ def main() -> None:
 	vecnorm_path = f"{model_base}_vecnormalize.pkl"
 	log_dir = os.environ.get("SQUARES_TB_LOGDIR", "./tb_logs")
 
+	# PPO hyperparameters configurable via environment variables, with sensible defaults.
+	def _get_int(name: str, default: int) -> int:
+		value = os.environ.get(name)
+		if value is None:
+			return default
+		try:
+			return int(value)
+		except ValueError:
+			return default
+
+	def _get_float(name: str, default: float) -> float:
+		value = os.environ.get(name)
+		if value is None:
+			return default
+		try:
+			return float(value)
+		except ValueError:
+			return default
+
+	learning_rate = _get_float("SQUARES_LEARNING_RATE", 3e-4)
+	n_steps = _get_int("SQUARES_N_STEPS", 2048)
+	batch_size = _get_int("SQUARES_BATCH_SIZE", 512)
+	gamma = _get_float("SQUARES_GAMMA", 0.995)
+	gae_lambda = _get_float("SQUARES_GAE_LAMBDA", 0.95)
+	clip_range = _get_float("SQUARES_CLIP_RANGE", 0.2)
+	ent_coef = _get_float("SQUARES_ENT_COEF", 0.04)
+	vf_coef = _get_float("SQUARES_VF_COEF", 0.5)
+	max_grad_norm = _get_float("SQUARES_MAX_GRAD_NORM", 0.5)
+	total_timesteps = _get_int("SQUARES_TOTAL_TIMESTEPS", 5_000_000)
+
 	# Simple single-process vectorized env, wrapped with VecNormalize
 	raw_env = DummyVecEnv([make_env(base_url)])
 	if os.path.exists(vecnorm_path):
@@ -89,15 +119,15 @@ def main() -> None:
 		model = PPO(
 			"MultiInputPolicy",
 			env,
-			learning_rate=3e-4,
-			n_steps=2048,       # or 1024 on smaller machines
-			batch_size=512,     # 256 if memory is tight
-			gamma=0.995,        # slightly longer horizon
-			gae_lambda=0.95,
-			clip_range=0.2,
-			ent_coef=0.04,      # a bit more exploration
-			vf_coef=0.5,
-			max_grad_norm=0.5,
+			learning_rate=learning_rate,
+			n_steps=n_steps,
+			batch_size=batch_size,
+			gamma=gamma,
+			gae_lambda=gae_lambda,
+			clip_range=clip_range,
+			ent_coef=ent_coef,
+			vf_coef=vf_coef,
+			max_grad_norm=max_grad_norm,
 			verbose=1,
 			tensorboard_log=log_dir,
 		)
@@ -105,7 +135,7 @@ def main() -> None:
 	# Adjust timesteps as needed; also save periodic snapshots and TensorBoard logs.
 	save_freq = int(os.environ.get("SQUARES_SNAPSHOT_FREQ", "200000"))
 	callback = SnapshotCallback(save_freq=save_freq, model_base=model_base, vecnorm_path=vecnorm_path)
-	model.learn(total_timesteps=5_000_000, callback=callback, tb_log_name=model_base)
+	model.learn(total_timesteps=total_timesteps, callback=callback, tb_log_name=model_base)
 
 	# Save (or overwrite) the trained policy and normalisation stats
 	model.save(model_base)

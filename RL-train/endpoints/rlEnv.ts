@@ -80,6 +80,13 @@ const RL_TRAIN_OPPONENT_PROB =
 		? Math.min(Math.max(Number(opponentProbRaw), 0), 1)
 		: 0.5;
 
+function getEnvNumber(name: string, defaultValue: number): number {
+	const raw = process.env[name];
+	if (raw === undefined) return defaultValue;
+	const parsed = Number(raw);
+	return Number.isFinite(parsed) ? parsed : defaultValue;
+}
+
 export async function rlReset(_req: RlResetRequest): Promise<RlResetResponse> {
 	const sessionId: SessionId = generateSessionId();
 	const match = new Match(sessionId);
@@ -210,11 +217,16 @@ export async function rlStep(req: RlStepRequest): Promise<RlStepResponse> {
 	const baseReward = newScore - session.lastScore;
 	session.lastScore = newScore;
 
-	const NEW_SQUARE_BONUS = 0.1;
-	const IDLE_PENALTY = -0.05;
-	const MAX_IDLE_PENALTY = -0.5;
-	const DOUBLE_SPEED_BONUS = 1.0;
-	const MARGIN_FACTOR = 0.01; // small shaping towards higher score margin
+	// Reward shaping constants, configurable via environment variables.
+	// These defaults reflect the current tuned values used for training.
+	const NEW_SQUARE_BONUS = getEnvNumber('RL_REWARD_NEW_SQUARE_BONUS', 0.1);
+	const IDLE_PENALTY = getEnvNumber('RL_REWARD_IDLE_PENALTY', -0.05);
+	const MAX_IDLE_PENALTY = getEnvNumber('RL_REWARD_MAX_IDLE_PENALTY', -0.5);
+	const DOUBLE_SPEED_BONUS = getEnvNumber('RL_REWARD_DOUBLE_SPEED_BONUS', 1.0);
+	const MARGIN_FACTOR = getEnvNumber('RL_REWARD_MARGIN_FACTOR', 0.01); // small shaping towards higher score margin
+	const WIN_BASE_BONUS = getEnvNumber('RL_REWARD_WIN_BASE_BONUS', 7);
+	const WIN_MARGIN_FACTOR = getEnvNumber('RL_REWARD_WIN_MARGIN_FACTOR', 0.5);
+	const WIN_MARGIN_CAP = getEnvNumber('RL_REWARD_WIN_MARGIN_CAP', 50);
 	let shapedReward = baseReward;
 
 	if (newlyClaimedSquares > 0) {
@@ -247,8 +259,8 @@ export async function rlStep(req: RlStepRequest): Promise<RlStepResponse> {
 		const done = match.duration <= 0 || !match.active;
 		if (done && margin > 0) {
 			// Base reward for any win plus extra for larger margins, capped.
-			const cappedMargin = Math.min(margin, 50);
-			const winBonus = 7 + 0.5 * cappedMargin;
+			const cappedMargin = Math.min(margin, WIN_MARGIN_CAP);
+			const winBonus = WIN_BASE_BONUS + WIN_MARGIN_FACTOR * cappedMargin;
 			shapedReward += winBonus;
 		}
 	}
