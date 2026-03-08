@@ -221,7 +221,11 @@ export async function rlStep(req: RlStepRequest): Promise<RlStepResponse> {
 	// These defaults reflect the current tuned values used for training.
 	const NEW_SQUARE_BONUS = getEnvNumber('RL_REWARD_NEW_SQUARE_BONUS', 0.1);
 	const IDLE_PENALTY = getEnvNumber('RL_REWARD_IDLE_PENALTY', -0.05);
-	const MAX_IDLE_PENALTY = getEnvNumber('RL_REWARD_MAX_IDLE_PENALTY', -0.5);
+	const MIN_IDLE_PENALTY_STEPS = Math.max(1, getEnvNumber('RL_REWARD_MIN_IDLE_PENALTY_STEPS', 1));
+	const MAX_IDLE_PENALTY_STEPS = Math.max(
+		MIN_IDLE_PENALTY_STEPS,
+		getEnvNumber('RL_REWARD_MAX_IDLE_PENALTY_STEPS', 10)
+	);
 	const DOUBLE_SPEED_BONUS = getEnvNumber('RL_REWARD_DOUBLE_SPEED_BONUS', 1.0);
 	const MARGIN_FACTOR = getEnvNumber('RL_REWARD_MARGIN_FACTOR', 0.01); // small shaping towards higher score margin
 	const WIN_BASE_BONUS = getEnvNumber('RL_REWARD_WIN_BASE_BONUS', 7);
@@ -235,10 +239,15 @@ export async function rlStep(req: RlStepRequest): Promise<RlStepResponse> {
 		session.idleStreak = 0;
 	} else if (baseReward === 0) {
 		// No score change and no new squares: increment idle streak and
-		// apply an increasingly strong penalty, capped at MAX_IDLE_PENALTY.
 		session.idleStreak += 1;
-		const penalty = Math.max(IDLE_PENALTY * session.idleStreak, MAX_IDLE_PENALTY);
-		shapedReward += penalty;
+		// apply an increasingly strong penalty once we've been idle for at least
+		// MIN_IDLE_PENALTY_STEPS, capped at MAX_IDLE_PENALTY_STEPS.
+		if (session.idleStreak >= MIN_IDLE_PENALTY_STEPS) {
+			const clampedStreak = Math.min(session.idleStreak, MAX_IDLE_PENALTY_STEPS);
+			const effectiveIdleSteps = clampedStreak - (MIN_IDLE_PENALTY_STEPS - 1);
+			const penalty = IDLE_PENALTY * effectiveIdleSteps;
+			shapedReward += penalty;
+		}
 	} else {
 		// Score changed (e.g. loop or special) even if no new squares were counted;
 		// treat this as non-idle and reset the streak.

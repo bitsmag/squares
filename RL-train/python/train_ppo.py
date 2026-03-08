@@ -110,6 +110,17 @@ def main() -> None:
 		# Continue training from an existing checkpoint
 		print(f"[train_ppo] Continuing training from existing model at '{model_file}'")
 		model = PPO.load(model_file, env=env)
+		# Optionally override key hyperparameters from the current environment
+		# configuration so you can tune training without restarting from scratch.
+		model.learning_rate = learning_rate
+		model.n_steps = n_steps
+		model.batch_size = batch_size
+		model.gamma = gamma
+		model.gae_lambda = gae_lambda
+		model.clip_range = clip_range
+		model.ent_coef = ent_coef
+		model.vf_coef = vf_coef
+		model.max_grad_norm = max_grad_norm
 		# Reconfigure logger so TensorBoard logs go to log_dir
 		new_logger = configure(log_dir, ["stdout", "tensorboard"])
 		model.set_logger(new_logger)
