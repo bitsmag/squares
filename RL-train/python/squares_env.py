@@ -63,7 +63,15 @@ class SquaresEnv(gym.Env):
 		last_err: Exception | None = None
 		for _ in range(3):
 			try:
-				r = requests.post(url, json=payload, timeout=15.0)
+				# Use Connection: close to avoid reusing potentially stale keep-alive
+				# connections, which can lead to occasional RemoteDisconnected errors
+				# after long idle gaps.
+				r = requests.post(
+					url,
+					json=payload,
+					timeout=15.0,
+					headers={"Connection": "close"},
+				)
 				r.raise_for_status()
 				return r.json()
 			except RequestException as e:
@@ -159,7 +167,27 @@ class SquaresEnv(gym.Env):
 		return obs, info
 
 	def step(self, action: int):
-		raw_obs, reward, done, info = self._backend_step(action)
+		try:
+			raw_obs, reward, done, info = self._backend_step(action)
+		except RuntimeError as e:
+			# Backend became temporarily unreachable (e.g. server restart or transient failure).
+			# Treat this as a truncated episode, attempt to reset, and continue training.
+			print(
+				f"[SquaresEnv] backend error in step: {e}. "
+				"Treating as truncated episode and resetting.",
+				flush=True,
+			)
+			# This may still raise if the backend remains down, in which case training will stop.
+			raw_obs = self._backend_reset()
+			self._last_raw_obs = raw_obs
+			self._last_score = float(raw_obs["agent"]["score"])
+			obs = self._encode_obs(raw_obs)
+			terminated = True
+			truncated = True
+			reward = 0.0
+			info = {"backend_error": str(e), "reset_after_error": True}
+			return obs, reward, terminated, truncated, info
+
 		self._last_raw_obs = raw_obs
 
 		# Backend reward is already score delta; we trust it here.

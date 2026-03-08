@@ -214,6 +214,7 @@ export async function rlStep(req: RlStepRequest): Promise<RlStepResponse> {
 	const IDLE_PENALTY = -0.05;
 	const MAX_IDLE_PENALTY = -0.5;
 	const DOUBLE_SPEED_BONUS = 1.0;
+	const MARGIN_FACTOR = 0.01; // small shaping towards higher score margin
 	let shapedReward = baseReward;
 
 	if (newlyClaimedSquares > 0) {
@@ -230,6 +231,26 @@ export async function rlStep(req: RlStepRequest): Promise<RlStepResponse> {
 		// Score changed (e.g. loop or special) even if no new squares were counted;
 		// treat this as non-idle and reset the streak.
 		session.idleStreak = 0;
+	}
+
+	// Competitive shaping: encourage higher score margin vs opponents and winning.
+	const opponentScores = match.players
+		.filter((p) => p.color !== agentColor)
+		.map((p) => p.score);
+	if (opponentScores.length > 0) {
+		const bestOpponentScore = Math.max(...opponentScores);
+		const margin = newScore - bestOpponentScore;
+		// Small per-step margin bonus so outscoring opponents is preferred.
+		shapedReward += MARGIN_FACTOR * margin;
+
+		// On terminal step, give a one-time win bonus that depends on margin.
+		const done = match.duration <= 0 || !match.active;
+		if (done && margin > 0) {
+			// Base reward for any win plus extra for larger margins, capped.
+			const cappedMargin = Math.min(margin, 50);
+			const winBonus = 7 + 0.5 * cappedMargin;
+			shapedReward += winBonus;
+		}
 	}
 
 	// Bonus when the agent picks up a new double-speed special.
