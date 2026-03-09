@@ -70,15 +70,15 @@ jq -r '
 
 ## Running Training
 
-1. **Start the Node server** (from the project root):
+1. **Start the Node server (and bot-server) via Docker Compose** (from the project root):
 
    ```bash
-   npm install
-   npm run build   # if you have a build step
-   npm start       # or: node dist/index.js / ts-node index.ts
+   docker compose up --build
    ```
 
-   By default the server listens on `http://localhost:3000` and exposes `POST /rl/reset` and `POST /rl/step`.
+   This is the recommended way to run training, because the compose setup loads all the relevant environment variables (including the reward-shaping knobs) and also starts the bot-server used as opponents.
+
+   By default the Node server listens on `http://localhost:3000` and exposes `POST /rl/reset` and `POST /rl/step`.
 
 2. **Create and activate a Python virtualenv** (recommended) and install training deps:
 
