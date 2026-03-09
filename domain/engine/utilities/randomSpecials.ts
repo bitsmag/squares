@@ -3,7 +3,7 @@ import type { RandomProvider } from './randomProvider';
 import { DefaultRandomProvider } from './randomProvider';
 
 // Probabilities for spawning specials per tick.
-const DOUBLE_SPEED_PROBABILITY = 0.02; // 2%
+const DOUBLE_SPEED_PROBABILITY = 0.04; // 4%
 const GET_POINTS_PROBABILITY = 0.0; // 0%
 
 export function getSpecials(
