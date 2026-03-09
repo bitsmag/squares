@@ -156,7 +156,6 @@ def main() -> None:
 		model.batch_size = batch_size
 		model.gamma = gamma
 		model.gae_lambda = gae_lambda
-		model.clip_range = clip_range
 		model.ent_coef = ent_coef
 		model.vf_coef = vf_coef
 		model.max_grad_norm = max_grad_norm
