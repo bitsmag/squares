@@ -3,3 +3,4 @@ stable-baselines3
 requests
 numpy
 tensorboard
+python-dotenv

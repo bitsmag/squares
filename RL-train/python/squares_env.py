@@ -26,7 +26,7 @@ class SquaresEnv(gym.Env):
 		# Actions: 0 = keep direction, 1 = left, 2 = up, 3 = right, 4 = down
 		self.action_space = spaces.Discrete(5)
 
-		# Observation: board (7 channels, 9x9) + status vector (5 scalars)
+		# Observation board (7 channels, 9x9) + Observation status (agent) vector (5 scalars)
 		# Channels:
 		#   0..4: one-hot of color ['', agent, other1, other2, other3]
 		#   5: doubleSpeedSpecial mask
