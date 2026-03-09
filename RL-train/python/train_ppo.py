@@ -13,7 +13,7 @@ import numpy as np
 from dotenv import load_dotenv
 from stable_baselines3 import PPO
 import stable_baselines3 as sb3
-from stable_baselines3.common.callbacks import BaseCallback
+from stable_baselines3.common.callbacks import BaseCallback, CallbackList
 from stable_baselines3.common.logger import configure
 from stable_baselines3.common.monitor import Monitor
 from stable_baselines3.common.vec_env import DummyVecEnv, VecNormalize
@@ -62,6 +62,54 @@ class SnapshotCallback(BaseCallback):
 			print(f"[train_ppo] Saved snapshot at step {step} -> '{model_path}'")
 
 		return True
+
+
+class DebugSamplesCallback(BaseCallback):
+	"""Collect a small sample of transitions with reward breakdowns.
+
+	Writes JSONL records to a file under the current run directory so you
+	can inspect what the agent is doing and which reward components fire.
+	"""
+
+	def __init__(self, out_path: Path, max_samples: int = 5000, verbose: int = 0):
+		super().__init__(verbose)
+		self.out_path = out_path
+		self.max_samples = max_samples
+		self._n_samples = 0
+		self._file = None
+
+	def _on_training_start(self) -> None:  # type: ignore[override]
+		self._file = self.out_path.open("w", encoding="utf-8")
+
+	def _on_step(self) -> bool:  # type: ignore[override]
+		if self._n_samples >= self.max_samples or self._file is None:
+			return True
+
+		infos = self.locals.get("infos")
+		actions = self.locals.get("actions")
+		rewards = self.locals.get("rewards")
+		if infos is None or actions is None or rewards is None:
+			return True
+
+		# Single env, so index 0.
+		info0 = infos[0]
+		reward_breakdown = info0.get("rewardBreakdown") or {}
+		record = {
+			"timestep": int(self.num_timesteps),
+			"action": int(actions[0]),
+			"normalized_reward": float(rewards[0]),
+			"reward_breakdown": reward_breakdown,
+		}
+		json.dump(record, self._file)
+		self._file.write("\n")
+		self._file.flush()
+		self._n_samples += 1
+		return True
+
+	def _on_training_end(self) -> None:  # type: ignore[override]
+		if self._file is not None:
+			self._file.close()
+			self._file = None
 
 
 def main() -> None:
@@ -185,10 +233,16 @@ def main() -> None:
 	save_freq = int(os.environ.get("SQUARES_SNAPSHOT_FREQ", "200000"))
 	snapshot_model_base = str(checkpoints_dir / "model")
 	snapshot_vecnorm_path = str(checkpoints_dir / "vecnormalize.pkl")
-	callback = SnapshotCallback(
-		save_freq=save_freq,
-		model_base=snapshot_model_base,
-		vecnorm_path=snapshot_vecnorm_path,
+	samples_path = run_dir / "samples.jsonl"
+	callback = CallbackList(
+		[
+			SnapshotCallback(
+				save_freq=save_freq,
+				model_base=snapshot_model_base,
+				vecnorm_path=snapshot_vecnorm_path,
+			),
+			DebugSamplesCallback(out_path=samples_path, max_samples=5000),
+		]
 	)
 
 	# Persist run configuration and environment metadata alongside the model.

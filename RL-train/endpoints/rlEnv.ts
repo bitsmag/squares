@@ -231,10 +231,16 @@ export async function rlStep(req: RlStepRequest): Promise<RlStepResponse> {
 	const WIN_BASE_BONUS = getEnvNumber('RL_REWARD_WIN_BASE_BONUS', 7);
 	const WIN_MARGIN_FACTOR = getEnvNumber('RL_REWARD_WIN_MARGIN_FACTOR', 0.5);
 	const WIN_MARGIN_CAP = getEnvNumber('RL_REWARD_WIN_MARGIN_CAP', 50);
-	let shapedReward = baseReward;
+
+	// Track individual reward components for debugging/analysis.
+	let squareReward = 0;
+	let idlePenaltyReward = 0;
+	let marginReward = 0;
+	let winBonusReward = 0;
+	let doubleSpeedBonusReward = 0;
 
 	if (newlyClaimedSquares > 0) {
-		shapedReward += NEW_SQUARE_BONUS * newlyClaimedSquares;
+		squareReward = NEW_SQUARE_BONUS * newlyClaimedSquares;
 		// Reset idle streak when we make territorial progress.
 		session.idleStreak = 0;
 	} else if (baseReward === 0) {
@@ -245,14 +251,15 @@ export async function rlStep(req: RlStepRequest): Promise<RlStepResponse> {
 		if (session.idleStreak >= MIN_IDLE_PENALTY_STEPS) {
 			const clampedStreak = Math.min(session.idleStreak, MAX_IDLE_PENALTY_STEPS);
 			const effectiveIdleSteps = clampedStreak - (MIN_IDLE_PENALTY_STEPS - 1);
-			const penalty = IDLE_PENALTY * effectiveIdleSteps;
-			shapedReward += penalty;
+			idlePenaltyReward = IDLE_PENALTY * effectiveIdleSteps;
 		}
 	} else {
 		// Score changed (e.g. loop or special) even if no new squares were counted;
 		// treat this as non-idle and reset the streak.
 		session.idleStreak = 0;
 	}
+
+	let shapedReward = baseReward + squareReward + idlePenaltyReward;
 
 	// Competitive shaping: encourage higher score margin vs opponents and winning.
 	const opponentScores = match.players
@@ -262,28 +269,45 @@ export async function rlStep(req: RlStepRequest): Promise<RlStepResponse> {
 		const bestOpponentScore = Math.max(...opponentScores);
 		const margin = newScore - bestOpponentScore;
 		// Small per-step margin bonus so outscoring opponents is preferred.
-		shapedReward += MARGIN_FACTOR * margin;
+		marginReward = MARGIN_FACTOR * margin;
+		shapedReward += marginReward;
 
 		// On terminal step, give a one-time win bonus that depends on margin.
 		const done = match.duration <= 0 || !match.active;
 		if (done && margin > 0) {
 			// Base reward for any win plus extra for larger margins, capped.
 			const cappedMargin = Math.min(margin, WIN_MARGIN_CAP);
-			const winBonus = WIN_BASE_BONUS + WIN_MARGIN_FACTOR * cappedMargin;
-			shapedReward += winBonus;
+			winBonusReward = WIN_BASE_BONUS + WIN_MARGIN_FACTOR * cappedMargin;
+			shapedReward += winBonusReward;
 		}
 	}
 
 	// Bonus when the agent picks up a new double-speed special.
 	if (!hadDoubleSpeedBefore && agent.doubleSpeedSpecial) {
-		shapedReward += DOUBLE_SPEED_BONUS;
+		doubleSpeedBonusReward = DOUBLE_SPEED_BONUS;
+		shapedReward += doubleSpeedBonusReward;
 	}
 
 	const done = match.duration <= 0 || !match.active;
 	session.done = done;
 
 	const obs = buildObservationFromMatch(match, agentColor);
-	return { obs, reward: shapedReward, done, info: {} };
+	const info = {
+		rewardBreakdown: {
+			baseReward,
+			squareReward,
+			idlePenaltyReward,
+			marginReward,
+			winBonusReward,
+			doubleSpeedBonusReward,
+			total: shapedReward,
+			newlyClaimedSquares,
+			idleStreak: session.idleStreak,
+			pickedDoubleSpeed: !hadDoubleSpeedBefore && agent.doubleSpeedSpecial,
+			hasDoubleSpeed: agent.doubleSpeedSpecial,
+		},
+	};
+	return { obs, reward: shapedReward, done, info };
 }
 
 export function buildObservationFromMatch(match: Match, agentColor: PlayerColor): RlObservation {
