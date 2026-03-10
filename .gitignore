@@ -22,3 +22,4 @@ __pycache__/
 # RL training models / logs are kept in RL-train/python/runs. The following folders are duplicates for testing/tensorboard
 bot-server/models/
 RL-train/python/logs/
+RL-train/python/runs/
