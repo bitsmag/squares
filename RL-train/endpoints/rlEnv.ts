@@ -107,8 +107,8 @@ export async function rlReset(_req: RlResetRequest): Promise<RlResetResponse> {
 	if (spawnOpponents) {
 		const opponentConfigs: { name: string; color: PlayerColor }[] = [
 			{ name: 'bot_orange', color: 'orange' },
-			// { name: 'bot_green', color: 'green' },
-			// { name: 'bot_red', color: 'red' },
+			{ name: 'bot_green', color: 'green' },
+			{ name: 'bot_red', color: 'red' },
 		];
 
 		opponentConfigs.forEach(({ name, color }) => {
